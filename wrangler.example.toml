@@ -1,0 +1,20 @@
+# Optional: copy to wrangler.toml to manage bindings as code (Pages then treats it as the source of truth).
+# Otherwise set the same bindings in the dashboard: Pages project → Settings → Bindings / Variables.
+name = "navjot"
+compatibility_date = "2025-09-01"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "navjot-orders"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+[vars]
+MAIL_FROM = "orders@your-domain.com"
+MAIL_TO = "hello@example.com"
+BOOK_PRICE_INR = "499"
+SHIPPING_INR = "60"
+BOOK_TITLE = "Her Amazon bestseller"
+# ZEPTOMAIL_API = "https://api.zeptomail.in/v1.1/email"
+
+# Secret (never commit): npx wrangler pages secret put ZEPTOMAIL_TOKEN --project-name navjot

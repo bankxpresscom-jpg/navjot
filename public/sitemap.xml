@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://drnavjotkaur.example/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image><image:loc>https://res.cloudinary.com/dhn6pvsr1/image/upload/c_fill,g_face,w_1200,h_1200,f_jpg,q_auto/v1790248001/navjot-05.jpg_kjhfs3.jpg</image:loc></image:image>
+    <image:image><image:loc>https://res.cloudinary.com/dhn6pvsr1/image/upload/f_jpg,q_auto,w_800/v1790247244/71to1VD6NoL._SL1500__mxv5zk.jpg</image:loc></image:image>
+  </url>
+</urlset>
