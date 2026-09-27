@@ -176,6 +176,148 @@ export const TEMPLATES = {
       ['cta', { title: 'Help us', titleEm: 'go further.', buttons: [btn('Donate', '#contact')] }],
       ['contact', {}]
     ]
+  },
+  developer: {
+    name: 'Developer / AI tool', kind: 'Developer portfolio, dev tool, AI product', style: 'terminal', icon: 'code', desc: 'Console look, projects list, stack, docs-style FAQ.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Engineer · Builder', title: 'I build software', titleEm: 'that ships.', text: 'One line on what you build and for whom.', buttons: [btn('See projects', '#projects'), btn('Contact', '#contact')], items: [it('APIs'), it('AI tools'), it('Web apps')] }],
+      ['work', { menu: { show: true, label: 'Projects' }, eyebrow: 'Projects', title: 'Things I', titleEm: 'made.', items: [it('[Project]', 'What it does.', '[Stack]'), it('[Project]', 'What it does.', '[Stack]'), it('[Project]', 'What it does.', '[Stack]')] }],
+      ['features', { menu: { show: true, label: 'Stack' }, variant: 'cards', eyebrow: 'Stack', title: 'Tools I', titleEm: 'use.', items: [it('Frontend', '[Your frontend tools]', '', { icon: 'code' }), it('Backend', '[Your backend tools]', '', { icon: 'layers' }), it('AI', '[Your AI tools]', '', { icon: 'zap' })] }],
+      ['timeline', { menu: { show: true, label: 'Experience' }, eyebrow: 'Experience', title: 'Where I', titleEm: 'worked.', items: [it('[Role, company]', '[What you did]', '[Years]'), it('[Role, company]', '[What you did]', '[Years]')] }],
+      ['faq', {}],
+      ['contact', { title: 'Let’s build', titleEm: 'something.' }]
+    ]
+  },
+  fashion: {
+    name: 'Fashion / Beauty', kind: 'Fashion label, model, beauty brand, boutique', style: 'vogue', icon: 'bag', desc: 'Masthead headline, lookbook, collection, stockists.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Collection · [Season]', title: 'The new', titleEm: 'silhouette.', text: 'A line about the collection.', buttons: [btn('View the collection', '#collection')] }],
+      ['work', { menu: { show: true, label: 'Lookbook' }, eyebrow: 'Lookbook', title: 'Look', titleEm: 'book.', items: [it('Look 01', '', '[Season]'), it('Look 02', '', '[Season]'), it('Look 03', '', '[Season]'), it('Look 04', '', '[Season]')] }],
+      ['about', { eyebrow: 'The house', title: 'Made slowly,', titleEm: 'worn forever.', text: 'Tell the story of the label.' }],
+      ['products', { menu: { show: true, label: 'Collection' }, eyebrow: 'Shop', title: 'The', titleEm: 'collection.', items: [it('[Piece]', '', '[Price]', { tag: 'New' }), it('[Piece]', '', '[Price]'), it('[Piece]', '', '[Price]')] }],
+      ['gallery', { title: 'Behind the', titleEm: 'scenes.' }],
+      ['marquee', { items: [it('Atelier'), it('Craft'), it('Edition'), it('Couture')] }],
+      ['contact', { title: 'Visit the', titleEm: 'atelier.' }]
+    ]
+  },
+  web3: {
+    name: 'Web3 / AI startup', kind: 'Crypto, AI startup, futuristic product', style: 'holo', icon: 'sparkles', desc: 'Holographic hero, bento features, roadmap, FAQ.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Now live', title: 'The future,', titleEm: 'made simple.', text: 'One sentence about the product.', buttons: [btn('Get started', '#contact'), btn('Roadmap', '#roadmap')] }],
+      ['logos', { eyebrow: 'Backed by', items: [it('[Partner]'), it('[Partner]'), it('[Partner]'), it('[Partner]')] }],
+      ['features', { menu: { show: true, label: 'Product' }, eyebrow: 'Product', title: 'Built for', titleEm: 'what’s next.', items: [it('Fast', 'Describe the speed benefit.', '', { icon: 'zap' }), it('Secure', 'Describe security.', '', { icon: 'shield' }), it('Open', 'Describe openness.', '', { icon: 'globe' }), it('Smart', 'Describe the intelligence.', '', { icon: 'sparkles' })] }],
+      ['timeline', { menu: { show: true, label: 'Roadmap' }, variant: 'steps', eyebrow: 'Roadmap', title: 'What’s', titleEm: 'coming.', items: [it('Launch', '[Details]', '[Quarter]'), it('Expand', '[Details]', '[Quarter]'), it('Scale', '[Details]', '[Quarter]')] }],
+      ['faq', {}],
+      ['cta', { title: 'Join the', titleEm: 'waitlist.', buttons: [btn('Join now', '#contact')] }],
+      ['contact', {}]
+    ]
+  },
+  hotel: {
+    name: 'Hotel / Retreat', kind: 'Hotel, villa, retreat, spa, travel', style: 'zen', icon: 'home', desc: 'Calm hero, rooms, experiences, gallery, booking.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Retreat', title: 'Where time', titleEm: 'slows down.', text: 'A line about the place and its setting.', buttons: [btn('Book your stay', '#contact'), btn('Rooms', '#rooms')] }],
+      ['about', { eyebrow: 'The place', title: 'Quiet, by', titleEm: 'design.', text: 'Describe the setting, architecture and feeling.' }],
+      ['products', { menu: { show: true, label: 'Rooms' }, variant: 'feature', eyebrow: 'Rooms', title: 'Stay', titleEm: 'with us.', items: [it('[Room name]', 'What makes it special.', '[Price per night]'), it('[Room name]', 'What makes it special.', '[Price per night]')] }],
+      ['features', { menu: { show: true, label: 'Experiences' }, variant: 'icons', eyebrow: 'Experiences', title: 'Ways to', titleEm: 'unwind.', items: [it('Spa', 'Short description.', '', { icon: 'leaf' }), it('Dining', 'Short description.', '', { icon: 'utensils' }), it('Excursions', 'Short description.', '', { icon: 'compass' })] }],
+      ['gallery', {}],
+      ['testimonials', {}],
+      ['map', {}],
+      ['contact', { title: 'Plan your', titleEm: 'stay.' }]
+    ]
+  },
+  luxury: {
+    name: 'Luxury / Jewellery', kind: 'Jewellery, watches, luxury goods, fine dining', style: 'deco', icon: 'gem', desc: 'Gold deco frames, collection, craftsmanship, appointments.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Maison · [Year founded]', title: 'Crafted to', titleEm: 'outlive us.', text: 'A line about the house and its craft.', buttons: [btn('Book an appointment', '#contact'), btn('The collection', '#collection')] }],
+      ['about', { eyebrow: 'Heritage', title: 'A legacy of', titleEm: 'craft.', text: 'Tell the story of the house.' }],
+      ['products', { menu: { show: true, label: 'Collection' }, eyebrow: 'Collection', title: 'Signature', titleEm: 'pieces.', items: [it('[Piece]', 'Materials and details.', '[Price]'), it('[Piece]', 'Materials and details.', '[Price]'), it('[Piece]', 'Materials and details.', '[Price]')] }],
+      ['timeline', { menu: { show: true, label: 'Craft' }, variant: 'steps', eyebrow: 'The craft', title: 'From sketch', titleEm: 'to heirloom.', items: [it('Design', '', 'I'), it('Craft', '', 'II'), it('Finish', '', 'III')] }],
+      ['testimonials', {}],
+      ['contact', { title: 'By', titleEm: 'appointment.' }]
+    ]
+  },
+  music: {
+    name: 'Music artist / DJ', kind: 'Musician, DJ, band, label, podcast', style: 'kinetic', icon: 'music', desc: 'Giant type, releases, tour dates, videos, bookings.',
+    blocks: () => [
+      ['hero', { eyebrow: 'New release out now', title: 'Louder', titleEm: 'than words.', buttons: [btn('Listen', '#releases'), btn('Tour', '#tour')], items: [it('Live'), it('Studio'), it('Radio')] }],
+      ['marquee', { items: [it('New single'), it('World tour'), it('Live sets')] }],
+      ['products', { menu: { show: true, label: 'Releases' }, variant: 'feature', eyebrow: 'Releases', title: 'Latest', titleEm: 'drops.', items: [it('[Release title]', 'Listen on your favourite platform.', '[Year]', { link: '' })] }],
+      ['timeline', { menu: { show: true, label: 'Tour' }, variant: 'agenda', eyebrow: 'Tour', title: 'On the', titleEm: 'road.', items: [it('[City, venue]', 'Tickets', '[Date]'), it('[City, venue]', 'Tickets', '[Date]'), it('[City, venue]', 'Tickets', '[Date]')] }],
+      ['video', { title: 'Watch', titleEm: 'live.' }],
+      ['gallery', {}],
+      ['contact', { eyebrow: 'Bookings', title: 'Book a', titleEm: 'show.' }]
+    ]
+  },
+  gaming: {
+    name: 'Gaming / Esports', kind: 'Game, esports team, streamer, tech event', style: 'neon', icon: 'zap', desc: 'Neon grid hero, features, roster, schedule.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Season [number]', title: 'Enter the', titleEm: 'arena.', text: 'One line that hypes the game or team.', buttons: [btn('Play now', '#contact'), btn('Schedule', '#schedule')] }],
+      ['marquee', { items: [it('Compete'), it('Stream'), it('Win'), it('Repeat')] }],
+      ['features', { menu: { show: true, label: 'Features' }, eyebrow: 'Features', title: 'Built to', titleEm: 'win.', items: [it('[Feature]', 'Short description.', '', { icon: 'zap' }), it('[Feature]', 'Short description.', '', { icon: 'target' }), it('[Feature]', 'Short description.', '', { icon: 'trophy' })] }],
+      ['team', { menu: { show: true, label: 'Roster' }, eyebrow: 'Roster', title: 'The', titleEm: 'squad.' }],
+      ['timeline', { menu: { show: true, label: 'Schedule' }, variant: 'agenda', eyebrow: 'Schedule', title: 'Next', titleEm: 'matches.', items: [it('[Match]', '[Details]', '[Date]'), it('[Match]', '[Details]', '[Date]')] }],
+      ['contact', {}]
+    ]
+  },
+  product: {
+    name: 'Tech product launch', kind: 'Gadget, hardware, car, premium product', style: 'chrome', icon: 'box', desc: 'Chrome headline, features, specs, pre-order.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Introducing', title: '[Product name]', titleEm: 'reimagined.', text: 'The one-line promise of the product.', buttons: [btn('Pre-order', '#contact'), btn('Specs', '#specs')] }],
+      ['about', { eyebrow: 'Design', title: 'Every detail,', titleEm: 'considered.', text: 'What makes the design special.' }],
+      ['features', { menu: { show: true, label: 'Features' }, eyebrow: 'Features', title: 'Power you', titleEm: 'can feel.', items: [it('[Feature]', 'Short description.', '', { icon: 'zap' }), it('[Feature]', 'Short description.', '', { icon: 'shield' }), it('[Feature]', 'Short description.', '', { icon: 'wifi' }), it('[Feature]', 'Short description.', '', { icon: 'sun' })] }],
+      ['stats', { menu: { show: true, label: 'Specs' }, title: 'Specs', items: [it('[Spec]', '', '', { value: '00' }), it('[Spec]', '', '', { value: '00' }), it('[Spec]', '', '', { value: '00' })] }],
+      ['pricing', { eyebrow: 'Models', title: 'Choose', titleEm: 'yours.', items: [it('Standard', '[Features]', '', { value: '[Price]' }), it('Pro', '[Features]', '', { value: '[Price]', tag: 'Most popular' })] }],
+      ['faq', {}],
+      ['contact', {}]
+    ]
+  },
+  education: {
+    name: 'School / Course', kind: 'School, academy, online course, workshop', style: 'bauhaus', icon: 'school', desc: 'Programmes, how it works, teachers, pricing, FAQ.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Now enrolling', title: 'Learn by', titleEm: 'making.', text: 'One line about what students learn.', buttons: [btn('Enrol', '#contact'), btn('Programmes', '#programmes')] }],
+      ['features', { menu: { show: true, label: 'Programmes' }, eyebrow: 'Programmes', title: 'Choose your', titleEm: 'path.', items: [it('[Course]', 'What students learn.', '', { icon: 'palette' }), it('[Course]', 'What students learn.', '', { icon: 'code' }), it('[Course]', 'What students learn.', '', { icon: 'pen' })] }],
+      ['timeline', { variant: 'steps', menu: { show: true, label: 'How it works' }, eyebrow: 'How it works', title: 'Three steps to', titleEm: 'start.', items: [it('Apply', '', '01'), it('Learn', '', '02'), it('Create', '', '03')] }],
+      ['team', { menu: { show: true, label: 'Teachers' }, eyebrow: 'Teachers', title: 'Learn from', titleEm: 'the best.' }],
+      ['pricing', {}],
+      ['faq', {}],
+      ['contact', {}]
+    ]
+  },
+  coach: {
+    name: 'Coach / Creator', kind: 'Coach, consultant, creator, course seller', style: 'liquid', icon: 'heart', desc: 'Friendly hero, offers, results, testimonials, booking.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Coaching', title: 'Grow with', titleEm: 'clarity.', text: 'Who you help and the change you bring.', buttons: [btn('Book a call', '#contact'), btn('Programmes', '#offers')] }],
+      ['about', { eyebrow: 'Hi, I’m [Name]', title: 'I help people', titleEm: 'move forward.', text: 'Your story in a few lines.' }],
+      ['pricing', { menu: { show: true, label: 'Offers' }, eyebrow: 'Work with me', title: 'Ways to', titleEm: 'start.', items: [it('1:1 session', 'One focused call', 'session', { value: '[Price]' }), it('Programme', 'Weekly calls\nWorkbook\nSupport', '[Length]', { value: '[Price]', tag: 'Popular' })] }],
+      ['testimonials', {}],
+      ['faq', {}],
+      ['newsletter', {}],
+      ['contact', { title: 'Let’s', titleEm: 'talk.' }]
+    ]
+  },
+  space: {
+    name: 'Science / Deep tech', kind: 'Space, science, research, deep-tech startup', style: 'cosmos', icon: 'rocket', desc: 'Starfield hero, mission, technology, team, news.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Mission', title: 'Beyond the', titleEm: 'horizon.', text: 'One sentence about the mission.', buttons: [btn('Our mission', '#mission'), btn('Contact', '#contact')] }],
+      ['about', { menu: { show: true, label: 'Mission' }, eyebrow: 'Mission', title: 'We exist to', titleEm: 'explore.', text: 'The mission in your own words.' }],
+      ['features', { menu: { show: true, label: 'Technology' }, eyebrow: 'Technology', title: 'How it', titleEm: 'works.', items: [it('[Technology]', 'Short description.', '', { icon: 'rocket' }), it('[Technology]', 'Short description.', '', { icon: 'globe' }), it('[Technology]', 'Short description.', '', { icon: 'chart' })] }],
+      ['stats', { items: [it('[Label]', '', '', { value: '00' }), it('[Label]', '', '', { value: '00' }), it('[Label]', '', '', { value: '00' })] }],
+      ['team', {}],
+      ['timeline', { menu: { show: true, label: 'News' }, variant: 'agenda', eyebrow: 'News', title: 'Latest', titleEm: 'updates.', items: [it('[Headline]', '[Summary]', '[Date]'), it('[Headline]', '[Summary]', '[Date]')] }],
+      ['contact', {}]
+    ]
+  },
+  clinic: {
+    name: 'Modern clinic / Fintech', kind: 'Clinic, dental, fintech, health tech', style: 'frost', icon: 'health', desc: 'Clean glass look, services, process, team, booking.',
+    blocks: () => [
+      ['hero', { eyebrow: 'Care, redesigned', title: 'Modern care,', titleEm: 'human touch.', text: 'One line about the service.', buttons: [btn('Book now', '#contact'), btn('Services', '#services')] }],
+      ['logos', { eyebrow: 'Accepted by', items: [it('[Partner]'), it('[Partner]'), it('[Partner]'), it('[Partner]')] }],
+      ['features', { eyebrow: 'Services', title: 'Everything', titleEm: 'in one place.', items: [it('[Service]', 'Short description.', '', { icon: 'health' }), it('[Service]', 'Short description.', '', { icon: 'heart' }), it('[Service]', 'Short description.', '', { icon: 'shield' }), it('[Service]', 'Short description.', '', { icon: 'clock' })] }],
+      ['timeline', { variant: 'steps', menu: { show: true, label: 'Process' }, eyebrow: 'Process', title: 'Simple from', titleEm: 'start to finish.', items: [it('Book', '', '01'), it('Visit', '', '02'), it('Follow up', '', '03')] }],
+      ['team', {}],
+      ['faq', {}],
+      ['contact', {}]
+    ]
   }
 };
 export const TEMPLATE_IDS = Object.keys(TEMPLATES);

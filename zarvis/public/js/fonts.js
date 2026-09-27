@@ -58,6 +58,36 @@ export const FONTS = [
   { n: 'IBM Plex Mono', c: 'mono', w: [400, 500, 600], i: 1 },
   { n: 'Space Mono', c: 'mono', w: [400, 700], i: 1 },
   { n: 'DM Mono', c: 'mono', w: [300, 400, 500], i: 1 },
+  // futuristic / tech
+  { n: 'Orbitron', c: 'display', w: [400, 500, 700, 900], i: 0 },
+  { n: 'Chakra Petch', c: 'sans', w: [400, 500, 600, 700], i: 1 },
+  { n: 'Michroma', c: 'display', w: [400], i: 0 },
+  { n: 'Syncopate', c: 'display', w: [400, 700], i: 0 },
+  { n: 'Audiowide', c: 'display', w: [400], i: 0 },
+  { n: 'Exo 2', c: 'sans', w: [300, 400, 600, 800], i: 1 },
+  { n: 'Rajdhani', c: 'sans', w: [400, 500, 600, 700], i: 0 },
+  { n: 'Share Tech Mono', c: 'mono', w: [400], i: 0 },
+  { n: 'Tomorrow', c: 'sans', w: [400, 500, 600], i: 1 },
+  { n: 'Zen Dots', c: 'display', w: [400], i: 0 },
+  { n: 'Monoton', c: 'display', w: [400], i: 0 },
+  { n: 'Major Mono Display', c: 'mono', w: [400], i: 0 },
+  // modern sans
+  { n: 'Urbanist', c: 'sans', w: [300, 400, 600, 800], i: 1 },
+  { n: 'Onest', c: 'sans', w: [400, 500, 600, 700], i: 0 },
+  { n: 'Hanken Grotesk', c: 'sans', w: [400, 500, 600, 800], i: 1 },
+  { n: 'Epilogue', c: 'sans', w: [400, 500, 700, 800], i: 1 },
+  { n: 'Red Hat Display', c: 'sans', w: [400, 500, 700, 900], i: 1 },
+  { n: 'Darker Grotesque', c: 'sans', w: [400, 500, 700, 900], i: 0 },
+  { n: 'Familjen Grotesk', c: 'sans', w: [400, 500, 600, 700], i: 1 },
+  { n: 'Anybody', c: 'display', w: [400, 700, 900], i: 1 },
+  { n: 'Karla', c: 'sans', w: [300, 400, 500, 700], i: 1 },
+  { n: 'Josefin Sans', c: 'sans', w: [300, 400, 600], i: 1 },
+  // classic / luxe
+  { n: 'Cinzel', c: 'serif', w: [400, 500, 600, 700], i: 0 },
+  { n: 'Marcellus', c: 'serif', w: [400], i: 0 },
+  { n: 'Tenor Sans', c: 'sans', w: [400], i: 0 },
+  { n: 'Poiret One', c: 'display', w: [400], i: 0 },
+  { n: 'Limelight', c: 'display', w: [400], i: 0 },
   // script
   { n: 'Caveat', c: 'script', w: [400, 500, 600, 700], i: 0 },
   { n: 'Pinyon Script', c: 'script', w: [400], i: 0 }
@@ -70,6 +100,13 @@ export const fontStack = (n, cat) => {
   const fb = c === 'serif' ? 'Georgia,"Times New Roman",serif' : c === 'mono' ? 'ui-monospace,Menlo,Consolas,monospace' : c === 'script' ? 'cursive' : 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
   return `"${String(n).replace(/["\\]/g, '')}",${fb}`;
 };
+
+/** One Google Fonts CSS2 URL per family, so one bad family can never block the others. */
+export function fontsUrls(reqs) {
+  const u = fontsUrl(reqs); if (!u) return [];
+  const q = u.split('?')[1].replace(/&display=swap$/, '');
+  return q.split('&').filter(x => x.startsWith('family=')).map(f => `https://fonts.googleapis.com/css2?${f}&display=swap`);
+}
 
 /** Google Fonts CSS2 URL for a set of { name, weights[], italic } requests (deduplicated per family). */
 export function fontsUrl(reqs) {
@@ -105,5 +142,7 @@ export const PAIRS = [
   ['Playfair Display', 'Inter'], ['Fraunces', 'Manrope'], ['Syne', 'Inter'], ['Unbounded', 'Manrope'], ['DM Serif Display', 'DM Sans'],
   ['Bebas Neue', 'Work Sans'], ['Instrument Serif', 'Inter'], ['Bodoni Moda', 'Jost'], ['Gloock', 'Figtree'], ['Space Grotesk', 'Space Grotesk'],
   ['Outfit', 'Outfit'], ['Big Shoulders Display', 'Inter'], ['Young Serif', 'Plus Jakarta Sans'], ['Italiana', 'Raleway'], ['Dela Gothic One', 'Manrope'],
-  ['Cormorant Garamond', 'Montserrat'], ['Archivo', 'Archivo'], ['Sora', 'Lexend'], ['Oswald', 'Lora'], ['EB Garamond', 'Inter Tight'], ['Abril Fatface', 'Poppins'], ['Bricolage Grotesque', 'Nunito']
+  ['Cormorant Garamond', 'Montserrat'], ['Archivo', 'Archivo'], ['Sora', 'Lexend'], ['Oswald', 'Lora'], ['EB Garamond', 'Inter Tight'], ['Abril Fatface', 'Poppins'], ['Bricolage Grotesque', 'Nunito'],
+  ['Orbitron', 'Exo 2'], ['Michroma', 'Onest'], ['Syncopate', 'Red Hat Display'], ['Urbanist', 'Urbanist'], ['Anybody', 'Hanken Grotesk'], ['Cinzel', 'Josefin Sans'],
+  ['Marcellus', 'Karla'], ['Epilogue', 'Epilogue'], ['Chakra Petch', 'Chakra Petch'], ['Darker Grotesque', 'Karla'], ['Familjen Grotesk', 'Instrument Serif'], ['Tomorrow', 'Inter']
 ];

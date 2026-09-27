@@ -5,7 +5,7 @@
    ========================================================================== */
 import { renderSite, contentWarnings, validPalette, esc, isVideoUrl } from './engine.js';
 import { BLOCKS, BLOCK_GROUPS, ICONS, makeBlock, normalizeBlock, uid } from './blocks.js';
-import { STYLES, STYLE_IDS, OPTIONS, resolveDesign } from './styles.js';
+import { STYLES, STYLE_IDS, OPTIONS, resolveDesign, generatePalette } from './styles.js';
 import { FONTS, FONT_NAMES, PAIRS } from './fonts.js';
 import { TEMPLATES, TEMPLATE_IDS, templateBlocks } from './templates.js';
 import { SPRITE } from './sprite.js';
@@ -20,22 +20,26 @@ const lines = v => String(v || '').split(/\s*\n\s*/).map(x => x.trim()).filter(B
 $('#sprite').outerHTML = SPRITE;
 
 /* ================================================================ providers */
+// No model is pinned: the server lists the models each key can use and picks the newest for the chosen priority.
 const PROVIDERS = {
-  anthropic: { label: 'Claude (Anthropic)', models: ['claude-opus-5', 'claude-sonnet-5', 'claude-haiku-4-5', 'claude-opus-5-5', 'claude-fable-5-1'], def: 'claude-opus-5' },
-  openai:    { label: 'OpenAI', models: ['gpt-5', 'gpt-5-mini', 'gpt-4.1', 'gpt-4.1-mini', 'gpt-4o-mini'], def: 'gpt-4.1-mini' },
-  gemini:    { label: 'Google Gemini', models: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'], def: 'gemini-2.5-flash' },
-  groq:      { label: 'Groq', models: ['llama-3.3-70b-versatile', 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'], def: 'llama-3.3-70b-versatile' }
+  auto:      { label: 'Automatic (best available key)' },
+  anthropic: { label: 'Claude (Anthropic)' },
+  openai:    { label: 'OpenAI' },
+  gemini:    { label: 'Google Gemini' },
+  groq:      { label: 'Groq' }
 };
+const PRIORITY = { best: 'Best quality (newest top model)', balanced: 'Balanced (newest mid model)', fast: 'Fastest & cheapest (newest small model)' };
 
 /* ================================================================ storage */
-const LS = { projects: 'zarvis2-projects', current: 'zarvis2-current', settings: 'zarvis2-settings' };
+const LS = { projects: 'zarvis2-projects', current: 'zarvis2-current', settings: 'zarvis3-settings' };
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { toast('Browser storage is full or blocked. Export your project to keep it.'); return false; } }
 };
 let projects = store.get(LS.projects, {});
 let P = null;                // current project
-let settings = store.get(LS.settings, { provider: 'anthropic', model: PROVIDERS.anthropic.def, effort: '' });
+let settings = { provider: 'auto', model: 'auto', priority: 'best', effort: '', ...store.get(LS.settings, {}) };
+if (!PROVIDERS[settings.provider]) settings.provider = 'auto';
 let status = { providers: {}, images: '', passwordRequired: false, offline: true };
 
 function toast(msg, ms = 3200) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), ms); }
@@ -57,27 +61,45 @@ async function loadStatus() {
   catch { status = { providers: {}, images: '', passwordRequired: status.passwordRequired, offline: true }; }
   updateChips();
 }
-const aiReady = () => !!status.providers?.[settings.provider];
+const aiReady = () => settings.provider === 'auto' ? Object.values(status.providers || {}).some(Boolean) : !!status.providers?.[settings.provider];
+const aiBody = () => ({ provider: settings.provider, model: settings.model || 'auto', priority: settings.priority || 'best', effort: settings.effort || undefined });
+const modelLabel = () => settings.model && settings.model !== 'auto' ? settings.model : `auto · ${settings.priority || 'best'}`;
 function updateChips() {
-  const txt = status.offline ? (status.passwordRequired ? 'AI: password needed' : 'AI: offline') : `AI: ${PROVIDERS[settings.provider].label.split(' ')[0]} · ${settings.model}${aiReady() ? '' : ' · no key'}`;
+  const txt = status.offline ? (status.passwordRequired ? 'AI: password needed' : 'AI: offline') : `AI: ${settings.provider === 'auto' ? 'Auto' : PROVIDERS[settings.provider].label.split(' ')[0]} · ${modelLabel()}${aiReady() ? '' : ' · no key'}`;
   $$('#aiChip, #aiChip2').forEach(c => { c.textContent = txt; c.className = 'zchip' + (aiReady() ? ' ok' : ' warn') + (c.id === 'aiChip2' ? ' hide-md' : ''); });
   const hint = $('#buildHint');
   if (hint) hint.textContent = aiReady() ? '' : 'AI is not set up yet (add an API key in Cloudflare). “Build” will start from the matching template instead.';
   const sh = $('#stockHint'); if (sh) sh.textContent = status.images ? `Uses ${status.images === 'pexels' ? 'Pexels' : 'Unsplash'} photos, credited in the footer.` : 'Needs a PEXELS_API_KEY or UNSPLASH_ACCESS_KEY on the server. Without one, Zarvis uses designed artwork.';
 }
 function openSettings(needPw = false) {
-  const d = $('#settings'), sp = $('#setProvider');
-  sp.innerHTML = Object.entries(PROVIDERS).map(([k, p]) => `<option value="${k}">${p.label}${status.providers?.[k] ? ' ✓ key set' : ' (no key)'}</option>`).join('');
+  const d = $('#settings'), sp = $('#setProvider'), sm = $('#setModel');
+  sp.innerHTML = Object.entries(PROVIDERS).map(([k, p]) => `<option value="${k}">${p.label}${k === 'auto' ? '' : status.providers?.[k] ? ' ✓ key set' : ' (no key)'}</option>`).join('');
   sp.value = settings.provider;
-  const fill = () => { $('#modelList').innerHTML = PROVIDERS[sp.value].models.map(m => `<option value="${m}">`).join(''); $('#keyStatus').textContent = status.providers?.[sp.value] ? 'API key is configured on the server.' : `No key found. Add ${{ anthropic: 'ANTHROPIC_API_KEY', openai: 'OPENAI_API_KEY', gemini: 'GEMINI_API_KEY', groq: 'GROQ_API_KEY' }[sp.value]} in Cloudflare → Pages → Settings → Variables and Secrets.`; };
-  sp.onchange = () => { fill(); $('#setModel').value = PROVIDERS[sp.value].def; };
+  $('#setPriority').innerHTML = Object.entries(PRIORITY).map(([k, l]) => `<option value="${k}">${l}</option>`).join('');
+  $('#setPriority').value = settings.priority || 'best';
+  const keyName = { anthropic: 'ANTHROPIC_API_KEY', openai: 'OPENAI_API_KEY', gemini: 'GEMINI_API_KEY', groq: 'GROQ_API_KEY' };
+  const fill = async () => {
+    const pv = sp.value;
+    sm.disabled = pv === 'auto';
+    if (pv === 'auto') { sm.innerHTML = '<option value="auto">Automatic: newest model of the first provider with a key</option>'; sm.value = 'auto'; $('#keyStatus').textContent = aiReady() ? `Uses ${Object.keys(status.providers || {}).filter(k => status.providers[k]).join(' → ')} in that order; if one fails, the next takes over.` : 'No API key found. Add one in Cloudflare → Pages → Settings → Variables and Secrets.'; return; }
+    if (!status.providers?.[pv]) { sm.innerHTML = '<option value="auto">Automatic (newest)</option>'; $('#keyStatus').textContent = `No key found. Add ${keyName[pv]} in Cloudflare → Pages → Settings → Variables and Secrets.`; return; }
+    $('#keyStatus').textContent = 'Loading the models your key can use…';
+    try {
+      const r = await api(`/api/models?provider=${pv}`);
+      const pr = $('#setPriority').value;
+      sm.innerHTML = `<option value="auto">Automatic: always the newest (now ${esc(r.auto?.[pr] || '…')})</option>` + (r.models || []).map(m => `<option value="${esc(m.id)}">${esc(m.id)}${m.label && m.label !== m.id ? ` · ${esc(m.label)}` : ''}</option>`).join('');
+      sm.value = settings.provider === pv && [...sm.options].some(o => o.value === settings.model) ? settings.model : 'auto';
+      $('#keyStatus').textContent = `${(r.models || []).length} models available to your key, listed live from ${PROVIDERS[pv].label}.`;
+    } catch (e) { sm.innerHTML = '<option value="auto">Automatic (newest)</option>'; $('#keyStatus').textContent = e.message; }
+  };
+  sp.onchange = fill; $('#setPriority').onchange = fill;
   fill();
-  $('#setModel').value = settings.model; $('#setEffort').value = settings.effort || '';
+  $('#setEffort').value = settings.effort || '';
   $('#pwField').hidden = !(status.passwordRequired || needPw);
   $('#imgStatus').textContent = status.images ? `Stock photos: ${status.images} is connected.` : 'Stock photos: not connected (optional PEXELS_API_KEY or UNSPLASH_ACCESS_KEY secret).';
   if (!d.open) d.showModal();
   d.onclose = () => {
-    settings = { provider: sp.value, model: $('#setModel').value.trim() || PROVIDERS[sp.value].def, effort: $('#setEffort').value };
+    settings = { provider: sp.value, model: sp.value === 'auto' ? 'auto' : (sm.value || 'auto'), priority: $('#setPriority').value || 'best', effort: $('#setEffort').value };
     store.set(LS.settings, settings);
     const p = $('#setPassword').value; if (p) { try { sessionStorage.setItem('zarvis-pw', p); } catch { /* ignore */ } }
     loadStatus();
@@ -130,7 +152,7 @@ function undo(dir) {
 function changed({ pane = false, preview = true } = {}) { saveSoon(); snapSoon(); if (pane) renderPane(); if (preview) schedulePreview(); }
 
 /* ================================================================ HOME */
-const KINDS = [['personal', 'Personal brand'], ['restaurant', 'Restaurant'], ['agency', 'Agency / studio'], ['saas', 'SaaS / app'], ['photographer', 'Photographer'], ['event', 'Event'], ['shop', 'Shop / product'], ['architect', 'Architecture / property'], ['writer', 'Writer / magazine'], ['cafe', 'Café / bar / music'], ['wellness', 'Wellness / clinic'], ['nonprofit', 'Nonprofit'], ['other', 'Something else']];
+const KINDS = [['personal', 'Personal brand'], ['restaurant', 'Restaurant'], ['agency', 'Agency / studio'], ['saas', 'SaaS / app'], ['web3', 'Web3 / AI startup'], ['developer', 'Developer / AI tool'], ['photographer', 'Photographer'], ['fashion', 'Fashion / beauty'], ['event', 'Event'], ['music', 'Music / DJ'], ['gaming', 'Gaming / esports'], ['shop', 'Shop / product'], ['product', 'Tech product'], ['luxury', 'Luxury / jewellery'], ['hotel', 'Hotel / retreat'], ['architect', 'Architecture / property'], ['writer', 'Writer / magazine'], ['cafe', 'Café / bar'], ['wellness', 'Wellness'], ['clinic', 'Clinic / fintech'], ['coach', 'Coach / creator'], ['education', 'School / course'], ['space', 'Science / deep tech'], ['nonprofit', 'Nonprofit'], ['other', 'Something else']];
 const home = { kind: '', style: 'auto' };
 function styleCard(id, pressed, attr = 'data-style') {
   const st = STYLES[id], p = Object.values(st.palettes)[0];
@@ -157,7 +179,7 @@ function renderTemplates() {
     const p = newProject({ name: t.name === 'Blank' ? 'Your Brand' : 'Aurelia', template: id, style: t.style });
     p.design.motionLevel = 'none'; p.design.splash = 'none'; p.design.cursor = 'none'; p.features = {};
     const r = await renderSite(p, { runtimeJs: '' });
-    const f = document.createElement('iframe'); f.setAttribute('sandbox', ''); f.setAttribute('aria-hidden', 'true'); f.tabIndex = -1; f.loading = 'lazy'; f.srcdoc = r.previewHtml.replace(/<script(?![^>]*application\/(?:ld\+)?json)[^>]*>[\s\S]*?<\/script>/g, '').replace('media="print"', 'media="all"'); e.target.appendChild(f);
+    const f = document.createElement('iframe'); f.setAttribute('sandbox', ''); f.setAttribute('aria-hidden', 'true'); f.tabIndex = -1; f.loading = 'lazy'; f.srcdoc = r.previewHtml.replace(/<script(?![^>]*application\/(?:ld\+)?json)[^>]*>[\s\S]*?<\/script>/g, '').replace(/media="print"/g, 'media="all"'); e.target.appendChild(f);
   }), { rootMargin: '200px' });
   $$('[data-thumb]').forEach(el => tplIO.observe(el));
 }
@@ -180,15 +202,23 @@ async function createFromHome(mode) {
   const f = readNewForm();
   if (!f.name) { $('#nName').focus(); toast('Give your project a name first.'); return; }
   if (mode === 'ai' && !aiReady()) { toast('AI is not configured, so starting from the matching template.'); mode = 'template'; }
-  const tpl = mode === 'blank' ? 'blank' : templateFor(f.kind);
+  const tpl = mode === 'blank' ? 'blank' : mode === 'instant' && !TEMPLATES[f.kind] ? rnd(TEMPLATE_IDS.filter(t => t !== 'blank')) : templateFor(f.kind);
   const p = newProject({ name: f.name, description: f.description, kind: KINDS.find(k => k[0] === f.kind)?.[1] || '', style: pickStyle(f), template: tpl, details: f.details });
+  if (mode === 'instant') {
+    // a unique look every time: random design system (unless one was chosen), generated palette, fitting layouts
+    const d = randomDesign(); if (f.style !== 'auto') { d.style = f.style; d.paletteId = ''; }
+    const g = generatePalette(d.style); d.colors = Object.fromEntries(['bg', 'surface', 'text', 'accent', 'accent2', 'dark', 'darkText'].map(k => [k, g[k]]));
+    p.design = d; p.blocks = variantsFor(d.style, p.blocks); p.blocks.forEach(b => { if (b.type === 'hero' && !b.title) b.title = f.name; });
+    if (f.description) { const h = p.blocks.find(b => b.type === 'hero'); if (h) h.text = f.description; }
+    mode = 'template';
+  }
   if (f.description && p.blocks[0]?.type === 'hero' && mode !== 'ai') { /* keep template copy; the description feeds AI later */ }
   if (mode !== 'ai') { projects[p.id] = p; openProject(p.id); if (f.stock && status.images) fillStock(p, { onlyEmpty: true }); return; }
   // AI build
   const log = $('#buildLog'), btn = $('#btnBuild'); log.hidden = false; btn.disabled = true;
-  const t0 = Date.now(); const tick = setInterval(() => { log.innerHTML = `✦ Designing <b>${esc(f.name)}</b> with ${esc(PROVIDERS[settings.provider].label)} · ${esc(settings.model)}… ${Math.round((Date.now() - t0) / 1000)}s\n<span class="zhint">Planning the structure, writing the copy, choosing fonts, colours and motion.</span>`; }, 500);
+  const t0 = Date.now(); const tick = setInterval(() => { log.innerHTML = `✦ Designing <b>${esc(f.name)}</b> with ${esc(PROVIDERS[settings.provider].label)} · ${esc(modelLabel())}… ${Math.round((Date.now() - t0) / 1000)}s\n<span class="zhint">Planning the structure, writing the copy, choosing fonts, colours and motion.</span>`; }, 500);
   try {
-    const r = await api('/api/generate', { method: 'POST', body: JSON.stringify({ mode: 'site', provider: settings.provider, model: settings.model, effort: settings.effort || undefined, input: siteInput(p, f.style === 'auto' ? 'auto' : p.design.style) }) });
+    const r = await api('/api/generate', { method: 'POST', body: JSON.stringify({ mode: 'site', ...aiBody(), input: siteInput(p, f.style === 'auto' ? 'auto' : p.design.style) }) });
     clearInterval(tick);
     applySite(p, r.site, { mode: 'site' });
     autoFillImages(p);
@@ -457,7 +487,7 @@ function designPane() {
   <p class="zhint">${esc(st.desc)}</p>
   <h3>Colours</h3>
   <div class="pal-row">${Object.entries(st.palettes).map(([k, p]) => `<button type="button" class="pal" data-pal="${k}" aria-pressed="${d.paletteId === k && !Object.keys(P.design.colors || {}).length}"><span class="sw">${['bg', 'surface', 'accent', 'accent2', 'dark'].map(c => `<i style="background:${p[c]}"></i>`).join('')}</span>${esc(p.name)}</button>`).join('')}</div>
-  <div class="colors">${[['bg', 'Background'], ['surface', 'Surface'], ['text', 'Text'], ['accent', 'Accent'], ['accent2', 'Accent 2'], ['dark', 'Dark'], ['darkText', 'Dark text']].map(([k, l]) => `<label>${l}<input type="color" data-color="${k}" value="${d.palette[k]}"></label>`).join('')}<label>&nbsp;<button type="button" class="zbtn sm" data-act="shuffle-colors" title="Random palette from this style">🎲</button></label></div>
+  <div class="colors">${[['bg', 'Background'], ['surface', 'Surface'], ['text', 'Text'], ['accent', 'Accent'], ['accent2', 'Accent 2'], ['dark', 'Dark'], ['darkText', 'Dark text']].map(([k, l]) => `<label>${l}<input type="color" data-color="${k}" value="${d.palette[k]}"></label>`).join('')}<label>&nbsp;<button type="button" class="zbtn sm" data-act="gen-palette" title="Generate a brand-new accessible palette">✨ New</button></label></div>
   <h3>Typography</h3>
   ${F.select('design.fonts.display', 'Headings font', fontOpts, { def: `Style default (${st.fonts.display})` })}
   ${F.select('design.fonts.body', 'Body font', fontOpts, { def: `Style default (${st.fonts.body})` })}
@@ -576,7 +606,7 @@ async function aiCommand(instruction) {
   showBusy('Zarvis is redesigning…'); const t0 = Date.now(); const tick = setInterval(() => showBusy(`Zarvis is working… ${Math.round((Date.now() - t0) / 1000)}s`), 1000);
   try {
     snapshot();
-    const r = await api('/api/generate', { method: 'POST', body: JSON.stringify({ mode: 'edit', provider: settings.provider, model: settings.model, effort: settings.effort || undefined, input: { instruction, project: compactProject(P), seed: Math.floor(Math.random() * 1e6) } }) });
+    const r = await api('/api/generate', { method: 'POST', body: JSON.stringify({ mode: 'edit', ...aiBody(), input: { instruction, project: compactProject(P), seed: Math.floor(Math.random() * 1e6) } }) });
     applySite(P, r.site, { mode: 'edit' });
     sel = null; changed({ pane: true }); snapshot();
     toast(`✓ Done in ${Math.round((Date.now() - t0) / 1000)}s${r.site?.notes ? ': ' + r.site.notes : ''}`, 6000);
@@ -590,7 +620,7 @@ async function aiBlock(instruction) {
   showBusy('Rewriting block…');
   try {
     snapshot();
-    const r = await api('/api/generate', { method: 'POST', body: JSON.stringify({ mode: 'block', provider: settings.provider, model: settings.model, effort: settings.effort || undefined, input: { instruction: instruction || 'Improve this block.', project: compactProject(P), blockId: b.id } }) });
+    const r = await api('/api/generate', { method: 'POST', body: JSON.stringify({ mode: 'block', ...aiBody(), input: { instruction: instruction || 'Improve this block.', project: compactProject(P), blockId: b.id } }) });
     const nb = { ...r.site.block, id: b.id, type: BLOCKS[r.site.block?.type] ? r.site.block.type : b.type };
     const tmp = { ...P, design: { ...P.design }, seo: { ...P.seo }, brand: { ...P.brand }, blocks: [b] };
     applySite(tmp, { style: P.design.style, blocks: [nb] }, { mode: 'edit' });
@@ -602,17 +632,41 @@ async function aiBlock(instruction) {
 }
 
 /* ================================================================ shuffle */
+/** A random, complete art direction: design system + palette (preset or generated) + sometimes a new font pairing and hero effect */
+function randomDesign(exclude = []) {
+  const id = rnd(STYLE_IDS.filter(x => !exclude.includes(x)));
+  const st = STYLES[id];
+  const d = { style: id, paletteId: rnd(Object.keys(st.palettes)), colors: {}, fonts: {} };
+  if (Math.random() < 0.45) { const g = generatePalette(id); d.colors = Object.fromEntries(['bg', 'surface', 'text', 'accent', 'accent2', 'dark', 'darkText'].map(k => [k, g[k]])); }
+  if (Math.random() < 0.35) { const [dsp, body] = rnd(PAIRS); d.fonts = { display: dsp, body }; }
+  if (Math.random() < 0.4) d.heroText = rnd(Object.keys(OPTIONS.heroText));
+  return d;
+}
+function variantsFor(styleId, blocks) { const st = STYLES[styleId]; return blocks.map(b => { const v = st.variants[b.type]; return v && BLOCKS[b.type].variants[v] ? { ...b, variant: v } : b; }); }
 function shuffleDesign() {
   snapshot();
-  const cur = P.design.style;
-  const id = rnd(STYLE_IDS.filter(s => s !== cur));
-  const st = STYLES[id];
-  P.design = { style: id, paletteId: rnd(Object.keys(st.palettes)), colors: {}, fonts: {}, customCss: P.design.customCss || '' };
-  if (Math.random() < 0.4) { const [dsp, body] = rnd(PAIRS); P.design.fonts = { display: dsp, body }; }
-  if (Math.random() < 0.5) P.design.heroText = rnd(Object.keys(OPTIONS.heroText));
+  P.design = { ...randomDesign([P.design.style]), customCss: P.design.customCss || '' };
   applyVariants();
   changed({ pane: true });
-  toast(`🎲 ${st.name} · ${st.palettes[P.design.paletteId].name}${P.design.fonts.display ? ` · ${P.design.fonts.display}` : ''}`);
+  const st = STYLES[P.design.style];
+  toast(`🎲 ${st.name} · ${Object.keys(P.design.colors).length ? 'generated palette' : st.palettes[P.design.paletteId].name}${P.design.fonts.display ? ` · ${P.design.fonts.display}` : ''}`);
+}
+let variantPool = [];
+async function showVariations() {
+  const d = $('#varDlg'); const grid = $('#varGrid');
+  grid.innerHTML = ''; if (!d.open) d.showModal();
+  const used = [P.design.style];
+  variantPool = [];
+  for (let i = 0; i < 6; i++) {
+    const design = randomDesign(used); used.push(design.style);
+    const p = { ...clone(P), design: { ...design, motionLevel: 'none', splash: 'none', cursor: 'none' }, blocks: variantsFor(design.style, clone(P.blocks)) };
+    variantPool.push(design);
+    const r = await renderSite(p, { runtimeJs: '' });
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'var-it'; b.dataset.pick = i;
+    b.innerHTML = `<span class="var-thumb"><iframe tabindex="-1" aria-hidden="true" sandbox=""></iframe></span><span class="tx"><b>${esc(STYLES[design.style].name)}</b><small>${esc(Object.keys(design.colors).length ? 'Generated palette' : STYLES[design.style].palettes[design.paletteId].name)}${design.fonts.display ? ' · ' + esc(design.fonts.display) : ''}</small></span>`;
+    grid.appendChild(b);
+    $('iframe', b).srcdoc = r.previewHtml.replace(/<script(?![^>]*application\/(?:ld\+)?json)[^>]*>[\s\S]*?<\/script>/g, '').replace(/media="print"/g, 'media="all"');
+  }
 }
 function applyVariants() { const st = STYLES[P.design.style]; P.blocks.forEach(b => { const v = st.variants[b.type]; if (v && BLOCKS[b.type].variants[v]) b.variant = v; }); }
 
@@ -649,6 +703,8 @@ async function openInTab() {
 
 /* ================================================================ events */
 document.addEventListener('click', e => {
+  const pick = e.target.closest('[data-pick]');
+  if (pick && P) { snapshot(); P.design = { ...variantPool[+pick.dataset.pick], customCss: P.design.customCss || '' }; applyVariants(); $('#varDlg').close(); changed({ pane: true }); toast(`Applied ${STYLES[P.design.style].name}`); return; }
   const t = e.target.closest('[data-act],[data-kind],[data-style],[data-tpl],[data-open],[data-dup],[data-del],[data-export],[data-tab],[data-device],[data-variant],[data-setstyle],[data-pal],[data-sugg],[data-goto],[data-add],[data-ph]');
   if (!t) return;
   const act = t.dataset.act;
@@ -664,6 +720,7 @@ document.addEventListener('click', e => {
   if (act === 'settings') { openSettings(); return; }
   if (act === 'tpl-selected') { createFromHome('template'); return; }
   if (act === 'blank') { createFromHome('blank'); return; }
+  if (act === 'instant') { createFromHome('instant'); return; }
   if (!P) return;
   // editor
   if (t.dataset.tab) { tab = t.dataset.tab; if (tab !== 'blocks') sel = null; renderPane(); return; }
@@ -690,6 +747,9 @@ document.addEventListener('click', e => {
     case 'open-tab': openInTab(); break;
     case 'zip': exportZip(); break;
     case 'shuffle': shuffleDesign(); break;
+    case 'variations': showVariations(); break;
+    case 'var-more': showVariations(); break;
+    case 'gen-palette': { const g = generatePalette(P.design.style); P.design.colors = Object.fromEntries(['bg', 'surface', 'text', 'accent', 'accent2', 'dark', 'darkText'].map(k => [k, g[k]])); changed({ pane: true }); toast('✨ New palette generated'); break; }
     case 'lib': libOpen = !libOpen; renderPane(); break;
     case 'select': { const id = t.closest('[data-id]').dataset.id; sel = id; renderPane(); postToPreview({ zarvis: 'scrollTo', id }); break; }
     case 'menu': { const x = P.blocks.find(bb => bb.id === t.closest('[data-id]').dataset.id); x.menu.show = !x.menu.show; changed({ pane: true }); break; }

@@ -62,6 +62,7 @@
 
       <div class="home-actions">
         <button class="zbtn primary lg" type="submit" id="btnBuild">✦ Build with AI</button>
+        <button class="zbtn violet lg" type="button" data-act="instant" title="A unique designed site in one click, no AI tokens">⚡ Instant site</button>
         <button class="zbtn lg" type="button" data-act="tpl-selected">Use template</button>
         <button class="zbtn ghost lg" type="button" data-act="blank">Blank</button>
         <span class="zhint" id="buildHint"></span>
@@ -97,7 +98,8 @@
   </header>
   <div class="cmdbar">
     <form id="cmdForm"><input id="cmdInput" placeholder="Ask Zarvis to change anything: “make it more luxurious”, “add a pricing section”, “rewrite for a vegan bakery”…" maxlength="1500" aria-label="AI command"><button class="zbtn violet" type="submit">✦ Apply</button></form>
-    <button class="zbtn sm" type="button" data-act="shuffle" title="New random design, no AI tokens">🎲 Shuffle design</button>
+    <button class="zbtn sm" type="button" data-act="variations" title="See your site in 6 random designs, no AI tokens">✨ Variations</button>
+    <button class="zbtn sm" type="button" data-act="shuffle" title="New random design, no AI tokens">🎲 Shuffle</button>
     <div class="cmd-sugg hide-md" id="cmdSugg"></div>
   </div>
   <div class="ebody">
@@ -119,7 +121,8 @@
     <h2>AI settings</h2>
     <p class="zhint">API keys live on the server as Cloudflare secrets, never in the browser. Here you choose which provider and model to use.</p>
     <label class="zf"><span>AI provider</span><select id="setProvider"></select><small id="keyStatus"></small></label>
-    <label class="zf"><span>Model</span><input id="setModel" list="modelList"><datalist id="modelList"></datalist><small>Pick a suggestion or type any model your account supports.</small></label>
+    <label class="zf"><span>Priority</span><select id="setPriority"></select><small>Zarvis never pins a model: it asks your provider which models your key can use and picks the newest one for this priority. If a model is retired, the next newest is used automatically.</small></label>
+    <label class="zf"><span>Model</span><select id="setModel"></select><small>Leave on Automatic to always get the latest model. Pick one only if you want to force it.</small></label>
     <label class="zf"><span>Effort / reasoning</span><select id="setEffort"><option value="">Provider default</option><option value="low">Low: fastest, cheapest</option><option value="medium">Medium</option><option value="high">High</option><option value="max">Max: best quality, most tokens</option></select></label>
     <label class="zf" id="pwField" hidden><span>Zarvis password</span><input id="setPassword" type="password" autocomplete="current-password"><small>Required because ZARVIS_PASSWORD is set. Kept for this browser session only.</small></label>
     <p class="zhint" id="imgStatus"></p>
@@ -134,6 +137,16 @@
     <p class="zhint">These still need your real content:</p>
     <ul class="warn-list" id="exportWarn"></ul>
     <div class="zdlg-actions"><button class="zbtn ghost" value="fix">Fix them</button><button class="zbtn primary" value="go">Download anyway</button></div>
+  </form>
+</dialog>
+
+<!-- Variations -->
+<dialog class="zdialog wide" id="varDlg">
+  <form method="dialog" class="zdlg-body">
+    <h2>Pick a new look</h2>
+    <p class="zhint">Your content in six random design systems, palettes and font pairings. Click one to apply it (Undo brings the old one back).</p>
+    <div class="var-grid" id="varGrid"></div>
+    <div class="zdlg-actions"><button class="zbtn" type="button" data-act="var-more">✨ Six more</button><button class="zbtn ghost" value="close">Close</button></div>
   </form>
 </dialog>
 

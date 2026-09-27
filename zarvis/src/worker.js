@@ -14,6 +14,7 @@
  */
 import Anthropic from '@anthropic-ai/sdk';
 import { SITE_SCHEMA, BLOCK_SCHEMA, SYSTEM_PROMPT, buildUserPrompt } from './prompt.js';
+import { listModels, pickModel, resolveModel, firstProvider, isModelError, PROVIDER_ORDER } from './models.js';
 
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
@@ -47,45 +48,44 @@ function parseJSON(text) {
 /* ------------------------------------------------------------------ Claude */
 async function callAnthropic(env, { model, effort, system, user, schema }) {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
-  const isHaiku = /haiku/.test(model);
-  const params = {
-    model,
-    max_tokens: 32000,
-    system,
-    messages: [{ role: 'user', content: user }],
-    output_config: {}
-  };
-  // JSON-schema output on the model families documented to support it; other models rely on the prompt + tolerant parsing
-  if (/^claude-(opus-5|sonnet-5|haiku-4-5|fable-5|mythos-5|opus-4-8)(?!-5)/.test(model)) params.output_config.format = { type: 'json_schema', schema };
-  if (!isHaiku) {
-    params.thinking = { type: 'adaptive' };
-    if (effort) params.output_config.effort = effort;
+  const base = { model, max_tokens: 32000, system, messages: [{ role: 'user', content: user }] };
+  const full = { ...base, output_config: { format: { type: 'json_schema', schema } } };
+  if (!/haiku/.test(model)) { full.thinking = { type: 'adaptive' }; if (effort) full.output_config.effort = effort; }
+  // Server-side fallback on refusals, documented for the Opus 5 / Fable 5 families
+  if (/^claude-(opus-5|fable-5)(?!-5)/.test(model)) { full.betas = ['server-side-fallback-2026-07-01']; full.fallbacks = 'default'; }
+  let msg;
+  try { msg = await client.beta.messages.stream(full).finalMessage(); }
+  catch (e) {
+    // A model that does not accept one of the optional features (schema output, thinking, effort, betas):
+    // retry once with the plain request so a new or older model still works.
+    if (e?.status !== 400 || isModelError(e)) throw e;
+    msg = await client.beta.messages.stream({ ...base, max_tokens: 16000 }).finalMessage().catch(async e2 => {
+      if (e2?.status === 400 && /max_tokens/i.test(e2.message || '')) return client.beta.messages.stream({ ...base, max_tokens: 8192 }).finalMessage();
+      throw e2;
+    });
   }
-  // Server-side fallback on refusals (Opus 5 / Fable family): re-runs a declined request on Anthropic's recommended model
-  if (/^claude-(opus-5|fable-5)(?!-5)/.test(model)) {
-    params.betas = ['server-side-fallback-2026-07-01'];
-    params.fallbacks = 'default';
-  }
-  if (!Object.keys(params.output_config).length) delete params.output_config;
-  const stream = client.beta.messages.stream(params);
-  const msg = await stream.finalMessage();
   if (msg.stop_reason === 'refusal') throw new Error('Claude declined this request. Try rephrasing the brief.');
-  if (msg.stop_reason === 'max_tokens') throw new Error('The response was cut off (max tokens). Try a shorter brief.');
+  if (msg.stop_reason === 'max_tokens') throw new Error('The response was cut off (max tokens). Try a shorter brief or a larger model.');
   const text = msg.content.filter(b => b.type === 'text').map(b => b.text).join('');
   return { copy: parseJSON(text), usage: { input: msg.usage.input_tokens, output: msg.usage.output_tokens }, model: msg.model };
 }
 
 /* ---------------------------------------------------- OpenAI-compatible */
 async function callOpenAICompatible(url, key, { model, system, user, effort, reasoning }) {
-  const body = {
-    model,
-    messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
-    response_format: { type: 'json_object' }
+  const send = async body => {
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` }, body: JSON.stringify(body) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { const err = new Error(data.error?.message || `Provider error ${res.status}`); err.status = res.status; throw err; }
+    return data;
   };
+  const body = { model, messages: [{ role: 'system', content: system }, { role: 'user', content: user }], response_format: { type: 'json_object' } };
   if (reasoning && effort) body.reasoning_effort = effort === 'max' || effort === 'xhigh' ? 'high' : effort;
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` }, body: JSON.stringify(body) });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error?.message || `Provider error ${res.status}`);
+  let data;
+  try { data = await send(body); }
+  catch (e) {
+    if (e.status !== 400 || isModelError(e)) throw e;
+    data = await send({ model, messages: body.messages });   // model rejected an optional parameter: plain request
+  }
   const text = data.choices?.[0]?.message?.content || '';
   return { copy: parseJSON(text), usage: { input: data.usage?.prompt_tokens, output: data.usage?.completion_tokens }, model: data.model || model };
 }
@@ -103,17 +103,29 @@ async function callGemini(env, { model, system, user }) {
     })
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error?.message || `Gemini error ${res.status}`);
+  if (!res.ok) { const err = new Error(data.error?.message || `Gemini error ${res.status}`); err.status = res.status; throw err; }
   const text = (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
   return { copy: parseJSON(text), usage: { input: data.usageMetadata?.promptTokenCount, output: data.usageMetadata?.candidatesTokenCount }, model };
 }
 
 const PROVIDERS = {
   anthropic: { key: 'ANTHROPIC_API_KEY', run: (env, a) => callAnthropic(env, a) },
-  openai:    { key: 'OPENAI_API_KEY', run: (env, a) => callOpenAICompatible('https://api.openai.com/v1/chat/completions', env.OPENAI_API_KEY, { ...a, reasoning: /^(o\d|gpt-5)/.test(a.model) }) },
+  openai:    { key: 'OPENAI_API_KEY', run: (env, a) => callOpenAICompatible('https://api.openai.com/v1/chat/completions', env.OPENAI_API_KEY, { ...a, reasoning: /^(o\d|gpt-[5-9])/.test(a.model) }) },
   groq:      { key: 'GROQ_API_KEY', run: (env, a) => callOpenAICompatible('https://api.groq.com/openai/v1/chat/completions', env.GROQ_API_KEY, a) },
   gemini:    { key: 'GEMINI_API_KEY', run: (env, a) => callGemini(env, a) }
 };
+
+/* ------------------------------------------------------------ models */
+async function handleModels(url, env) {
+  const provider = url.searchParams.get('provider');
+  if (!PROVIDERS[provider]) return json({ error: 'Unknown provider.' }, 400);
+  if (!env[PROVIDERS[provider].key]) return json({ models: [], auto: {} });
+  try {
+    const list = await listModels(env, provider, { fresh: url.searchParams.get('fresh') === '1' });
+    const auto = Object.fromEntries(['best', 'balanced', 'fast'].map(p => [p, pickModel(provider, list, p)]));
+    return json({ models: [...list].sort((a, b) => b.created - a.created || a.id.localeCompare(b.id)).map(m => ({ id: m.id, label: m.label })), auto });
+  } catch (e) { return json({ error: e.message || 'Could not list models.' }, 502); }
+}
 
 /* ------------------------------------------------------------ stock photos */
 const imageProvider = env => (env.PEXELS_API_KEY ? 'pexels' : env.UNSPLASH_ACCESS_KEY ? 'unsplash' : '');
@@ -143,11 +155,13 @@ async function handleTrack(url, env) {
 async function handleGenerate(request, env) {
   let body;
   try { body = await request.json(); } catch { return json({ error: 'Invalid JSON body.' }, 400); }
-  const provider = PROVIDERS[body.provider];
-  if (!provider) return json({ error: 'Unknown provider.' }, 400);
-  if (!env[provider.key]) return json({ error: `No API key set for ${body.provider}. Add ${provider.key} in Cloudflare Pages → Settings → Variables and Secrets.` }, 400);
-  const model = String(body.model || '').trim();
-  if (!/^[\w.:\-/]{2,80}$/.test(model)) return json({ error: 'Invalid model name.' }, 400);
+  let providerId = body.provider === 'auto' || !body.provider ? firstProvider(env) : body.provider;
+  const provider = PROVIDERS[providerId];
+  if (!provider) return json({ error: body.provider === 'auto' ? 'No AI key is set. Add one in Cloudflare Pages → Settings → Variables and Secrets.' : 'Unknown provider.' }, 400);
+  if (!env[provider.key]) return json({ error: `No API key set for ${providerId}. Add ${provider.key} in Cloudflare Pages → Settings → Variables and Secrets.` }, 400);
+  const priority = ['best', 'balanced', 'fast'].includes(body.priority) ? body.priority : 'best';
+  let model = String(body.model || '').trim();
+  if (model && model !== 'auto' && !/^[\w.:\-/]{2,100}$/.test(model)) return json({ error: 'Invalid model name.' }, 400);
   const effort = ['low', 'medium', 'high', 'xhigh', 'max'].includes(body.effort) ? body.effort : undefined;
   const mode = ['site', 'edit', 'block'].includes(body.mode) ? body.mode : 'site';
   const input = body.input && typeof body.input === 'object' ? body.input : null;
@@ -165,10 +179,31 @@ async function handleGenerate(request, env) {
   (async () => {
     let result;
     try {
-      const out = await provider.run(env, { model, effort, system: SYSTEM_PROMPT, user, schema });
+      const tryProvider = async (pid, wanted) => {
+        const P = PROVIDERS[pid];
+        // "auto" (or empty) = the newest suitable model this key can use right now
+        let m = !wanted || wanted === 'auto' ? await resolveModel(env, pid, priority) : wanted;
+        if (!m) throw new Error(`Could not find a usable ${pid} model for this key.`);
+        try { return { out: await P.run(env, { model: m, effort, system: SYSTEM_PROMPT, user, schema }), model: m }; }
+        catch (e) {
+          if (!isModelError(e)) throw e;
+          // the chosen model is gone or not enabled for this key: pick the next best live model and retry once
+          const next = await resolveModel(env, pid, priority, [m]);
+          if (!next || next === m) throw e;
+          return { out: await P.run(env, { model: next, effort, system: SYSTEM_PROMPT, user, schema }), model: next };
+        }
+      };
+      let out, lastErr;
+      // provider "auto": if one provider fails (key, quota, outage), move on to the next one that has a key
+      const chain = body.provider === 'auto' || !body.provider ? PROVIDER_ORDER.filter(pid => env[PROVIDERS[pid].key]) : [providerId];
+      for (const pid of chain) {
+        try { const r = await tryProvider(pid, pid === chain[0] ? model : 'auto'); out = r.out; model = r.model; providerId = pid; break; }
+        catch (e) { lastErr = e; }
+      }
+      if (!out) throw lastErr || new Error('Generation failed.');
       const site = out.copy;
       if (!site || typeof site !== 'object' || (mode === 'block' ? !site.block : !Array.isArray(site.blocks))) throw new Error('The AI answer was not a usable design. Try again or pick another model.');
-      result = { site, usage: out.usage, model: out.model, provider: body.provider };
+      result = { site, usage: out.usage, model: out.model || model, provider: providerId };
     } catch (e) {
       result = { error: e?.message || 'Generation failed.', status: Number.isInteger(e?.status) ? e.status : 502 };
     }
@@ -194,6 +229,7 @@ export default {
       }
       if (url.pathname === '/api/generate' && request.method === 'POST') return handleGenerate(request, env);
       if (url.pathname === '/api/images' && request.method === 'GET') return handleImages(url, env);
+      if (url.pathname === '/api/models' && request.method === 'GET') return handleModels(url, env);
       if (url.pathname === '/api/images/track' && request.method === 'GET') return handleTrack(url, env);
       return json({ error: 'Not found.' }, 404);
     }

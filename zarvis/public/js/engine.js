@@ -4,7 +4,7 @@
  */
 import { BLOCKS, normalizeBlock } from './blocks.js';
 import { STYLES, resolveDesign, styleCss } from './styles.js';
-import { fontsUrl, fontStack } from './fonts.js';
+import { fontsUrls, fontStack } from './fonts.js';
 import { SPRITE } from './sprite.js';
 
 export const LIBS = {
@@ -606,7 +606,7 @@ a.card:hover,a.tm:hover{transform:translateY(-4px)}
 .pf{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,7vw,120px);align-items:center;margin-bottom:clamp(60px,9vw,140px)}.pf:last-of-type{margin-bottom:0}
 .pf-r .pf-m{order:2}.pf-t{margin:16px 0 20px}.pf .price{margin:22px 0}
 /* pricing */
-.plans{align-items:stretch}.plan{display:flex;flex-direction:column;border:1px solid var(--c-line)}.plan.is-feat{background:var(--dark);color:var(--dark-text);--c-fg:var(--dark-text);--c-mu:color-mix(in srgb,var(--dark-text) 64%,var(--dark));--c-line2:color-mix(in srgb,var(--dark-text) 30%,transparent);--c-em:var(--em-d)}
+.plans{align-items:stretch}.plan{display:flex;flex-direction:column;border:1px solid var(--c-line)}.plans .plan.is-feat,.plans .card.plan.is-feat{background:var(--dark);color:var(--dark-text);--c-fg:var(--dark-text);--c-mu:color-mix(in srgb,var(--dark-text) 64%,var(--dark));--c-line2:color-mix(in srgb,var(--dark-text) 30%,transparent);--c-em:var(--em-d)}
 .plan-tag{position:absolute;right:20px;top:20px}.plan-p{display:flex;align-items:baseline;gap:8px;margin:18px 0 24px}.plan-v{font:var(--dw) calc(clamp(2.4rem,4vw,3.4rem) * var(--ts))/1 var(--fd)}.plan-m{color:var(--c-mu)}
 .plan-f{list-style:none;padding:0;margin:0 0 28px;display:grid;gap:10px;flex:1}.plan-f li{display:flex;gap:10px}.plan-f .i{color:var(--c-em);margin-top:.3em}
 .plan-rows .row{grid-template-columns:1fr 1.4fr auto}
@@ -843,6 +843,12 @@ html.anim [data-a].in,html.anim [data-a="stagger"].in>*{opacity:1;transform:none
 .anim [data-hero=blur].go .wi{animation:hBlur 1.4s var(--ease) both;animation-delay:calc(var(--wi,0) * .09s)}
 .anim [data-hero=fade].go .hl{animation:hFade 1.6s var(--ease) both}.anim [data-hero=fade].go .hl+.hl{animation-delay:.25s}
 @keyframes hRise{from{transform:translateY(110%)}}@keyframes hWave{from{transform:translateY(.8em) scale(.4);opacity:0}}@keyframes hBlur{from{opacity:0;filter:blur(18px);transform:scale(1.1)}}@keyframes hFade{from{opacity:0;transform:translateY(30px)}}
+.hero-t.glitching .hl{position:relative}.hero-t.glitching span.hl{display:inline-block}
+.hero-t.glitching .hl::before,.hero-t.glitching .hl::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;overflow:hidden;pointer-events:none}
+.hero-t.glitching .hl::before{color:var(--accent);animation:gl1 3.2s steps(2,end) infinite;clip-path:inset(0 0 55% 0)}
+.hero-t.glitching .hl::after{color:var(--accent-2);animation:gl2 2.7s steps(2,end) infinite;clip-path:inset(55% 0 0 0)}
+@keyframes gl1{0%,88%,100%{transform:none;opacity:0}90%{transform:translate(-4px,-2px);opacity:.9}94%{transform:translate(3px,1px);opacity:.9}}
+@keyframes gl2{0%,84%,100%{transform:none;opacity:0}86%{transform:translate(4px,2px);opacity:.9}91%{transform:translate(-3px,0);opacity:.9}}
 .tw-caret{display:inline-block;width:.06em;height:.85em;margin-left:.05em;background:currentColor;vertical-align:baseline;animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.mq-track,.cue span,.grain::after{animation:none}.splash{display:none}}
 /* ============ responsive ============ */
@@ -879,7 +885,7 @@ html.anim [data-a].in,html.anim [data-a="stagger"].in>*{opacity:1;transform:none
 /* ================================================================= boot */
 function bootJs() {
   // runs in <head>: js class, splash once per session, non-blocking fonts, motion safety net
-  return "(function(h){h.className=h.className.replace('no-js','js');try{if(sessionStorage.getItem('z-splash')||matchMedia('(prefers-reduced-motion: reduce)').matches||window.__ZP)h.classList.add('no-splash')}catch(e){h.classList.add('no-splash')}var l=document.getElementById('gf');if(l){var f=function(){l.media='all'};if(l.sheet)f();else l.addEventListener('load',f)}setTimeout(function(){if(!window.__zr)h.classList.remove('anim')},3500)})(document.documentElement);";
+  return "(function(h){h.className=h.className.replace('no-js','js');try{if(sessionStorage.getItem('z-splash')||matchMedia('(prefers-reduced-motion: reduce)').matches||window.__ZP)h.classList.add('no-splash')}catch(e){h.classList.add('no-splash')}[].forEach.call(document.querySelectorAll('link[data-gf]'),function(l){var f=function(){l.media='all'};if(l.sheet)f();else l.addEventListener('load',f)});setTimeout(function(){if(!window.__zr)h.classList.remove('anim')},3500)})(document.documentElement);";
 }
 async function sha256b64(s) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
@@ -911,7 +917,7 @@ export async function renderSite(project, { runtimeJs = '', preview = null } = {
     { name: d.fonts.label, weights: [500, 600] },
     d.fonts.em ? { name: d.fonts.em, weights: [400], italic: d.emItalic } : null
   ];
-  const gf = fontsUrl(fReq);
+  const gfs = fontsUrls(fReq);
   const vars = `:root{--bg:${P.bg};--surface:${P.surface};--text:${P.text};--accent:${P.accent};--accent-2:${P.accent2};--on-accent:${onColor(P.accent)};--dark:${P.dark};--dark-text:${P.darkText};
 --em-l:${readable(P.accent, P.bg, P.text)};--em-s:${readable(P.accent, P.surface, P.text)};--em-d:${readable(P.accent2 || P.accent, P.dark, P.darkText)};
 --fd:${fontStack(d.fonts.display)};--fb:${fontStack(d.fonts.body)};--fl:${fontStack(d.fonts.label)};--dw:${d.displayWeight};--bw:400;--dcase:${d.displayCase};--dls:${d.displayTracking};--em-style:${d.emItalic ? 'italic' : 'normal'};
@@ -946,7 +952,7 @@ export async function renderSite(project, { runtimeJs = '', preview = null } = {
 
   // runtime data
   const siteData = {
-    motion: { level: d.motionLevel, heroText: d.heroText, parallax: d.parallax, hscroll: true, magnetic: d.magnetic, style: d.style },
+    motion: { level: d.motionLevel, heroText: d.heroText, parallax: d.parallax, hscroll: true, magnetic: d.magnetic, style: d.style, skew: !!st.skew },
     f: { smooth: !!F.smooth && motionOn, progress: !!F.progress, toTop: !!F.backToTop, cookie: !!F.cookie && !!(F.ga4 || F.plausible), ga4: /^G-[A-Z0-9]{4,}$/i.test(F.ga4 || '') ? F.ga4 : '', plausible: F.plausible || '', chat: F.chatProvider && F.chatId ? { p: F.chatProvider, id: F.chatId } : null, share: !!F.share, formEndpoint: /^https:\/\//.test(F.formEndpoint || '') ? F.formEndpoint : '' },
     cursor: d.cursor, splash: d.splash, wa: ctx.wa, email: brand.email || '', name
   };
@@ -978,7 +984,7 @@ ${og ? `<meta property="og:image" content="${esc(og)}"><meta property="og:image:
 <meta name="twitter:card" content="${og ? 'summary_large_image' : 'summary'}"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(desc)}">
 ${favLink}
 <link rel="manifest" href="site.webmanifest">
-${gf ? `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" id="gf" href="${esc(gf)}" media="print"><noscript><link rel="stylesheet" href="${esc(gf)}"></noscript>` : ''}
+${gfs.length ? `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>${gfs.map(u => `<link rel="stylesheet" data-gf href="${esc(u)}" media="print">`).join('')}<noscript>${gfs.map(u => `<link rel="stylesheet" href="${esc(u)}">`).join('')}</noscript>` : ''}
 ${pv}<script>${boot}</script>
 <style>${css}</style>
 <script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, '\\u003c')}</script>

@@ -166,10 +166,10 @@ function splitWords(el, chars = false) {
     const kind = h.dataset.hero;
     const run = () => {
       if (!moving) { h.classList.add('go'); return; }
-      if (kind === 'typewriter' || kind === 'scramble') {
+      if (kind === 'typewriter' || kind === 'scramble' || kind === 'glitch') {
         const parts = $$('.hl', h).map(p => ({ el: p, text: p.textContent }));
         h.setAttribute('aria-label', parts.map(p => p.text).join(' '));
-        parts.forEach(p => { p.el.setAttribute('aria-hidden', 'true'); p.el.textContent = kind === 'scramble' ? p.text.replace(/\S/g, ' ') : ''; });
+        parts.forEach(p => { p.el.setAttribute('aria-hidden', 'true'); p.el.textContent = kind !== 'typewriter' ? p.text.replace(/\S/g, ' ') : ''; });
         h.classList.add('go');
         if (kind === 'typewriter') {
           const caret = document.createElement('span'); caret.className = 'tw-caret';
@@ -189,7 +189,7 @@ function splitWords(el, chars = false) {
               let out = '';
               for (let i = 0; i < L; i++) { const ch = p.text[i]; out += ch === ' ' || i / L < pr ? ch : glyphs[(Math.random() * glyphs.length) | 0]; }
               p.el.textContent = out;
-              if (pr < 1) requestAnimationFrame(frame); else p.el.textContent = p.text;
+              if (pr < 1) requestAnimationFrame(frame); else { p.el.textContent = p.text; if (kind === 'glitch') { p.el.dataset.text = p.text; h.classList.add('glitching'); } }
             };
             requestAnimationFrame(frame);
           });
@@ -281,6 +281,13 @@ $$('[data-mq]').forEach(m => {
   track.appendChild(clone);
   track.style.setProperty('--mq-dur', Math.max(18, set.scrollWidth / (m.classList.contains('mq-giant') ? 110 : 70)) + 's');
 });
+
+/* ---------- marquees lean with scroll speed (kinetic styles) ---------- */
+if (M.skew && moving && !reduced) {
+  const tracks = $$('[data-mq]'); let last = scrollY, sk = 0;
+  const tick = () => { const v = scrollY - last; last = scrollY; sk += (Math.max(-12, Math.min(12, v * 0.35)) - sk) * 0.12; tracks.forEach(t => { t.style.transform = `skewX(${(-sk).toFixed(2)}deg)`; }); requestAnimationFrame(tick); };
+  if (tracks.length) requestAnimationFrame(tick);
+}
 
 /* ---------- videos (lazy, in view only) ---------- */
 {
