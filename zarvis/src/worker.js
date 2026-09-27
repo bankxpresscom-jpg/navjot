@@ -1,16 +1,19 @@
 /**
  * Zarvis: Cloudflare Pages advanced-mode worker (_worker.js).
  *
- *   GET  /api/status    which AI providers have keys configured, whether a password is required
- *   POST /api/generate  { provider, model, effort, brief } → { copy, usage, provider, model }
- *   everything else     static app (env.ASSETS)
+ *   GET  /api/status          configured AI providers, stock-photo provider, password requirement
+ *   POST /api/generate        { mode: site|edit|block, provider, model, effort, input } → { site, usage, provider, model }
+ *   GET  /api/images?q=&n=    stock photo search (Pexels or Unsplash) → { photos: [{ src, thumb, alt, credit, download }] }
+ *   GET  /api/images/track?u= Unsplash download tracking (required by their guidelines)
+ *   everything else           static app (env.ASSETS)
  *
  * Secrets (Pages → Settings → Variables and Secrets), set only the ones you use:
  *   ANTHROPIC_API_KEY  OPENAI_API_KEY  GEMINI_API_KEY  GROQ_API_KEY
+ *   PEXELS_API_KEY or UNSPLASH_ACCESS_KEY   optional stock photos
  *   ZARVIS_PASSWORD    optional extra lock for /api/* (use together with Cloudflare Access)
  */
 import Anthropic from '@anthropic-ai/sdk';
-import { COPY_SCHEMA, SYSTEM_PROMPT, buildUserPrompt } from './prompt.js';
+import { SITE_SCHEMA, BLOCK_SCHEMA, SYSTEM_PROMPT, buildUserPrompt } from './prompt.js';
 
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
@@ -42,7 +45,7 @@ function parseJSON(text) {
 }
 
 /* ------------------------------------------------------------------ Claude */
-async function callAnthropic(env, { model, effort, system, user }) {
+async function callAnthropic(env, { model, effort, system, user, schema }) {
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
   const isHaiku = /haiku/.test(model);
   const params = {
@@ -50,17 +53,20 @@ async function callAnthropic(env, { model, effort, system, user }) {
     max_tokens: 32000,
     system,
     messages: [{ role: 'user', content: user }],
-    output_config: { format: { type: 'json_schema', schema: COPY_SCHEMA } }
+    output_config: {}
   };
+  // JSON-schema output on the model families documented to support it; other models rely on the prompt + tolerant parsing
+  if (/^claude-(opus-5|sonnet-5|haiku-4-5|fable-5|mythos-5|opus-4-8)(?!-5)/.test(model)) params.output_config.format = { type: 'json_schema', schema };
   if (!isHaiku) {
     params.thinking = { type: 'adaptive' };
     if (effort) params.output_config.effort = effort;
   }
   // Server-side fallback on refusals (Opus 5 / Fable family): re-runs a declined request on Anthropic's recommended model
-  if (/^claude-(opus-5|fable-5)/.test(model)) {
+  if (/^claude-(opus-5|fable-5)(?!-5)/.test(model)) {
     params.betas = ['server-side-fallback-2026-07-01'];
     params.fallbacks = 'default';
   }
+  if (!Object.keys(params.output_config).length) delete params.output_config;
   const stream = client.beta.messages.stream(params);
   const msg = await stream.finalMessage();
   if (msg.stop_reason === 'refusal') throw new Error('Claude declined this request. Try rephrasing the brief.');
@@ -109,6 +115,31 @@ const PROVIDERS = {
   gemini:    { key: 'GEMINI_API_KEY', run: (env, a) => callGemini(env, a) }
 };
 
+/* ------------------------------------------------------------ stock photos */
+const imageProvider = env => (env.PEXELS_API_KEY ? 'pexels' : env.UNSPLASH_ACCESS_KEY ? 'unsplash' : '');
+async function handleImages(url, env) {
+  const q = String(url.searchParams.get('q') || '').trim().slice(0, 100);
+  const n = Math.min(30, Math.max(1, parseInt(url.searchParams.get('n'), 10) || 12));
+  if (!q) return json({ error: 'Missing search words.' }, 400);
+  const prov = imageProvider(env);
+  if (!prov) return json({ error: 'No stock photo key. Add PEXELS_API_KEY or UNSPLASH_ACCESS_KEY.' }, 400);
+  if (prov === 'pexels') {
+    const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=${n}&orientation=landscape`, { headers: { Authorization: env.PEXELS_API_KEY } });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) return json({ error: d.error || `Pexels error ${r.status}` }, 502);
+    return json({ provider: 'pexels', photos: (d.photos || []).map(p => ({ src: p.src.original, thumb: p.src.medium, alt: p.alt || '', credit: `${p.photographer} / Pexels`, link: p.url, download: '' })) });
+  }
+  const r = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&per_page=${n}&orientation=landscape&content_filter=high`, { headers: { Authorization: `Client-ID ${env.UNSPLASH_ACCESS_KEY}`, 'Accept-Version': 'v1' } });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) return json({ error: (d.errors || [])[0] || `Unsplash error ${r.status}` }, 502);
+  return json({ provider: 'unsplash', photos: (d.results || []).map(p => ({ src: p.urls.raw, thumb: p.urls.small, alt: p.alt_description || '', credit: `${p.user?.name || 'Unknown'} / Unsplash`, link: p.links?.html || '', download: p.links?.download_location || '' })) });
+}
+async function handleTrack(url, env) {
+  const u = String(url.searchParams.get('u') || '');
+  if (env.UNSPLASH_ACCESS_KEY && /^https:\/\/api\.unsplash\.com\/photos\/[\w-]+\/download/.test(u)) await fetch(u, { headers: { Authorization: `Client-ID ${env.UNSPLASH_ACCESS_KEY}` } }).catch(() => {});
+  return json({ ok: true });
+}
+
 async function handleGenerate(request, env) {
   let body;
   try { body = await request.json(); } catch { return json({ error: 'Invalid JSON body.' }, 400); }
@@ -118,10 +149,13 @@ async function handleGenerate(request, env) {
   const model = String(body.model || '').trim();
   if (!/^[\w.:\-/]{2,80}$/.test(model)) return json({ error: 'Invalid model name.' }, 400);
   const effort = ['low', 'medium', 'high', 'xhigh', 'max'].includes(body.effort) ? body.effort : undefined;
-  const brief = body.brief && typeof body.brief === 'object' ? body.brief : null;
-  if (!brief) return json({ error: 'Missing brief.' }, 400);
-  const user = buildUserPrompt(brief);
-  if (user.length > 60000) return json({ error: 'The brief is too long. Shorten the bio or unique request.' }, 413);
+  const mode = ['site', 'edit', 'block'].includes(body.mode) ? body.mode : 'site';
+  const input = body.input && typeof body.input === 'object' ? body.input : null;
+  if (!input) return json({ error: 'Missing input.' }, 400);
+  if (mode !== 'site' && !String(input.instruction || '').trim() && mode !== 'block') return json({ error: 'Tell Zarvis what to change.' }, 400);
+  const user = buildUserPrompt(mode, input);
+  if (user.length > 120000) return json({ error: 'The project is too large for one AI request. Remove some blocks or shorten long texts.' }, 413);
+  const schema = mode === 'block' ? BLOCK_SCHEMA : SITE_SCHEMA;
   // Long generations can exceed Cloudflare's ~100 s time-to-first-byte limit (error 524), so the
   // response streams: whitespace heartbeats while the model works, then one JSON object.
   // Leading whitespace is valid JSON, so the browser still reads it with res.json().
@@ -131,8 +165,10 @@ async function handleGenerate(request, env) {
   (async () => {
     let result;
     try {
-      const out = await provider.run(env, { model, effort, system: SYSTEM_PROMPT, user });
-      result = { ...out, provider: body.provider };
+      const out = await provider.run(env, { model, effort, system: SYSTEM_PROMPT, user, schema });
+      const site = out.copy;
+      if (!site || typeof site !== 'object' || (mode === 'block' ? !site.block : !Array.isArray(site.blocks))) throw new Error('The AI answer was not a usable design. Try again or pick another model.');
+      result = { site, usage: out.usage, model: out.model, provider: body.provider };
     } catch (e) {
       result = { error: e?.message || 'Generation failed.', status: Number.isInteger(e?.status) ? e.status : 502 };
     }
@@ -152,10 +188,13 @@ export default {
       if (url.pathname === '/api/status' && request.method === 'GET') {
         return json({
           providers: Object.fromEntries(Object.entries(PROVIDERS).map(([k, p]) => [k, !!env[p.key]])),
+          images: imageProvider(env),
           passwordRequired: !!env.ZARVIS_PASSWORD
         });
       }
       if (url.pathname === '/api/generate' && request.method === 'POST') return handleGenerate(request, env);
+      if (url.pathname === '/api/images' && request.method === 'GET') return handleImages(url, env);
+      if (url.pathname === '/api/images/track' && request.method === 'GET') return handleTrack(url, env);
       return json({ error: 'Not found.' }, 404);
     }
     const res = await env.ASSETS.fetch(request);

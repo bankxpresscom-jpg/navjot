@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Zarvis · AI Website Studio</title>
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#0B0C10">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B0C10'/%3E%3Cpath d='M18 20h28L18 44h28' fill='none' stroke='%23C6FF3D' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0A0B0F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230A0B0F'/%3E%3Cpath d='M18 20h28L18 44h28' fill='none' stroke='%23C6FF3D' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -14,32 +14,101 @@
 <script type="module" src="/js/app.js"></script>
 </head>
 <body>
-<div class="app" id="app">
-  <header class="zbar">
-    <div class="zlogo"><span class="zmark" aria-hidden="true">Z</span><b>ZARVIS</b><small>AI website studio</small></div>
-    <input class="zproject" id="projectName" aria-label="Project name" placeholder="Untitled project">
-    <div class="zbar-actions">
-      <span class="zchip" id="aiChip" title="Active AI provider">AI: …</span>
-      <button class="zbtn ghost" type="button" id="btnProjects">Projects</button>
-      <button class="zbtn ghost" type="button" id="btnSettings">Settings</button>
-      <button class="zbtn primary" type="button" id="btnDownload">Download ZIP</button>
-    </div>
-  </header>
+<div id="sprite" hidden></div>
 
-  <div class="zlayout">
-    <nav class="zsteps" aria-label="Steps" id="steps"></nav>
-    <main class="zform" id="form" aria-live="polite"></main>
-    <section class="zpreview" aria-label="Live preview">
-      <div class="zprev-bar">
-        <div class="zseg" role="group" aria-label="Device">
-          <button type="button" data-device="desktop" aria-pressed="true">Desktop</button>
-          <button type="button" data-device="tablet" aria-pressed="false">Tablet</button>
-          <button type="button" data-device="mobile" aria-pressed="false">Mobile</button>
+<!-- ============================ HOME ============================ -->
+<div class="home" id="home">
+  <header class="home-bar">
+    <button class="zlogo" type="button" data-act="home"><span class="zmark" aria-hidden="true">Z</span><b>ZARVIS</b></button>
+    <span class="sp"></span>
+    <button class="zchip" type="button" id="aiChip" data-act="settings" title="AI settings">AI: …</button>
+    <button class="zbtn ghost sm" type="button" data-act="settings">Settings</button>
+  </header>
+  <main class="home-main">
+    <h1>What are we <em>building</em> today?</h1>
+    <p class="home-sub">Give it a name and one sentence. Zarvis designs the whole website: structure, copy, fonts, colours and motion. You can change anything afterwards.</p>
+
+    <form class="new-card" id="newForm" autocomplete="off">
+      <label class="zsr" for="nName">Project or brand name</label>
+      <input class="big-input" id="nName" placeholder="Project or brand name" required maxlength="80">
+      <label class="zsr" for="nDesc">Describe it</label>
+      <textarea class="big-area" id="nDesc" placeholder="Describe it in a sentence or two: what it is, who it's for, where, and the vibe you want. e.g. “A cosy Italian trattoria in Dubai Marina, family recipes, warm and romantic.”" maxlength="2000"></textarea>
+
+      <span class="lbl">What kind of website?</span>
+      <div class="kinds" id="kinds"></div>
+
+      <span class="lbl">Design</span>
+      <div class="styles-row" id="stylePick"></div>
+
+      <details class="more" id="moreDetails">
+        <summary>Add your details (optional, recommended)</summary>
+        <div class="grid">
+          <p class="zhint" style="margin:0 0 12px">The AI only uses facts you give here. Numbers, prices, awards and quotes it doesn't know become [placeholders] for you to fill in.</p>
+          <div class="grid2">
+            <label class="zf"><span>Email</span><input id="nEmail" type="email" placeholder="hello@brand.com"></label>
+            <label class="zf"><span>WhatsApp number</span><input id="nWa" placeholder="+971 50 123 4567"></label>
+            <label class="zf"><span>Phone</span><input id="nPhone"></label>
+            <label class="zf"><span>Address / city</span><input id="nAddr"></label>
+            <label class="zf"><span>Logo link</span><input id="nLogo" placeholder="https://…"></label>
+            <label class="zf"><span>Language</span><input id="nLang" value="en" placeholder="en, ar, hi, fr…"></label>
+            <label class="zf"><span>Instagram</span><input id="nIg" placeholder="https://instagram.com/…"></label>
+            <label class="zf"><span>LinkedIn / Facebook / YouTube / other links</span><input id="nLinks" placeholder="Paste links separated by spaces"></label>
+          </div>
+          <label class="zf"><span>Image links (one per line). The first becomes the hero image.</span><textarea id="nImages" placeholder="https://res.cloudinary.com/…/hero.jpg&#10;https://…"></textarea></label>
+          <label class="zf"><span>Facts the AI may use</span><textarea id="nFacts" placeholder="Bio, services, prices, awards, numbers, opening hours, clients, real testimonials… Anything true about you."></textarea></label>
+          <label class="tgl"><input type="checkbox" id="nStock" checked><span><b>Fill missing images with stock photos</b><small id="stockHint">Needs a Pexels or Unsplash key on the server. Without one, Zarvis uses designed artwork.</small></span></label>
         </div>
-        <span class="zprev-meta" id="previewMeta"></span>
-        <button class="zbtn ghost sm" type="button" id="btnRefresh">Refresh</button>
+      </details>
+
+      <div class="home-actions">
+        <button class="zbtn primary lg" type="submit" id="btnBuild">✦ Build with AI</button>
+        <button class="zbtn lg" type="button" data-act="tpl-selected">Use template</button>
+        <button class="zbtn ghost lg" type="button" data-act="blank">Blank</button>
+        <span class="zhint" id="buildHint"></span>
       </div>
-      <div class="zframe-wrap" id="frameWrap"><iframe id="preview" title="Website preview" sandbox="allow-scripts allow-popups allow-forms allow-modals allow-downloads"></iframe></div>
+      <div class="build-log" id="buildLog" hidden></div>
+    </form>
+
+    <div class="sec-title"><h2>Your projects</h2><span><label class="zbtn sm ghost" for="importFile">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden></span></div>
+    <div class="proj-grid" id="projGrid"></div>
+
+    <div class="sec-title"><h2>Start from a template</h2><span class="zhint">Each one opens with demo text and [placeholders] to fill in.</span></div>
+    <div class="tpl-grid" id="tplGrid"></div>
+  </main>
+</div>
+
+<!-- ============================ EDITOR ============================ -->
+<div class="editor" id="editor" hidden>
+  <header class="ebar">
+    <button class="zbtn ghost sm icon" type="button" data-act="home" title="All projects" aria-label="All projects"><svg class="i"><use href="#i-chev-l"/></svg></button>
+    <span class="zmark hide-sm" aria-hidden="true">Z</span>
+    <input class="zproject" id="projectName" aria-label="Project name">
+    <button class="zbtn ghost sm icon" type="button" data-act="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
+    <button class="zbtn ghost sm icon" type="button" data-act="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷</button>
+    <span class="sp"></span>
+    <div class="seg" role="group" aria-label="Preview size">
+      <button type="button" data-device="desktop" aria-pressed="true" title="Desktop"><svg class="i"><use href="#i-tv"/></svg></button>
+      <button type="button" data-device="tablet" aria-pressed="false" title="Tablet"><svg class="i"><use href="#i-book-open"/></svg></button>
+      <button type="button" data-device="mobile" aria-pressed="false" title="Mobile"><svg class="i"><use href="#i-phone-s"/></svg></button>
+    </div>
+    <button class="zbtn ghost sm hide-sm" type="button" data-act="open-tab" title="Open preview in a new tab"><svg class="i"><use href="#i-arrow-ur"/></svg>Preview</button>
+    <button class="zchip hide-md" type="button" id="aiChip2" data-act="settings">AI: …</button>
+    <button class="zbtn primary sm" type="button" data-act="zip"><svg class="i"><use href="#i-download"/></svg>Download ZIP</button>
+  </header>
+  <div class="cmdbar">
+    <form id="cmdForm"><input id="cmdInput" placeholder="Ask Zarvis to change anything: “make it more luxurious”, “add a pricing section”, “rewrite for a vegan bakery”…" maxlength="1500" aria-label="AI command"><button class="zbtn violet" type="submit">✦ Apply</button></form>
+    <button class="zbtn sm" type="button" data-act="shuffle" title="New random design, no AI tokens">🎲 Shuffle design</button>
+    <div class="cmd-sugg hide-md" id="cmdSugg"></div>
+  </div>
+  <div class="ebody">
+    <aside class="side">
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="pane" id="pane"></div>
+    </aside>
+    <section class="stage" id="stage" aria-label="Live preview">
+      <div class="frame-box" id="frameBox"><iframe id="preview" title="Website preview" sandbox="allow-scripts allow-popups allow-forms allow-modals allow-downloads"></iframe></div>
+      <span class="stage-note" id="stageNote"></span>
+      <div class="busy" id="busy" hidden><div><span class="spin"></span><span id="busyText">Working…</span></div></div>
     </section>
   </div>
 </div>
@@ -47,29 +116,35 @@
 <!-- Settings -->
 <dialog class="zdialog" id="settings">
   <form method="dialog" class="zdlg-body">
-    <h2>Settings</h2>
-    <p class="zhint">API keys are never stored in the browser. Add them as secrets in Cloudflare Pages (see README). This panel only chooses which provider and model to use.</p>
-    <div class="zfield"><label for="setProvider">AI provider</label><select id="setProvider"></select><small id="keyStatus"></small></div>
-    <div class="zfield"><label for="setModel">Model</label><input id="setModel" list="modelList"><datalist id="modelList"></datalist><small>Pick a suggestion or type any model name your account supports.</small></div>
-    <div class="zfield"><label for="setEffort">Effort / reasoning</label><select id="setEffort"><option value="">Provider default</option><option value="low">Low: fastest, cheapest</option><option value="medium">Medium</option><option value="high">High</option><option value="max">Max: best quality, most tokens</option></select></div>
-    <div class="zfield" id="pwField" hidden><label for="setPassword">Zarvis password</label><input id="setPassword" type="password" autocomplete="current-password"><small>Required because ZARVIS_PASSWORD is set. Kept for this browser session only.</small></div>
+    <h2>AI settings</h2>
+    <p class="zhint">API keys live on the server as Cloudflare secrets, never in the browser. Here you choose which provider and model to use.</p>
+    <label class="zf"><span>AI provider</span><select id="setProvider"></select><small id="keyStatus"></small></label>
+    <label class="zf"><span>Model</span><input id="setModel" list="modelList"><datalist id="modelList"></datalist><small>Pick a suggestion or type any model your account supports.</small></label>
+    <label class="zf"><span>Effort / reasoning</span><select id="setEffort"><option value="">Provider default</option><option value="low">Low: fastest, cheapest</option><option value="medium">Medium</option><option value="high">High</option><option value="max">Max: best quality, most tokens</option></select></label>
+    <label class="zf" id="pwField" hidden><span>Zarvis password</span><input id="setPassword" type="password" autocomplete="current-password"><small>Required because ZARVIS_PASSWORD is set. Kept for this browser session only.</small></label>
+    <p class="zhint" id="imgStatus"></p>
     <div class="zdlg-actions"><button class="zbtn primary" value="ok">Save</button></div>
   </form>
 </dialog>
 
-<!-- Projects -->
-<dialog class="zdialog" id="projects">
+<!-- Confirm export -->
+<dialog class="zdialog" id="exportDlg">
   <form method="dialog" class="zdlg-body">
-    <h2>Projects</h2>
-    <div class="zproj-list" id="projectList"></div>
-    <div class="zdlg-actions wrap">
-      <button class="zbtn ghost" type="button" id="btnNew">New project</button>
-      <button class="zbtn ghost" type="button" id="btnSample">Load sample</button>
-      <button class="zbtn ghost" type="button" id="btnDuplicate">Duplicate</button>
-      <button class="zbtn ghost" type="button" id="btnExport">Export JSON</button>
-      <label class="zbtn ghost" for="importFile">Import JSON / zarvis-project.json</label><input type="file" id="importFile" accept="application/json,.json" hidden>
-      <button class="zbtn primary" value="close">Close</button>
-    </div>
+    <h2>Before you publish</h2>
+    <p class="zhint">These still need your real content:</p>
+    <ul class="warn-list" id="exportWarn"></ul>
+    <div class="zdlg-actions"><button class="zbtn ghost" value="fix">Fix them</button><button class="zbtn primary" value="go">Download anyway</button></div>
+  </form>
+</dialog>
+
+<!-- Photo search -->
+<dialog class="zdialog" id="photoDlg">
+  <form method="dialog" class="zdlg-body" id="photoForm">
+    <h2>Find a photo</h2>
+    <div style="display:flex;gap:8px"><input id="photoQ" class="big-area" style="margin:0;min-height:40px;height:40px" placeholder="e.g. cosy italian restaurant interior"><button class="zbtn primary" type="button" id="photoGo">Search</button></div>
+    <div class="photo-grid" id="photoGrid"></div>
+    <p class="zhint" id="photoNote"></p>
+    <div class="zdlg-actions"><button class="zbtn ghost" value="close">Close</button></div>
   </form>
 </dialog>
 

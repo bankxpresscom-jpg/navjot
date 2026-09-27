@@ -1,139 +1,139 @@
 # Zarvis: AI website studio
 
-Zarvis builds animated, Awwwards-style portfolio websites from your own data and gives you a ZIP you can upload straight to Cloudflare Pages.
+Type a name and one sentence, and Zarvis designs a complete, animated, Awwwards-style website: structure, copy, fonts, colours and motion. You can then change anything by dragging blocks, clicking through design options or telling the AI what you want. Export a ZIP and upload it to Cloudflare Pages.
 
-- **You give it facts:** name, bio, roles, image and video links, social links, books, awards, stats, contact details.
-- **The AI writes the copy (optional):** headlines, section titles, FAQ, SEO text. You pick Claude, OpenAI, Gemini or Groq in Settings.
-- **The Zarvis engine builds the site.** Six art directions, three hero layouts and three motion levels. Every site gets:
-  - a left hamburger menu, and a bottom tab bar on mobile and tablet
-  - a full-bleed animated hero
-  - moving image rows
-  - Open Graph image, social icons, contact links, SEO files and a strict security policy
+- **10 design systems**, each a complete art direction with its own fonts, palettes, layouts, headings, buttons, cards, image shapes, menus and animation personality:
+  - Maison (editorial luxury)
+  - Brutal (neo-brutalist)
+  - Swiss (international grid)
+  - Aurora (tech glass)
+  - Bloom (organic)
+  - Pop (playful)
+  - Noir (cinematic)
+  - Studio (agency minimal)
+  - Gazette (magazine)
+  - Retro (70s)
+- **20 block types with 50+ layouts**:
+  - hero, about, services, numbers, portfolio, gallery, products/menu, pricing
+  - testimonials, team, logos, timeline/steps/events, FAQ, call to action
+  - moving text, video, contact, newsletter, map, custom HTML
+- **Drag and drop:** reorder blocks, drag new ones in from the library, and show or hide them. Blocks marked "Menu" automatically appear in the left hamburger menu, the mobile and tablet bottom bar, and the footer.
+- **Any kind of website.** There are 12 starter templates (personal brand, restaurant, agency, SaaS, photographer, event, shop, architecture, writer, café, wellness, nonprofit) plus blank projects and AI-generated structures.
+- **Fine control:**
+  - 50+ Google Fonts, or type any other Google Font name
+  - weights, sizes and heading case
+  - seven editable colours, corner radius
+  - heading, button, card and image styles; menu type; spacing
+  - hero text effect (rise, typewriter, scramble, blur, letter wave, fade), reveal and image animations
+  - cursor, intro splash, film grain, custom CSS
+- **AI everywhere, optional:**
+  - "Build with AI" designs the whole site from a sentence.
+  - The command bar applies changes such as "make it more luxurious" or "add pricing with 3 plans".
+  - Each block has its own "Rewrite with AI".
+  - Choose Claude, OpenAI, Gemini or Groq in Settings.
+- **🎲 Shuffle design** gives a new random design system, palette and font pairing instantly, with no AI tokens.
+- **Every exported site includes:**
+  - left hamburger menu and bottom tab bar on mobile and tablet
+  - full-bleed or alternative animated hero
+  - moving marquees, smooth scrolling, OG image, social icons and contact channels
+  - WhatsApp/email forms and order buttons
+  - SEO tags, JSON-LD, sitemap, robots.txt, a strict security policy, a 404 page and favicon
 
-The AI only writes words. The layout, animation and speed come from the engine, so every site keeps the same quality whichever AI (or none) you use.
+The AI only produces content and design choices as data. The Zarvis engine renders the HTML, CSS and animations, so quality stays the same with any AI provider, or with none.
+
+### Honesty built in
+
+- The AI is instructed to use only facts you provide.
+- Anything specific it doesn't know (prices, names, numbers, quotes, hours) becomes a `[placeholder]`.
+- Templates mark demo text the same way.
+- **Publish → Content check** lists everything still to fill in, and the export asks before downloading a site with placeholders.
 
 ---
 
 ## 1. Deploy Zarvis on Cloudflare Pages
 
-**Option A: drag and drop (fastest)**
+**Drag and drop (fastest)**
 
-1. In the Cloudflare dashboard, go to **Workers & Pages → Create → Pages → Upload assets**.
+1. In the Cloudflare dashboard, open **Workers & Pages → Create → Pages → Upload assets**.
 2. Name the project `zarvis`.
-3. Upload the contents of `zarvis.zip`: unzip it and drop the folder. `index.html` and `_worker.js` must be at the top level.
-4. Deploy. Your studio is live at `https://zarvis.pages.dev` (or `zarvis-xxx.pages.dev`).
+3. Unzip `zarvis.zip` and drop the folder. `index.html` and `_worker.js` must be at the top level.
+4. Deploy. Zarvis is live at `https://zarvis.pages.dev` (or similar).
 
-**Option B: from Git**
+**From Git**
 
-Connect the repository with these build settings:
+Use framework preset **None**, an empty build command, and build output directory `zarvis/public`. The built `_worker.js` is committed. Run `npm run build` only if you edit `src/`.
 
-| Setting | Value |
+## 2. Add keys (secrets)
+
+Go to **Pages → zarvis → Settings → Variables and Secrets** and add these as **Secret** values for Production. Add only the ones you use, then redeploy.
+
+| Secret | What it enables |
 |---|---|
-| Framework preset | None |
-| Build command | *(empty)* |
-| Build output directory | `zarvis/public` |
-
-The built `_worker.js` is committed, so no build step runs on Cloudflare. Run `npm run build` locally only if you change the files in `src/`.
-
-## 2. Add your AI keys (secrets)
-
-Go to **Pages → zarvis → Settings → Variables and Secrets**. Add the keys you use as **Secret** values for **Production**. You only need one.
-
-| Secret | Provider |
-|---|---|
-| `ANTHROPIC_API_KEY` | Claude (console.anthropic.com) |
+| `ANTHROPIC_API_KEY` | Claude |
 | `OPENAI_API_KEY` | OpenAI |
-| `GEMINI_API_KEY` | Google Gemini (aistudio.google.com) |
+| `GEMINI_API_KEY` | Google Gemini |
 | `GROQ_API_KEY` | Groq |
-| `ZARVIS_PASSWORD` | Optional second lock for the AI endpoints |
+| `PEXELS_API_KEY` or `UNSPLASH_ACCESS_KEY` | Optional stock photos for empty image slots, plus a "Find a photo" search on every image field. Photographers are credited in the site footer. |
+| `ZARVIS_PASSWORD` | Optional second lock on the AI endpoints |
 
-Redeploy after adding secrets: **Deployments → … → Retry deployment**, or upload again. Keys stay on Cloudflare's server and never reach the browser.
+Keys stay on Cloudflare's server; the browser never sees them. Without any AI key, Zarvis still works fully with templates, blocks, design controls and Shuffle. Without a photo key, empty image slots show designed artwork in the site's colours.
 
 ## 3. Password-protect it
 
-Use **Cloudflare Access**. It is free for up to 50 users.
+Use **Cloudflare Access** (free for up to 50 users):
 
-1. Open **Zero Trust → Access → Applications → Add an application → Self-hosted**.
-2. Application domain: `zarvis.pages.dev` (and `*.zarvis.pages.dev` to cover preview deployments).
-3. Policy: **Allow**, with a rule such as *Emails → your@email.com*. Cloudflare then emails you a one-time code at login.
+1. Go to **Zero Trust → Access → Applications → Add an application → Self-hosted**.
+2. Domain: `zarvis.pages.dev` (add `*.zarvis.pages.dev` to cover preview deployments).
+3. Policy: **Allow**, with a rule like *Emails → you@example.com*.
 
-A shortcut: **Pages → zarvis → Settings → General → Access policy → Enable** protects preview URLs. Add the production domain in Zero Trust as above.
+`ZARVIS_PASSWORD` is optional. When set, the studio asks for it once per browser session before any AI call.
 
-`ZARVIS_PASSWORD` is optional. When set, the studio asks for it once per browser session before it can call the AI, so even a leaked Access session cannot spend your tokens.
+## 4. Choose the AI and the cost
 
-## 4. Switch AI provider or model
+In **Settings**, choose the provider, the model (type any model name your account has) and the effort level.
 
-In the studio, go to **Settings**:
-
-- **Provider:** the list shows which ones have a key configured.
-- **Model:** type any model your account supports. Suggestions are listed.
-- **Effort:** Low is cheapest and fastest; Max is best quality.
-
-| Provider | Default model | Notes |
+| Provider | Default | Notes |
 |---|---|---|
-| Claude | `claude-opus-5` | Best writing quality. Uses adaptive thinking and structured JSON output. If Opus 5 declines a request, Anthropic's server-side fallback reruns it on their recommended model. Use `claude-haiku-4-5` for low cost. |
-| OpenAI | `gpt-4.1-mini` | Change it to any chat model on your account. |
-| Gemini | `gemini-2.5-flash` | Good low-cost option. |
-| Groq | `llama-3.3-70b-versatile` | Very fast and cheap. |
+| Claude | `claude-opus-5` | Best design and writing. Uses adaptive thinking and strict JSON-schema output, with Anthropic's server-side fallback if a request is declined. `claude-sonnet-5` is a good balance; `claude-haiku-4-5` is the cheapest. |
+| OpenAI | `gpt-4.1-mini` | JSON mode. Change it to any chat model you have. |
+| Gemini | `gemini-2.5-flash` | Low cost. |
+| Groq | `llama-3.3-70b-versatile` | Very fast. |
 
-Model names change often. If a provider says "model not found", type the current name from that provider's dashboard.
+Model names change often. If a provider replies "model not found", type the current name from its dashboard.
 
 ## 5. Make a website
 
-1. **Brand:** name, kind of site, tagline, roles (they rotate in the hero), bio, mission, tone.
-2. **Contact & social:** email, WhatsApp, phone, booking link, and Instagram / LinkedIn / Facebook / YouTube / X / TikTok / Threads links.
-3. **Images & video:** hero image, logo, optional hero video, gallery and video links, and an optional share-image override.
-   - Cloudinary links get automatic face-aware crops, responsive sizes and an auto-generated OG image.
-   - Other image links work as they are.
-4. **Sections:** tick what you want: about, stats, services, speaking, books, organisations, awards, testimonials, timeline, gallery, press, FAQ, newsletter, contact. Each shows its fields when ticked.
-5. **Features:** tick boxes for:
-   - splash intro, smooth scrolling, custom cursor, pinned awards rail
-   - WhatsApp chat bubble, live chat widget (Tawk.to or Crisp)
-   - share buttons, save-contact (vCard), back-to-top
-   - Google Analytics 4 or Plausible, with an optional cookie consent banner
+1. **Home:** type the name and a sentence, pick the kind of website, and pick a design (or "Let AI decide").
+   - Optionally open **Add your details**: email, WhatsApp, links, your image links, and facts (prices, awards, real testimonials…).
+2. Click **✦ Build with AI**, or **Use template** / **Blank**.
+3. **Editor:**
+   - **Blocks:** drag ⋮⋮ to reorder, **+ Add block** (click or drag in), toggle *Menu* and visibility. Click a block, or double-click it in the preview, to edit its layout, background, texts, images, buttons and items.
+   - **Design:** switch the design system, palette, colours, fonts, shapes and motion.
+   - **Brand:** logo, contact channels, social links, and the facts for the AI.
+   - **Features:** smooth scroll, progress bar, WhatsApp bubble, share buttons, announcement bar, form endpoint (e.g. Formspree), live chat (Tawk.to / Crisp), GA4 / Plausible with cookie consent.
+   - **Publish:** domain, SEO, social image, content check, **Download ZIP**.
+4. Upload the ZIP as a new Cloudflare Pages project. The site is live.
 
-   Order and inquiry forms send the message to WhatsApp, or to email if no WhatsApp number is set.
-6. **Design:** six themes (Editorial Luxe, Noir Cinema, Swiss Precision, Terracotta Warmth, Midnight Aurora, Blush Couture), hero layout (full-bleed / split / centered), motion (subtle / standard / cinematic), accent colour, and optional custom CSS.
-7. **AI brief & SEO:**
-   - **Unique request:** free text for anything special, such as "make it feel like a fashion magazine" or "add a section about my foundation".
-   - Domain, SEO title and description, footer.
-8. **Build & download:**
-   - **Write copy with AI** (optional).
-   - **Render theme previews** compares all six designs; click one to apply it.
-   - **Download website ZIP.**
+Projects are saved in your browser. Use **Export** to back them up, and **Import** to continue on another computer. Every exported ZIP also contains `zarvis-project.json`, which you can import.
 
-Upload that ZIP as a new Cloudflare Pages project and the website is live.
-
-The ZIP contains `zarvis-project.json`. Import it in **Projects** to edit the site later. Projects are saved in your browser; use **Export JSON** to back them up.
-
-### Honesty rules
-
-The AI is told to use only the facts you enter:
-
-- no invented numbers, awards, clients or quotes
-- stats appear only if you type them
-
-Always read the copy before publishing.
+Keyboard: Ctrl/⌘+Z undo, Ctrl/⌘+Shift+Z redo, Alt+↑/↓ move the focused block.
 
 ## Files
 
 ```
-public/            ← what Cloudflare serves (this is the ZIP)
-  _worker.js       built API worker (AI calls, password check, security headers)
-  index.html       the studio
-  zarvis.css
-  js/              studio app, engine, themes, icons, zip writer, sample project
-  engine/site.js   runtime shipped inside every generated website
-src/               worker source (edit here, then npm run build)
-scripts/build.mjs  bundles src/ into public/_worker.js with esbuild
+public/                 what Cloudflare serves (this is the ZIP)
+  _worker.js            built API worker: AI, stock photos, password, security headers
+  index.html, zarvis.css
+  js/app.js             studio (home, editor, drag and drop, AI flows, export)
+  js/engine.js          renderer: project → complete website files
+  js/styles.js          the 10 design systems and design options
+  js/blocks.js          block types, layouts and fields
+  js/templates.js       starter templates
+  js/fonts.js           curated Google Fonts and pairings
+  js/sprite.js, zip.js  icons, ZIP writer
+  engine/site.js        runtime included in every generated site
+src/worker.js, src/prompt.js   worker source and AI prompts/schemas
+scripts/build.mjs       bundles src/ into public/_worker.js
 ```
 
-Local development:
-
-```
-npm install
-npm run build
-npx wrangler pages dev public
-```
-
-`npm run zip` rebuilds and creates `zarvis.zip`.
+Local development: `npm install`, `npm run build`, then `npx wrangler pages dev public`. `npm run zip` builds `zarvis.zip`.
