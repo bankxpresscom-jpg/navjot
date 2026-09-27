@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zarvis · AI Website Studio</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0C10">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B0C10'/%3E%3Cpath d='M18 20h28L18 44h28' fill='none' stroke='%23C6FF3D' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="/zarvis.css">
+<script type="module" src="/js/app.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="zbar">
+    <div class="zlogo"><span class="zmark" aria-hidden="true">Z</span><b>ZARVIS</b><small>AI website studio</small></div>
+    <input class="zproject" id="projectName" aria-label="Project name" placeholder="Untitled project">
+    <div class="zbar-actions">
+      <span class="zchip" id="aiChip" title="Active AI provider">AI: …</span>
+      <button class="zbtn ghost" type="button" id="btnProjects">Projects</button>
+      <button class="zbtn ghost" type="button" id="btnSettings">Settings</button>
+      <button class="zbtn primary" type="button" id="btnDownload">Download ZIP</button>
+    </div>
+  </header>
+
+  <div class="zlayout">
+    <nav class="zsteps" aria-label="Steps" id="steps"></nav>
+    <main class="zform" id="form" aria-live="polite"></main>
+    <section class="zpreview" aria-label="Live preview">
+      <div class="zprev-bar">
+        <div class="zseg" role="group" aria-label="Device">
+          <button type="button" data-device="desktop" aria-pressed="true">Desktop</button>
+          <button type="button" data-device="tablet" aria-pressed="false">Tablet</button>
+          <button type="button" data-device="mobile" aria-pressed="false">Mobile</button>
+        </div>
+        <span class="zprev-meta" id="previewMeta"></span>
+        <button class="zbtn ghost sm" type="button" id="btnRefresh">Refresh</button>
+      </div>
+      <div class="zframe-wrap" id="frameWrap"><iframe id="preview" title="Website preview" sandbox="allow-scripts allow-popups allow-forms allow-modals allow-downloads"></iframe></div>
+    </section>
+  </div>
+</div>
+
+<!-- Settings -->
+<dialog class="zdialog" id="settings">
+  <form method="dialog" class="zdlg-body">
+    <h2>Settings</h2>
+    <p class="zhint">API keys are never stored in the browser. Add them as secrets in Cloudflare Pages (see README). This panel only chooses which provider and model to use.</p>
+    <div class="zfield"><label for="setProvider">AI provider</label><select id="setProvider"></select><small id="keyStatus"></small></div>
+    <div class="zfield"><label for="setModel">Model</label><input id="setModel" list="modelList"><datalist id="modelList"></datalist><small>Pick a suggestion or type any model name your account supports.</small></div>
+    <div class="zfield"><label for="setEffort">Effort / reasoning</label><select id="setEffort"><option value="">Provider default</option><option value="low">Low: fastest, cheapest</option><option value="medium">Medium</option><option value="high">High</option><option value="max">Max: best quality, most tokens</option></select></div>
+    <div class="zfield" id="pwField" hidden><label for="setPassword">Zarvis password</label><input id="setPassword" type="password" autocomplete="current-password"><small>Required because ZARVIS_PASSWORD is set. Kept for this browser session only.</small></div>
+    <div class="zdlg-actions"><button class="zbtn primary" value="ok">Save</button></div>
+  </form>
+</dialog>
+
+<!-- Projects -->
+<dialog class="zdialog" id="projects">
+  <form method="dialog" class="zdlg-body">
+    <h2>Projects</h2>
+    <div class="zproj-list" id="projectList"></div>
+    <div class="zdlg-actions wrap">
+      <button class="zbtn ghost" type="button" id="btnNew">New project</button>
+      <button class="zbtn ghost" type="button" id="btnSample">Load sample</button>
+      <button class="zbtn ghost" type="button" id="btnDuplicate">Duplicate</button>
+      <button class="zbtn ghost" type="button" id="btnExport">Export JSON</button>
+      <label class="zbtn ghost" for="importFile">Import JSON / zarvis-project.json</label><input type="file" id="importFile" accept="application/json,.json" hidden>
+      <button class="zbtn primary" value="close">Close</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="ztoast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

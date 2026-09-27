@@ -1,0 +1,14 @@
+{
+  "name": "zarvis",
+  "private": true,
+  "type": "module",
+  "description": "Zarvis: an AI website studio for Cloudflare Pages. Generates animated, fast, SEO-ready brand websites as uploadable zips.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "zip": "npm run build && cd public && rm -f ../zarvis.zip && zip -r -X ../zarvis.zip . -x '.*'"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "latest",
+    "esbuild": "^0.25.0"
+  }
+}

@@ -4,3 +4,6 @@ node_modules/
 wrangler.toml
 .DS_Store
 navjot-site.zip
+zarvis/node_modules/
+zarvis.zip
+zarvis/zarvis.zip
