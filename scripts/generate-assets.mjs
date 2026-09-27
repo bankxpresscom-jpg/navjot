@@ -25,7 +25,7 @@ for (const [name, size] of [['favicon-16.png', 16], ['favicon-32.png', 32], ['ic
   await writeFile(out(name), await png(svg, size));
 }
 // Apple touch icon: full-bleed square (iOS rounds it)
-const square = (scale) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B2FA3"/><stop offset=".6" stop-color="#0B1C6E"/><stop offset="1" stop-color="#050A24"/></linearGradient>${GOLD}</defs><rect width="48" height="48" fill="url(#b)"/><g transform="translate(${24 - 24 * scale} ${23.6 - 24 * scale}) scale(${scale})" fill="none" stroke="url(#g)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">${MONO}</g></svg>`);
+const square = (scale) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A2330"/><stop offset=".6" stop-color="#1E1924"/><stop offset="1" stop-color="#15121A"/></linearGradient>${GOLD}</defs><rect width="48" height="48" fill="url(#b)"/><g transform="translate(${24 - 24 * scale} ${23.6 - 24 * scale}) scale(${scale})" fill="none" stroke="url(#g)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">${MONO}</g></svg>`);
 await writeFile(out('apple-touch-icon.png'), await png(square(0.72), 180));
 // Maskable: monogram inside the 80% safe zone
 await writeFile(out('icon-maskable-192.png'), await png(square(0.6), 192));
@@ -49,22 +49,22 @@ await writeFile(out('favicon.ico'), Buffer.concat([header, ...imgs]));
 // og.jpg fallback (1200×630): gradient, aurora glows, monogram, name + titles
 const og = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <defs>
-  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B2FA3"/><stop offset=".5" stop-color="#0B1C6E"/><stop offset="1" stop-color="#050A24"/></linearGradient>
-  <radialGradient id="r1" cx=".85" cy=".15" r=".6"><stop offset="0" stop-color="#FF6FAE" stop-opacity=".45"/><stop offset="1" stop-color="#FF6FAE" stop-opacity="0"/></radialGradient>
-  <radialGradient id="r2" cx=".1" cy=".95" r=".7"><stop offset="0" stop-color="#8B6CFF" stop-opacity=".55"/><stop offset="1" stop-color="#8B6CFF" stop-opacity="0"/></radialGradient>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A2330"/><stop offset=".55" stop-color="#1E1924"/><stop offset="1" stop-color="#110E15"/></linearGradient>
+  <radialGradient id="r1" cx=".85" cy=".15" r=".6"><stop offset="0" stop-color="#B7797A" stop-opacity=".30"/><stop offset="1" stop-color="#B7797A" stop-opacity="0"/></radialGradient>
+  <radialGradient id="r2" cx=".1" cy=".95" r=".7"><stop offset="0" stop-color="#B8924F" stop-opacity=".22"/><stop offset="1" stop-color="#B8924F" stop-opacity="0"/></radialGradient>
   <radialGradient id="r3" cx=".78" cy=".55" r=".35"><stop offset="0" stop-color="#F1C96B" stop-opacity=".35"/><stop offset="1" stop-color="#F1C96B" stop-opacity="0"/></radialGradient>
   ${GOLD}
   <linearGradient id="gt" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C8963E"/><stop offset=".5" stop-color="#FFF1C9"/><stop offset="1" stop-color="#F1C96B"/></linearGradient>
 </defs>
 <rect width="1200" height="630" fill="url(#bg)"/><rect width="1200" height="630" fill="url(#r1)"/><rect width="1200" height="630" fill="url(#r2)"/><rect width="1200" height="630" fill="url(#r3)"/>
-<g fill="none" stroke="#F1C96B" stroke-opacity=".5"><circle cx="940" cy="330" r="210" stroke-dasharray="3 10"/><circle cx="940" cy="330" r="178" stroke="#FF6FAE" stroke-opacity=".35"/></g>
+<g fill="none" stroke="#F1C96B" stroke-opacity=".5"><circle cx="940" cy="330" r="210" stroke-dasharray="3 10"/><circle cx="940" cy="330" r="178" stroke="#D9BC84" stroke-opacity=".25"/></g>
 <g transform="translate(820 205) scale(5)" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${MONO}</g>
 <path d="M72 70h26M72 70v26M1128 560h-26M1128 560v-26" stroke="#F1C96B" stroke-width="2" fill="none"/>
-<text x="80" y="200" font-family="Syne, Manrope, 'DejaVu Sans', Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="6" fill="#F1C96B">MRS. INDIA PLANET 2022</text>
-<text x="80" y="300" font-family="Syne, 'DejaVu Sans', Arial, sans-serif" font-size="92" font-weight="800" fill="#FFFFFF">Dr. Navjot</text>
-<text x="80" y="398" font-family="Syne, 'DejaVu Sans', Arial, sans-serif" font-size="92" font-weight="800" fill="url(#gt)">Kaur</text>
-<text x="80" y="468" font-family="Manrope, 'DejaVu Sans', Arial, sans-serif" font-size="30" fill="#DDE1FF">Educationist · Author · Keynote Speaker</text>
-<text x="80" y="512" font-family="Manrope, 'DejaVu Sans', Arial, sans-serif" font-size="30" fill="#DDE1FF">Global Education Leader</text>
+<text x="80" y="200" font-family="Syne, Manrope, 'DejaVu Sans', Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="7" fill="#D9BC84">KEYNOTE SPEAKER · AUTHOR</text>
+<text x="80" y="300" font-family="'Cormorant Garamond', 'DejaVu Serif', Georgia, serif" font-size="96" font-weight="600" fill="#FFFFFF">Dr. Navjot</text>
+<text x="80" y="398" font-family="'Cormorant Garamond', 'DejaVu Serif', Georgia, serif" font-size="96" font-weight="600" fill="url(#gt)">Kaur</text>
+<text x="80" y="468" font-family="Manrope, 'DejaVu Sans', Arial, sans-serif" font-size="30" fill="#DDE1FF">Educationist · Founder of global forums</text>
+<text x="80" y="512" font-family="Manrope, 'DejaVu Sans', Arial, sans-serif" font-size="30" fill="#DDE1FF">Author of Cosmic Map of Answers</text>
 <text x="80" y="570" font-family="'Instrument Serif', 'DejaVu Serif', Georgia, serif" font-style="italic" font-size="34" fill="#FFE9B0">Beauty with purpose.</text>
 </svg>`);
 await sharp(og).jpeg({ quality: 86, mozjpeg: true }).toFile(out('og.jpg'));

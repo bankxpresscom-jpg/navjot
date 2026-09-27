@@ -2,14 +2,13 @@
   "name": "dr-navjot-kaur",
   "private": true,
   "type": "module",
-  "description": "One-page personal brand site for Dr. Navjot Kaur (Cloudflare Pages + Pages Functions + D1).",
+  "description": "One-page personal brand site for Dr. Navjot Kaur (static, Cloudflare Pages).",
   "scripts": {
     "icons": "node scripts/generate-assets.mjs",
     "csp-hash": "node scripts/csp-hash.mjs",
     "set-domain": "node scripts/set-domain.mjs",
-    "dev": "npx wrangler pages dev public",
-    "db:init": "npx wrangler d1 execute navjot-orders --remote --file=schema.sql",
-    "deploy": "npx wrangler pages deploy public --project-name navjot"
+    "zip": "cd public && rm -f ../navjot-site.zip && zip -r -X ../navjot-site.zip . -x '.*'",
+    "preview": "npx serve public"
   },
   "devDependencies": {
     "sharp": "^0.35.4"

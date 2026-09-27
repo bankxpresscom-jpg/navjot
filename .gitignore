@@ -3,3 +3,4 @@ node_modules/
 .dev.vars
 wrangler.toml
 .DS_Store
+navjot-site.zip

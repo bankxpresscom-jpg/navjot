@@ -1,101 +1,63 @@
 # Dr. Navjot Kaur: personal brand site
 
-A one-page, cinematic portfolio built for **Cloudflare Pages**, with a **Pages Function + D1** backend for direct book orders over UPI.
+A one-page, editorial brand portfolio. Pure static files: no build step, no server, no database.
+Deploy the `public/` folder (or `navjot-site.zip`) to **Cloudflare Pages**.
 
 ```
-public/                     ← Pages build output (deploy this folder)
-  index.html                critical CSS inline, SVG icon sprite, JSON-LD, all sections
-  assets/app.js             CONFIG → LIB → ASSETS at the top, then all behaviour
-  assets/monogram.svg       splash monogram
-  _headers                  security headers, CSP, cache rules
-  robots.txt  sitemap.xml  site.webmanifest  og.jpg
-  favicon.svg favicon.ico favicon-16.png favicon-32.png apple-touch-icon.png
-  icon-192.png icon-512.png icon-maskable-192.png icon-maskable-512.png
-functions/api/order.js      POST /api/order (validation, honeypot, D1 insert, ZeptoMail)
-schema.sql                  D1 migration for the `orders` table
-scripts/generate-assets.mjs favicon set + og.jpg from favicon.svg (sharp)
-scripts/csp-hash.mjs        re-hashes the inline boot script into _headers
-scripts/set-domain.mjs      swaps the placeholder domain everywhere
-wrangler.example.toml       optional bindings-as-code
+public/
+  index.html            page, inline critical CSS, icon sprite, SEO + JSON-LD
+  assets/app.js         CONFIG → LIB → ASSETS at the top, then all behaviour
+  assets/monogram.svg   crown + NK monogram
+  _headers              security headers, CSP, cache rules
+  robots.txt  sitemap.xml  site.webmanifest  og.jpg  favicon set
+scripts/                icon/OG generator (sharp), CSP hash, domain swap
 ```
 
-No framework and no build step. Libraries load from jsDelivr at pinned versions with SRI:
-GSAP 3.12.5 + ScrollTrigger, Lenis 1.1.13, and qrcode-generator 1.4.4 (only loaded when the order drawer shows a QR code).
+Libraries load from jsDelivr at pinned versions with SRI: GSAP 3.12.5 + ScrollTrigger and Lenis 1.1.13.
+Fonts come from Google Fonts (Cormorant Garamond, Bebas Neue, Jost), with the `@font-face` rules inlined.
 
-## Deploy
+## Deploy to Cloudflare Pages
 
-1. **Pages project**: connect the repo. Framework preset: *None*. Build command: *(empty)*. Output directory: `public`.
-   Or run `npx wrangler pages deploy public --project-name navjot`.
-2. **D1**
-   ```bash
-   npx wrangler d1 create navjot-orders
-   npx wrangler d1 execute navjot-orders --remote --file=schema.sql
-   ```
-   Pages → Settings → Bindings → add a **D1 database** binding named `DB`.
-3. **ZeptoMail**: Pages → Settings → Variables and Secrets:
-   - `ZEPTOMAIL_TOKEN` (secret): the Send Mail token
-   - `MAIL_FROM`: a sender on a domain verified in ZeptoMail
-   - `MAIL_TO`: the inbox that receives order notifications
-   - optional: `ZEPTOMAIL_API` (defaults to the India DC, `api.zeptomail.in`), `BOOK_PRICE_INR`, `SHIPPING_INR`, `BOOK_TITLE`
-4. **Domain**: `npm run set-domain -- https://www.your-domain.com` replaces the placeholder `https://drnavjotkaur.example` in the canonical, OG, JSON-LD, robots.txt, sitemap.xml and CONFIG.
+**Direct upload (no Git):** Cloudflare dashboard → Workers & Pages → Create → Pages → *Upload assets*, then drop in `navjot-site.zip`.
+`index.html` sits at the root of the zip.
 
-Local dev: `cp wrangler.example.toml wrangler.toml` (set a D1 id), then run `npx wrangler d1 execute navjot-orders --local --file=schema.sql` and `npm run dev`.
+**From Git:** connect the repo. Framework preset: *None*. Build command: *(empty)*. Output directory: `public`.
 
-## Before launch: things only you can fill in
+To rebuild the zip after edits, run `npm run zip`.
 
-| What | Where |
+## How ordering works (no payments on the site)
+
+- **Order on WhatsApp** (Books section, the hero book card, or clicking the 3D book) opens a short form: book, copies, name, phone, pincode, address.
+  Submitting opens WhatsApp (the app on phones, WhatsApp Web on desktop) with the complete order message addressed to `CONFIG.WHATSAPP_NUMBER`.
+  She confirms price, payment and delivery in the chat.
+- **Invite to speak** (top bar, hero, Speaker section, Contact) works the same way: name, phone, organisation, event, date, city and message are sent as a WhatsApp invitation.
+- Every form also offers **"Prefer email?"**, which opens the same message pre-filled in the visitor's email app.
+
+## Edit these in `public/assets/app.js` → `CONFIG`
+
+| What | Key |
 |---|---|
-| **Book title** (exact text from the cover) | `CONFIG.BOOK_TITLE` in `public/assets/app.js`, the Book `name` in the JSON-LD in `index.html`, and `BOOK_TITLE` env var |
-| **Direct price + shipping** (placeholders ₹499 / ₹60) | `CONFIG.BOOK_PRICE_INR`, `CONFIG.SHIPPING_INR` **and** the `BOOK_PRICE_INR` / `SHIPPING_INR` env vars (the server recomputes the amount and flags mismatches in the email) |
-| **UPI**: `deifiedbooks@okicici` is TEMPORARY | `CONFIG.UPI_ID` and `CONFIG.UPI_PAYEE_NAME` (payee name should match the VPA's registered name) |
-| **Email** (`hello@example.com` is a dummy) | `CONFIG.CONTACT_EMAIL`, plus the static fallbacks and JSON-LD in `index.html` (search for `hello@example.com`) |
-| Footer credit | `CONFIG.CRAFTED_BY` |
-| Real domain | `npm run set-domain -- https://…` |
+| WhatsApp number for orders and invitations | `WHATSAPP_NUMBER` (currently `917743031578`) |
+| **Email**: `hello@example.com` is a dummy | `CONTACT_EMAIL` (also update the fallback text in `index.html` and the JSON-LD) |
+| **The 4 other books** | `BOOKS`: fill in `title` (and optionally `cover` and `amazon`) for `book-2` … `book-5`. They appear on an "Also by Dr. Navjot Kaur" shelf and in the order form automatically. With no cover image, an elegant typographic cover is drawn. |
+| Footer credit | `CRAFTED_BY` |
+| Real domain | run `npm run set-domain -- https://www.your-domain.com` |
 
-Contact links and text in the page read from `CONFIG` at runtime (`data-cfg-href` / `data-cfg-text`). The HTML keeps the same values as no-JS fallbacks. Head metadata (OG, JSON-LD) has to stay static for crawlers, so it mirrors CONFIG.
+After editing `app.js`, bump `?v=` on its `<script>` tag in `index.html` (it's cached for a year).
 
-## Asset mapping (`ASSETS` in `app.js`)
+## Photos (`ASSETS` in `app.js`)
 
-**Important:** this build environment's network policy blocked `res.cloudinary.com`, so the images could **not** be opened and inspected. The mapping below is inferred from filenames, and it was built to be safe without seeing the photos:
+- **Hero:** `hero_image` only (her photo, as requested). If you change it, also update the `preload` link and `<img>` in `index.html`.
+- **About:** `author_photo_1`, which slowly cross-fades with `author_photo_6`, plus `author_photo_2`.
+- **Speaker:** `author_photo_3`, with the stage video playing over it when in view.
+- **Contact:** `author_photo_5`. `author_photo_4` opens the gallery.
+- **Leadership:** the three organisation logos.
+- **Moments of Honor, Impact, Media and the moving gallery rows:** the event, award and community photos and videos.
 
-- Every photo slot requests a **face-aware server-side crop** (`c_fill,g_auto,ar_…`) at the exact aspect ratio of the slot, so faces are kept in frame on every breakpoint. `pos` (CSS object-position) is a second safety net.
-- Transparent PNGs are shown uncropped (`c_limit`, `object-fit: contain`) as floating cutouts. If a PNG turns out to be opaque, it still reads as a framed photo.
-- WhatsApp-compressed files (`IMG-2024…`, `IMG-2025…`, `IMG-2026…`, `VID-2025…`) are marked `small: true` and only used in small tiles.
-- `Screenshot_…_ChatGPT.jpg` is in `LIB` but **disabled** (`enabled: false` in `ASSETS.moments`). Enable it only if it's a clean image.
-
-| Slot | Asset | Why |
-|---|---|---|
-| Hero video / poster | `IMG_2677.mov` (as .mp4) + `so_1` frame grab | iPhone original: best quality for full-bleed |
-| Hero fallback, OG image | `navjot-05.jpg` | named portrait |
-| About portrait | `DSC_4230.JPG` | DSLR, likely studio |
-| About cutout | `DR._NAVJOT.png` | PNG → floating cutout |
-| Leadership visual | `file_…2ca8….png` | PNG |
-| Journey visual | `file_…f774….png` | PNG |
-| Contact cutout | `file_…f3dc….png` | PNG |
-| Awards rail photos | `DSC_4235.JPG`, `20231201_141109.jpg`, `2243.JPG` | DSLR + Dec 2023 (awards year) |
-| Book | `71to1VD6NoL._SL1500_` | cover |
-| Media cover frame | `navjot-07.jpg` | named portrait (Diva Planet feature frame) |
-| Impact bento | `ayam_2022`, `1000250327`, `20250325_085754`, `IMG-20240919-WA0015`*, `IMG-20250325-WA0007`* + videos `1000416510`, `1000416969.mov`, `1000418113` | events / social work |
-| Moments | `20240713`, `20251206`, `IMG_20220511`, `20250705_121907`, `20250705_122055`, `1000381797`, `IMG-20260922-WA0026`* + videos `1000211837`, `1000424527`, `VID-20251206-WA0006`* | remaining gallery |
-
-\* small tiles only. To re-map, change the `LIB.*` reference in `ASSETS`. If you change `ASSETS.hero.video`, also update the two poster `preload` links and the `<picture>` in `index.html` (they mirror it so the LCP image starts downloading before JS).
-
-Alt text and captions are written to be accurate without having seen the photos ("at an event", "on stage"). Once you've viewed them, make them more specific in `ASSETS`.
+Every photo slot requests a face-aware crop from Cloudinary (`c_fill,g_auto`), so her face stays in frame at any screen size.
+Logos and the book cover are never cropped. The ChatGPT screenshot is kept but disabled (`enabled: false`).
 
 ## Maintenance
 
-- **Edit `app.js`?** Bump `?v=` on its `<script>` tag in `index.html` (`/assets/*` is cached for a year, immutable).
-- **Edit the inline boot `<script>` in `<head>`?** Run `npm run csp-hash` (the CSP whitelists it by hash).
-- **Change the monogram?** Edit `public/favicon.svg`, then `npm install && npm run icons` regenerates the favicon PNGs, the ICO and `og.jpg`.
-- **Fonts**: Google Fonts files from fonts.gstatic.com, with the `@font-face` rules (latin + latin-ext, `font-display: swap`) inlined in `index.html`, so there's no render-blocking stylesheet round trip. Preconnect warms the origin.
-
-## Orders
-
-`upi://pay?pa=<UPI_ID>&pn=<payee>&am=<total>&cu=INR&tn=<order ref>`: a deep link on phones, a QR code of the same link on desktop, plus a copy-UPI-ID button. The buyer then submits the UTR. `/api/order`:
-- rejects cross-origin posts, non-JSON and oversized bodies
-- validates every field; the honeypot returns fake success
-- recomputes the amount on the server
-- inserts `status='pending'`; `utr` is UNIQUE, so the same payment can't be claimed twice
-- emails you via ZeptoMail with `reply_to` set to the buyer
-
-Verify each UTR against your UPI statement, then `UPDATE orders SET status='verified' WHERE id='NK-…'`.
+- Edit the tiny inline `<script>` in `<head>`? Run `npm run csp-hash` (the CSP whitelists it by hash).
+- Change the monogram? Edit `public/favicon.svg`, then `npm install && npm run icons` regenerates the favicons and `og.jpg`.
