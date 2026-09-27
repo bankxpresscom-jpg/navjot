@@ -8,37 +8,26 @@
   "display": "standalone",
   "orientation": "portrait",
   "lang": "en-IN",
-  "background_color": "#15121A",
-  "theme_color": "#15121A",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "https://res.cloudinary.com/dhn6pvsr1/image/upload/c_pad,b_black,w_164,h_164/c_pad,b_black,w_192,h_192,f_png/v1790515212/splash-favicon-logo_yxkwes.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "https://res.cloudinary.com/dhn6pvsr1/image/upload/c_pad,b_black,w_440,h_440/c_pad,b_black,w_512,h_512,f_png/v1790515212/splash-favicon-logo_yxkwes.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-maskable-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/icon-maskable-512.png",
+      "src": "https://res.cloudinary.com/dhn6pvsr1/image/upload/c_pad,b_black,w_320,h_320/c_pad,b_black,w_512,h_512,f_png/v1790515212/splash-favicon-logo_yxkwes.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    },
-    {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
     }
   ]
 }

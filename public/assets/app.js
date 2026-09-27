@@ -30,16 +30,16 @@ const CONFIG = {
   JOB_TITLE: 'Keynote Speaker · Author · Educationist',
   MAX_QTY: 20,
 
-  /* Books. The featured book is the hero of the Books section.
-     The other four appear on the "Also by" shelf as soon as a title is filled in.
-     `cover` is optional (a typographic cover is drawn without one); `amazon` is optional. */
+  /* Books: order-form options, and the featured title in the Books section.
+     Covers and buy links for the Library cards live in index.html (#library) and ASSETS.books. */
   BOOKS: [
     { id: 'cosmic', title: 'Cosmic Map of Answers', featured: true,
       cover: `${C}/image/upload/v1790247244/71to1VD6NoL._SL1500__mxv5zk.jpg`, amazon: 'https://amzn.in/d/0aum2eAt' },
-    { id: 'book-2', title: '', cover: '', amazon: '' },
-    { id: 'book-3', title: '', cover: '', amazon: '' },
-    { id: 'book-4', title: '', cover: '', amazon: '' },
-    { id: 'book-5', title: '', cover: '', amazon: '' }
+    { id: 'mother-blessing', title: 'Mother: A Divine Blessing', amazon: 'https://www.amazon.in/dp/9364526813' },
+    { id: 'mother-gift', title: 'Mother: A Divine Gift', store: 'https://pnpacademy.in/product/mother-a-divine-gift/' },
+    { id: 'mother-creation', title: 'Mother: A Divine Creation', amazon: 'https://www.amazon.in/dp/B0G1YVZVYZ' },
+    { id: 'mother-trilogy', title: 'The Mother Trilogy (all three books)' },
+    { id: 'gwb', title: 'Gratitude, Wisdom & Blessing', amazon: 'https://www.amazon.in/Gratitude-Wisdom-Blessing-NAVJOT-KAUR/dp/B0F2F62YMG' }
   ],
 
   CRAFTED_BY: { label: 'Crafted by', name: 'Your Studio', url: '' },
@@ -62,8 +62,14 @@ const LIB = {
   logoWAAF:    `${C}/image/upload/v1790510338/world_academic_achievers_logo_geu0ea.jpg`,
   logoGWAC:    `${C}/image/upload/v1790510338/the_global_women_achievers_circle_logo_tmtstx.jpg`,
   logoYDC:     `${C}/image/upload/v1790510342/youth_diplomatic_conclave_logo_klpqwl.png`,
-  // Book
+  // Brand logo (gold NK, transparent PNG): splash, header, footer and favicons reference it in index.html
+  logo:        `${C}/image/upload/v1790515212/splash-favicon-logo_yxkwes.png`,
+  // Book covers
   bookCover:   `${C}/image/upload/v1790247244/71to1VD6NoL._SL1500__mxv5zk.jpg`,
+  coverMotherBlessing: `${C}/image/upload/v1790515433/mother_a_divine_blessing_ltkh3x.jpg`,
+  coverMotherGift:     `${C}/image/upload/v1790515213/mother-a-divine-gift_rgdnjg.webp`,
+  coverMotherCreation: `${C}/image/upload/v1790515212/mother_a_divine_creation_sb4gmq.jpg`,
+  coverGWB:            `${C}/image/upload/v1790515212/gratitude_wisdom_and_blessings_pstm7s.jpg`,
   // Events, awards, community
   dsc4230:     `${C}/image/upload/v1790248009/DSC_4230.JPG_vzqbab.jpg`,
   pngF3dc:     `${C}/image/upload/v1790248009/file_00000000f3dc7207821deb2fc9ad53ca_kf3vhd.png`,
@@ -115,7 +121,13 @@ const ASSETS = {
     portrait: img(LIB.author3, 'Dr. Navjot Kaur speaking', { pos: '50% 20%' }),
     video: LIB.vStage                                                           // plays over the portrait when in view
   },
-  books: { cover: img(LIB.bookCover, 'Cover of Cosmic Map of Answers by Dr. Navjot Kaur') },
+  books: {
+    cover:          img(LIB.bookCover, 'Cover of Cosmic Map of Answers by Dr. Navjot Kaur'),
+    motherBlessing: img(LIB.coverMotherBlessing, 'Cover of Mother: A Divine Blessing by Dr. Navjot Kaur'),
+    motherGift:     img(LIB.coverMotherGift, 'Cover of Mother: A Divine Gift by Dr. Navjot Kaur'),
+    motherCreation: img(LIB.coverMotherCreation, 'Cover of Mother: A Divine Creation by Dr. Navjot Kaur'),
+    gwb:            img(LIB.coverGWB, 'Cover of Gratitude, Wisdom & Blessing by Dr. Navjot Kaur')
+  },
   leadership: {
     waaf: img(LIB.logoWAAF, 'World Academic Achievers Forum logo'),
     ydc:  img(LIB.logoYDC,  'Youth Diplomatic Conclave logo'),
@@ -258,12 +270,29 @@ function failSafe(im, host) {
   if (im.complete && im.naturalWidth === 0 && im.src) fail();
 }
 function wrapInner(im) { const d = document.createElement('div'); d.className = 'inner'; d.appendChild(im); return d; }
+/** Tiny blurred copy of an image (or a video frame) used behind full, uncropped photos */
+const cBlur = (url, isVideo) => isVideo
+  ? tx(url, 'so_1,f_jpg,q_30,c_limit,w_64,e_blur:600').replace(/\.(mov|mp4|webm|m4v)$/i, '.jpg')
+  : tx(url, 'f_auto,q_30,c_limit,w_64,e_blur:600');
+/** Full photo, never cropped: object-fit contain over its own blurred backdrop */
+function fullPhoto(frame, item, sizes, isVideo = false) {
+  frame.classList.add('fit');
+  const bg = new Image(); bg.className = 'bgblur'; bg.alt = ''; bg.loading = 'lazy'; bg.decoding = 'async';
+  bg.width = 64; bg.height = 80; bg.src = cBlur(item.src, isVideo);
+  const im = new Image(); im.loading = 'lazy'; im.decoding = 'async'; im.width = 800; im.height = 1000; im.sizes = sizes; im.alt = item.alt || '';
+  if (isVideo) { im.srcset = [480, 720, 1080].map(w => `${cPoster(item.src, w)} ${w}w`).join(', '); im.src = cPoster(item.src, 720); }
+  else { im.srcset = cSrcset(item.src, null); im.src = cImg(item.src, 800); }
+  const inner = document.createElement('div'); inner.className = 'inner'; inner.append(bg, im);
+  frame.prepend(inner);
+  return im;
+}
 
 function mountSlots() {
   $$('[data-slot]').forEach(host => {
     const item = resolve(host.dataset.slot);
     if (!item || item.enabled === false) { host.classList.add('is-failed'); return; }
-    const fit = host.dataset.fit === 'limit';
+    if (host.dataset.fit === 'contain') { failSafe(fullPhoto(host, item, host.dataset.sizes || '50vw'), host); return; }
+    const fit = host.dataset.fit === 'limit' || host.dataset.fit === 'book';
     const ar = fit ? null : (host.dataset.ar || '4:5');
     const im = makeImg(item, { ar, sizes: host.dataset.sizes || '50vw' });
     if (fit) { im.width = 600; im.height = 900; }
@@ -357,23 +386,14 @@ function tile(item, { ar, sizes, cls = '', tag = 'figure', caption = true, hover
   const frame = document.createElement('div');
   frame.className = 'frame';
   frame.style.setProperty('--ar', ar.replace(':', '/'));
-  let im;
+  // Event photos are shown whole (never cropped), so nobody's head is cut off
+  const im = fullPhoto(frame, item, sizes, isVideo);
   if (isVideo) {
-    im = new Image();
-    const [aw, ah] = ar.split(':').map(Number);
-    im.width = 720; im.height = Math.round(720 * ah / aw);
-    im.loading = 'lazy'; im.decoding = 'async'; im.sizes = sizes;
-    im.srcset = [480, 720, 1080].map(w => `${cPoster(item.src, w, ar)} ${w}w`).join(', ');
-    im.src = cPoster(item.src, 720, ar); im.alt = item.alt;
-    frame.appendChild(wrapInner(im));
     if (hover && !saveData) {
       const v = Videos.make(item.src, finePointer ? 720 : 480);
       frame.appendChild(v);
       Videos.register(v, el);
     }
-  } else {
-    im = makeImg(item, { ar, sizes });
-    frame.appendChild(wrapInner(im));
   }
   failSafe(im, frame);
   el.appendChild(frame);
@@ -423,25 +443,6 @@ function initMarquees() {
     while (set.scrollWidth < innerWidth * 1.1 && g++ < 6) set.insertAdjacentHTML('beforeend', base);
     const clone = set.cloneNode(true); clone.setAttribute('aria-hidden', 'true'); track.appendChild(clone);
   });
-}
-
-/* ---------------------------------------------------------------------------
-   Book shelf (the four other titles appear once named in CONFIG.BOOKS)
-   ------------------------------------------------------------------------ */
-function mountShelf() {
-  const others = books().filter(b => !b.featured);
-  const shelf = $('#shelf'), grid = $('#shelfGrid');
-  if (!shelf || !others.length) return;
-  others.forEach(b => {
-    const el = document.createElement('article');
-    el.className = 'shelf-book'; el.setAttribute('data-reveal', '');
-    el.innerHTML = `<div class="cover-b">${b.cover ? '' : `<div class="typo"><small>DR. NAVJOT KAUR</small><b>${esc(b.title)}</b></div>`}</div>
-      <h3>${esc(b.title)}</h3>
-      <div class="btn-row"><button class="link" type="button" data-open="order" data-book="${esc(b.id)}">ORDER ${icon('arrow-r')}</button>${b.amazon ? `<a class="link" href="${esc(b.amazon)}" target="_blank" rel="noopener">AMAZON ${icon('arrow-ur')}</a>` : ''}</div>`;
-    if (b.cover) { const im = makeImg({ src: b.cover, alt: `Cover of ${b.title}` }, { ar: null, sizes: '(min-width: 900px) 22vw, 45vw' }); $('.cover-b', el).appendChild(im); }
-    grid.appendChild(el);
-  });
-  shelf.hidden = false;
 }
 
 /* ---------------------------------------------------------------------------
@@ -654,6 +655,15 @@ function initMotion() {
   gsap.fromTo('.stack .second', { yPercent: 12 }, { yPercent: -12, ease: 'none', scrollTrigger: { trigger: '.stack', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.fromTo('.statement', { xPercent: 3 }, { xPercent: -2, ease: 'none', scrollTrigger: { trigger: '#impact', start: 'top bottom', end: 'bottom top', scrub: true } });
 
+  // The Library: the Mother Trilogy fans out from a stack as it scrolls into view
+  const tri = $$('[data-tri]');
+  if (tri.length === 3) {
+    gsap.fromTo(tri[0], { xPercent: 70, rotation: -8, y: 30 }, { xPercent: 0, rotation: 0, y: 0, ease: 'none', scrollTrigger: { trigger: '#trilogy', start: 'top 85%', end: 'center 60%', scrub: 0.8 } });
+    gsap.fromTo(tri[2], { xPercent: -70, rotation: 8, y: 30 }, { xPercent: 0, rotation: 0, y: 0, ease: 'none', scrollTrigger: { trigger: '#trilogy', start: 'top 85%', end: 'center 60%', scrub: 0.8 } });
+    gsap.fromTo(tri[1], { y: -20, scale: 1.06 }, { y: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: '#trilogy', start: 'top 85%', end: 'center 60%', scrub: 0.8 } });
+  }
+  gsap.fromTo('.solo-wrap', { rotation: -6, y: 40 }, { rotation: 0, y: 0, ease: 'none', scrollTrigger: { trigger: '.solo', start: 'top bottom', end: 'center 60%', scrub: 0.8 } });
+
   // Moments of Honor: pinned horizontal rail on desktop
   gsap.matchMedia().add('(min-width: 1025px)', () => {
     const sec = $('#honors'), rail = $('#rail'), pin = $('#railPin');
@@ -848,7 +858,7 @@ async function boot() {
   Menu.init();
   initScrollUI();
   setTimeout(startRoles, heroDelay * 1000 + 1200);
-  for (const step of [mountSlots, mountReel, mountGalleries, mountShelf, initMarquees, initMotion, initPointer, () => { initVCard(); Lightbox.init(); Drawer.init(); }]) {
+  for (const step of [mountSlots, mountReel, mountGalleries, initMarquees, initMotion, initPointer, () => { initVCard(); Lightbox.init(); Drawer.init(); }]) {
     await yieldToMain();
     step();
   }

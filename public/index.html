@@ -8,7 +8,7 @@
 <!-- SITE_URL placeholder: run `npm run set-domain -- https://your-domain.com` to replace https://drnavjotkaur.example everywhere -->
 <link rel="canonical" href="https://drnavjotkaur.example/">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<meta name="theme-color" content="#15121A">
+<meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="light dark">
 <meta name="author" content="Dr. Navjot Kaur">
 
@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://drnavjotkaur.example/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Dr. Navjot Kaur monogram and name on deep aubergine and gold">
+<meta property="og:image:alt" content="Dr. Navjot Kaur name and titles on deep aubergine and gold">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Dr. Navjot Kaur | Keynote Speaker, Author &amp; Educationist">
 <meta name="twitter:description" content="Keynote, guest and motivational speaker. Author of Cosmic Map of Answers. Beauty with purpose.">
@@ -39,6 +39,7 @@
 <link rel="dns-prefetch" href="https://res.cloudinary.com">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_limit,w_320/v1790515212/splash-favicon-logo_yxkwes.png">
 
 <!-- LCP: her hero portrait (face-aware 4:5 crop). Mirrors ASSETS.hero in /assets/app.js. -->
 <link rel="preload" as="image" fetchpriority="high" imagesrcset="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_fill,g_auto,ar_4:5,w_480/v1790510343/hero_image_iadrrl.jpg 480w, https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_fill,g_auto,ar_4:5,w_800/v1790510343/hero_image_iadrrl.jpg 800w, https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_fill,g_auto,ar_4:5,w_1200/v1790510343/hero_image_iadrrl.jpg 1200w, https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_fill,g_auto,ar_4:5,w_1600/v1790510343/hero_image_iadrrl.jpg 1600w" imagesizes="(min-width: 900px) 50vw, 100vw">
@@ -46,11 +47,10 @@
 <!-- Boot script. Its sha256 is whitelisted in public/_headers (CSP). If you edit it, run `npm run csp-hash`. -->
 <script>(function(h){h.className=h.className.replace('no-js','js');try{if(sessionStorage.getItem('nk-splash')||matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('no-splash')}catch(e){h.classList.add('no-splash')}})(document.documentElement);</script>
 
-<link rel="icon" href="/favicon.ico" sizes="48x48">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
-<link rel="icon" href="/favicon-16.png" type="image/png" sizes="16x16">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!-- Favicons: the gold NK logo on black, padded by Cloudinary (see ASSETS.logo / README) -->
+<link rel="icon" type="image/png" sizes="32x32" href="https://res.cloudinary.com/dhn6pvsr1/image/upload/c_pad,b_black,w_28,h_28/c_pad,b_black,w_32,h_32,f_png/v1790515212/splash-favicon-logo_yxkwes.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://res.cloudinary.com/dhn6pvsr1/image/upload/c_pad,b_black,w_164,h_164/c_pad,b_black,w_192,h_192,f_png/v1790515212/splash-favicon-logo_yxkwes.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/dhn6pvsr1/image/upload/c_pad,b_black,w_140,h_140/c_pad,b_black,w_180,h_180,f_png/v1790515212/splash-favicon-logo_yxkwes.png">
 <link rel="manifest" href="/site.webmanifest">
 
 <style>
@@ -156,9 +156,9 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 .clip-reveal{clip-path:inset(0 0 0 0)}
 
 /* ---------- Splash ---------- */
-.splash{position:fixed;inset:0;z-index:300;display:grid;place-items:center;pointer-events:none;background:var(--ink);clip-path:inset(0 0 0 0);animation:curtain .7s var(--ease-io) 1.05s forwards}
+.splash{position:fixed;inset:0;z-index:300;display:grid;place-items:center;pointer-events:none;background:#000;clip-path:inset(0 0 0 0);animation:curtain .7s var(--ease-io) 1.05s forwards}
 .splash-inner{display:grid;justify-items:center;gap:12px;text-align:center;width:min(92vw,700px)}
-.splash .mono{width:clamp(120px,26vw,150px);height:auto;opacity:.25;transform:scale(.9);animation:sIn .8s var(--ease) forwards}
+.splash .mono{width:clamp(130px,30vw,170px);height:clamp(130px,30vw,170px);object-fit:contain;filter:drop-shadow(0 0 28px rgba(217,188,132,.35));opacity:.25;transform:scale(.9);animation:sIn .8s var(--ease) forwards}
 .splash-name{width:100%;font:500 clamp(1.8rem,5vw,2.8rem)/1 var(--serif);color:var(--t-light);opacity:0;transform:translateY(10px);animation:sIn .8s var(--ease) .2s forwards}
 .splash-tag{width:100%;font:400 .95rem/1 var(--label);letter-spacing:.3em;color:var(--gold-2);opacity:0;animation:sIn .8s var(--ease) .38s forwards}
 @keyframes sIn{to{opacity:1;transform:none}}
@@ -183,7 +183,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 .burger .word{display:none}
 @media (min-width:700px){.burger .word{display:inline}}
 .brand{justify-self:center;display:flex;align-items:center;gap:12px}
-.brand img{width:40px;height:40px}
+.brand img{width:46px;height:46px;object-fit:contain}
 .brand b{display:none;font:500 1.4rem/1 var(--serif)}
 @media (min-width:1025px){.brand b{display:inline}}
 .top-cta{justify-self:end;display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 20px;border:1px solid rgba(217,188,132,.55);border-radius:999px;font:400 1rem/1 var(--label);letter-spacing:.14em;color:var(--gold-2);transition:background .35s,color .35s}
@@ -389,18 +389,38 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 .steps3 li::before{content:"0" counter(s);display:block;font:400 1.5rem/1 var(--label);color:var(--gold-3);margin-bottom:6px}
 .d-note{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:.92rem;color:var(--m-dark)}
 .d-note .i{color:var(--gold);margin-top:4px}
-.shelf{margin-top:clamp(70px,9vw,120px)}
-.shelf[hidden]{display:none}
-.shelf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(18px,3vw,36px);margin-top:34px}
-@media (min-width:900px){.shelf-grid{grid-template-columns:repeat(4,1fr)}}
-.shelf-book{display:grid;gap:14px;align-content:start}
-.shelf-book .cover-b{position:relative;aspect-ratio:2/3;overflow:hidden;border-radius:2px 6px 6px 2px;box-shadow:0 26px 40px -18px rgba(27,23,32,.5);transition:transform .6s var(--ease);background:linear-gradient(160deg,#2a2330,#15121a)}
-.shelf-book:hover .cover-b{transform:translateY(-8px) rotate(-1deg)}
-.shelf-book .cover-b img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.shelf-book .typo{position:absolute;inset:0;display:grid;align-content:space-between;padding:18px;color:var(--t-light)}
-.shelf-book .typo b{font:500 1.5rem/1.1 var(--serif)}
-.shelf-book .typo small{font:400 .9rem/1 var(--label);letter-spacing:.16em;color:var(--gold-2)}
-.shelf-book h3{font:500 1.3rem/1.2 var(--serif)}
+/* ---------- The Library ---------- */
+.library{margin-top:clamp(90px,11vw,160px)}
+.lib-head{text-align:center;max-width:760px;margin:0 auto}
+.lib-head .label::after{content:"";width:34px;height:1px;background:currentColor;opacity:.6}
+.lib-head .lead{margin-left:auto;margin-right:auto}
+.bk-cover{position:relative;aspect-ratio:2/3;border-radius:2px 7px 7px 2px;overflow:hidden;background:linear-gradient(160deg,#2a2330,#15121a);box-shadow:0 30px 50px -22px rgba(27,23,32,.55),0 8px 16px -8px rgba(27,23,32,.3);transform:perspective(1000px) rotateY(-14deg);transform-origin:40% 50%;transition:transform .8s var(--ease),box-shadow .8s var(--ease);cursor:pointer}
+.bk-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bk-cover::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.35) 0,rgba(255,255,255,.18) 2.5%,rgba(0,0,0,.08) 5%,transparent 9%),linear-gradient(110deg,rgba(255,255,255,.22),transparent 30%)}
+.bk:hover .bk-cover,.solo:hover .bk-cover,.bk-cover:focus-visible{transform:perspective(1000px) rotateY(0deg) translateY(-12px);box-shadow:0 46px 60px -26px rgba(27,23,32,.6),0 10px 20px -10px rgba(27,23,32,.3)}
+.trilogy{position:relative;display:grid;gap:clamp(40px,5vw,70px);align-items:center;margin-top:clamp(50px,6vw,90px);padding:clamp(34px,5vw,72px);background:var(--ink);color:var(--t-light);border-radius:6px;overflow:hidden;isolation:isolate}
+.trilogy::before{content:"";position:absolute;z-index:-1;right:-10%;top:-30%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(217,188,132,.22),transparent 65%)}
+.trilogy .label{color:var(--gold-2)}
+@media (min-width:1000px){.trilogy{grid-template-columns:.75fr 1.25fr}}
+.tri-title{font:500 clamp(2.1rem,3.8vw,3.4rem)/1.05 var(--serif);margin:16px 0 14px}
+.tri-title em{font-style:italic;font-weight:400;color:var(--gold-3)}
+.trilogy .tri-title em{color:var(--gold-2)}
+.tri-text p:not(.label){color:var(--m-light);max-width:40ch;margin-bottom:26px}
+.tri-covers{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2.4vw,30px);align-items:start}
+.bk{display:grid;gap:12px;align-content:start}
+.bk-n{font:400 .95rem/1 var(--label);letter-spacing:.2em;color:var(--gold-2);margin-top:10px}
+.bk h4{font:500 clamp(1.05rem,1.6vw,1.4rem)/1.2 var(--serif)}
+.bk-actions{display:flex;flex-wrap:wrap;gap:6px 16px}
+.bk-actions .link{font-size:.92rem;padding-bottom:4px}
+.bk-actions .link:hover{color:var(--gold-2)}
+@media (max-width:599px){.bk-actions{display:grid}.bk h4{font-size:1rem}}
+.solo{display:grid;gap:clamp(34px,5vw,80px);align-items:center;margin-top:clamp(30px,4vw,50px);padding:clamp(30px,5vw,64px);background:#fff;border:1px solid var(--line-d);border-radius:6px}
+.solo-wrap{width:min(260px,56vw);margin:0 auto}
+@media (min-width:900px){.solo{grid-template-columns:auto 1fr}.solo-wrap{margin:0}}
+/* Full-photo frames: whole image, never cropped, over a soft blurred copy of itself */
+.frame.fit .bgblur{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;opacity:.9}
+.frame.fit .inner>img:not(.bgblur),.frame.fit>video{object-fit:contain}
+.frame.fit .inner::after{content:"";position:absolute;inset:0;background:rgba(21,18,26,.18);pointer-events:none}
 
 /* =========================================================================
    LEADERSHIP
@@ -448,10 +468,16 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 .rail-group::after{content:"";flex:1;height:1px;background:var(--line-l)}
 @media (min-width:640px) and (max-width:1024px){.rail{grid-template-columns:repeat(2,1fr)}.rail-group{grid-column:1/-1}}
 @media (min-width:1025px){
+  .honors.is-pinnable{height:100vh;height:100svh;min-height:600px;display:flex;flex-direction:column;justify-content:center;padding-top:calc(70px + 2vh);padding-bottom:3vh}
+  .honors.is-pinnable .h2{font-size:clamp(2rem,3.3vw,3.2rem)}
+  .honors.is-pinnable .honor-count .v{font-size:clamp(2.4rem,3.6vw,3.4rem)}
+  .honors.is-pinnable .rail-pin{margin-top:clamp(18px,3.5vh,44px)}
   .honors.is-pinnable .rail{display:flex;gap:20px;width:max-content;align-items:stretch;padding-right:var(--pad)}
-  .honors.is-pinnable .hcard,.honors.is-pinnable .hphoto{width:clamp(290px,23vw,350px);flex:none}
+  .honors.is-pinnable .hcard,.honors.is-pinnable .hphoto{width:clamp(270px,21vw,330px);height:clamp(270px,50vh,430px);min-height:0;flex:none}
+  .honors.is-pinnable .hcard{padding:26px 24px}
+  .honors.is-pinnable .hcard .y{font-size:clamp(2.2rem,5vh,3.2rem)}
   .honors.is-pinnable .hphoto{display:flex;flex-direction:column}
-  .honors.is-pinnable .hphoto .frame{flex:1;aspect-ratio:auto;min-height:320px}
+  .honors.is-pinnable .hphoto .frame{flex:1;aspect-ratio:auto;min-height:0}
   .honors.is-pinnable .rail-group{writing-mode:vertical-rl;transform:rotate(180deg);margin:0 6px}
   .honors.is-pinnable .rail-group::after{flex:none;width:1px;height:60px}
   .honors:not(.is-pinnable) .rail{grid-template-columns:repeat(3,1fr)}
@@ -549,7 +575,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 .foot-grid{max-width:var(--maxw);margin:0 auto;display:grid;gap:34px}
 @media (min-width:900px){.foot-grid{grid-template-columns:1.3fr 1fr auto;align-items:start}}
 .foot-brand{display:flex;gap:16px;align-items:center}
-.foot-brand img{width:54px;height:54px}
+.foot-brand img{width:64px;height:64px;object-fit:contain}
 .foot-brand b{display:block;font:500 1.7rem/1.1 var(--serif);color:var(--t-light)}
 .foot-brand em{font:italic 400 1.15rem/1 var(--serif);color:var(--gold-2)}
 .foot-links{display:grid;grid-template-columns:repeat(2,auto);gap:8px 34px;justify-content:start;font:400 1.05rem/1.4 var(--label);letter-spacing:.14em}
@@ -561,7 +587,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
    ========================================================================= */
 .scrim{position:fixed;inset:0;z-index:230;background:rgba(15,13,19,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
 .scrim.is-open{opacity:1;visibility:visible;transition:opacity .4s,visibility 0s}
-.drawer{position:fixed;z-index:240;left:0;right:0;bottom:0;max-height:92svh;overflow:auto;overscroll-behavior:contain;background:var(--ivory);color:var(--t-dark);border-radius:22px 22px 0 0;padding:14px clamp(20px,4vw,40px) calc(26px + var(--safe-b));box-shadow:0 -30px 80px rgba(0,0,0,.35);transform:translateY(105%);visibility:hidden;transition:transform .6s var(--ease),visibility .6s}
+.drawer{position:fixed;z-index:240;left:0;right:0;bottom:0;max-height:94vh;max-height:94dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior:contain;background:var(--ivory);color:var(--t-dark);border-radius:22px 22px 0 0;padding:14px clamp(20px,4vw,40px) calc(26px + var(--safe-b));box-shadow:0 -30px 80px rgba(0,0,0,.35);transform:translateY(105%);visibility:hidden;transition:transform .6s var(--ease),visibility .6s}
 .drawer.is-open{transform:none;visibility:visible;transition:transform .6s var(--ease),visibility 0s}
 @media (min-width:900px){.drawer{left:auto;top:0;width:min(540px,100%);max-height:none;border-radius:0;transform:translateX(105%);padding-top:34px}}
 .grab{width:44px;height:4px;border-radius:4px;background:var(--line-d);margin:0 auto 14px}
@@ -619,7 +645,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-<script defer src="/assets/app.js?v=20260927b"></script>
+<script defer src="/assets/app.js?v=20260927c"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -694,7 +720,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 
 <div class="splash" aria-hidden="true">
   <div class="splash-inner">
-    <img class="mono" src="/assets/monogram.svg" width="160" height="160" alt="" fetchpriority="high">
+    <img class="mono" src="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_limit,w_320/v1790515212/splash-favicon-logo_yxkwes.png" width="160" height="160" alt="" fetchpriority="high">
     <p class="splash-name">Dr. Navjot Kaur</p>
     <p class="splash-tag">BEAUTY WITH PURPOSE</p>
   </div>
@@ -705,12 +731,12 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <!-- ======================= TOP BAR ======================= -->
 <header class="topbar" id="topbar">
   <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="bars" aria-hidden="true"><span></span><span></span></span><span class="word" aria-hidden="true">MENU</span></button>
-  <a class="brand" href="#home" aria-label="Dr. Navjot Kaur, back to top"><img src="/assets/monogram.svg" width="40" height="40" alt=""><b>Dr. Navjot Kaur</b></a>
+  <a class="brand" href="#home" aria-label="Dr. Navjot Kaur, back to top"><img src="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_limit,w_120/v1790515212/splash-favicon-logo_yxkwes.png" width="46" height="46" alt=""><b>Dr. Navjot Kaur</b></a>
   <button class="top-cta" type="button" data-open="speak" aria-haspopup="dialog" aria-label="Invite Dr. Navjot Kaur to speak"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span>INVITE TO SPEAK</span></button>
 </header>
 
 <!-- ======================= MENU ======================= -->
-<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Site menu">
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Site menu" data-lenis-prevent>
   <div class="menu-wrap">
     <nav aria-label="Primary">
       <ol class="menu-links">
@@ -786,7 +812,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   </div>
 </section>
 
-<div class="ribbon marquee" style="--dur:48s">
+<div class="ribbon marquee" style="--dur:30s">
   <div class="marquee-track"><div class="marquee-set">
     <span class="m-item">KEYNOTE SPEAKER<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
     <span class="m-item">GUEST SPEAKER<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
@@ -877,7 +903,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
       </ul>
     </div>
   </div>
-  <div class="strip marquee" style="--dur:75s" id="stageStrip"></div>
+  <div class="strip marquee" style="--dur:36s" id="stageStrip"></div>
   <div class="wrap">
     <div class="speak-cta" data-reveal>
       <p>Planning a conference, school event or women's forum? <em>Invite Dr. Navjot Kaur to speak.</em></p>
@@ -900,7 +926,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
       <p class="label" data-reveal><span class="n">03</span> BOOKS</p>
       <h2 class="h2" id="books-h" data-split><span class="t" data-cfg-text="featuredTitle">Cosmic Map of Answers</span></h2>
       <p class="badge" data-reveal style="margin-top:22px"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg>AMAZON BESTSELLING AUTHOR</p>
-      <p class="lead" data-reveal>Her newest book carries the same conviction that shapes her classrooms and her stages: the right knowledge, shared generously, can help every reader believe in their dreams and unleash their true potential.</p>
+      <p class="lead" data-reveal>Her newest book, and the first of five, carries the same conviction that shapes her classrooms and her stages: the right knowledge, shared generously, can help every reader believe in their dreams and unleash their true potential.</p>
       <ol class="steps3" aria-label="How to order a copy" data-reveal>
         <li>Tap <b>Order on WhatsApp</b> and add the copies and delivery address.</li>
         <li>Your order opens in WhatsApp, ready to send to the author.</li>
@@ -913,9 +939,54 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
       <p class="d-note" data-reveal><svg class="i" aria-hidden="true"><use href="#i-truck"/></svg>Physical copies, shipped across India. No payment is taken on this website.</p>
     </div>
   </div>
-  <div class="wrap shelf" id="shelf" hidden>
-    <p class="label">ALSO BY DR. NAVJOT KAUR</p>
-    <div class="shelf-grid" id="shelfGrid"></div>
+  <div class="wrap library" id="library">
+    <div class="lib-head">
+      <p class="label" data-reveal>THE LIBRARY</p>
+      <h3 class="h2" data-split>Five books, one <em>calling.</em></h3>
+      <p class="lead" data-reveal>Every title can be ordered directly from the author on WhatsApp, or bought online.</p>
+    </div>
+
+    <div class="trilogy" id="trilogy">
+      <div class="tri-text">
+        <p class="label">A TRILOGY · THREE BOOKS</p>
+        <h3 class="tri-title">The <em>Mother</em> Trilogy</h3>
+        <p>Three books honouring motherhood: as a blessing, as a gift and as a creation.</p>
+        <button class="btn btn-gold" type="button" data-open="order" data-book="mother-trilogy" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg>Order the trilogy</button>
+      </div>
+      <div class="tri-covers">
+        <article class="bk" data-tri>
+          <div class="bk-cover" data-slot="books.motherBlessing" data-fit="book" data-sizes="(min-width: 900px) 220px, 30vw" data-cursor="ORDER" data-open="order" data-book="mother-blessing"></div>
+          <span class="bk-n">BOOK I</span>
+          <h4>Mother: A Divine Blessing</h4>
+          <div class="bk-actions"><a class="link" href="https://www.amazon.in/dp/9364526813" target="_blank" rel="noopener">AMAZON <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-blessing">WHATSAPP <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
+        </article>
+        <article class="bk" data-tri>
+          <div class="bk-cover" data-slot="books.motherGift" data-fit="book" data-sizes="(min-width: 900px) 220px, 30vw" data-cursor="ORDER" data-open="order" data-book="mother-gift"></div>
+          <span class="bk-n">BOOK II</span>
+          <h4>Mother: A Divine Gift</h4>
+          <div class="bk-actions"><a class="link" href="https://pnpacademy.in/product/mother-a-divine-gift/" target="_blank" rel="noopener">BUY ONLINE <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-gift">WHATSAPP <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
+        </article>
+        <article class="bk" data-tri>
+          <div class="bk-cover" data-slot="books.motherCreation" data-fit="book" data-sizes="(min-width: 900px) 220px, 30vw" data-cursor="ORDER" data-open="order" data-book="mother-creation"></div>
+          <span class="bk-n">BOOK III</span>
+          <h4>Mother: A Divine Creation</h4>
+          <div class="bk-actions"><a class="link" href="https://www.amazon.in/dp/B0G1YVZVYZ" target="_blank" rel="noopener">AMAZON <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-creation">WHATSAPP <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
+        </article>
+      </div>
+    </div>
+
+    <article class="solo" data-reveal>
+      <div class="solo-wrap"><div class="bk-cover solo-cover" data-slot="books.gwb" data-fit="book" data-sizes="(min-width: 900px) 260px, 56vw" data-cursor="ORDER" data-open="order" data-book="gwb"></div></div>
+      <div>
+        <p class="label">ALSO BY DR. NAVJOT KAUR</p>
+        <h3 class="tri-title">Gratitude, Wisdom <em>&amp;</em> Blessing</h3>
+        <p class="lead">An invitation to live with gratitude, lead with wisdom and recognise the blessings in every day.</p>
+        <div class="btn-row" style="margin-top:28px">
+          <button class="btn btn-gold" type="button" data-open="order" data-book="gwb" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg>Order on WhatsApp</button>
+          <a class="btn btn-line" href="https://www.amazon.in/Gratitude-Wisdom-Blessing-NAVJOT-KAUR/dp/B0F2F62YMG" target="_blank" rel="noopener">Buy on Amazon<svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
+        </div>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -975,19 +1046,19 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   <div class="rail-pin" id="railPin">
     <div class="rail" id="rail">
       <article class="hcard crown" data-reveal><span class="y">2022</span><span class="kind">TITLE</span><h3>Mrs. India Planet 2022</h3><p class="by">A title she carries as a platform for women's empowerment: beauty with purpose.</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg>INDIA</span></article>
-      <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.0" data-ar="4:5" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.0"></figcaption></figure>
+      <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.0" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.0"></figcaption></figure>
       <p class="rail-group">INTERNATIONAL</p>
       <article class="hcard" data-reveal><span class="y">2023</span><span class="kind">INTERNATIONAL</span><h3>Inspirational Educator Award</h3><p class="by">International School Awards</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>THAILAND</span></article>
       <article class="hcard" data-reveal><span class="y">2023</span><span class="kind">INTERNATIONAL</span><h3>Educationist of the Year 2023</h3><p class="by">Dubai YUJ International Awards</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>DUBAI, UAE</span></article>
       <article class="hcard" data-reveal><span class="y">2022</span><span class="kind">INTERNATIONAL</span><h3>Indian Achievers Award 2022</h3><p class="by">“Outstanding Leadership in Education”</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>DUBAI</span></article>
-      <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.1" data-ar="4:5" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.1"></figcaption></figure>
+      <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.1" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.1"></figcaption></figure>
       <p class="rail-group">NATIONAL</p>
       <article class="hcard" data-reveal><span class="y">2023</span><span class="kind">NATIONAL</span><h3>Young Woman Director of the Year 2023</h3><p class="by">Women Leaders Forum</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>NEW DELHI</span></article>
       <article class="hcard" data-reveal><span class="y">2023</span><span class="kind">NATIONAL</span><h3>Director of the Year – Education 2023</h3><p class="by">Women Entrepreneurship Summit / India Business Conclave, Global Triumph Foundation</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>CHENNAI</span></article>
-      <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.2" data-ar="4:5" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.2"></figcaption></figure>
+      <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.2" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.2"></figcaption></figure>
       <article class="hcard" data-reveal><span class="y">IWHM</span><span class="kind">NATIONAL</span><h3>Valuable Member</h3><p class="by">Indian Women's History Museum</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>INDIA</span></article>
       <article class="hcard" data-reveal><span class="y">2024</span><span class="kind">NATIONAL</span><h3>Panelist &amp; Guest Speaker</h3><p class="by">21st Education Summit 2024</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>INDIA</span></article>
-      <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.3" data-ar="4:5" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.3"></figcaption></figure>
+      <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.3" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.3"></figcaption></figure>
     </div>
   </div>
 </section>
@@ -1012,7 +1083,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
     <p class="label" data-reveal><span class="n">07</span> IN THE MEDIA</p>
     <h2 class="h2" id="media-h" data-split>In the <em>headlines.</em></h2>
   </div>
-  <div class="outlets marquee" style="--dur:40s">
+  <div class="outlets marquee" style="--dur:26s">
     <div class="marquee-track"><div class="marquee-set">
       <span class="m-item">Diva Planet<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
       <span class="m-item">Fastway News<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
@@ -1025,7 +1096,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   <div class="wrap media-grid">
     <figure class="cover" data-reveal>
       <div class="mast" aria-hidden="true"><b>Diva Planet</b><span>COVER FEATURE<br>OCT 2021 · VOL. 5</span></div>
-      <div class="frame" data-slot="media.cover" data-ar="3:4" data-sizes="(min-width: 900px) 390px, 86vw"></div>
+      <div class="frame" data-slot="media.cover" data-ar="3:4" data-fit="contain" data-sizes="(min-width: 900px) 390px, 86vw"></div>
       <figcaption><span>DIVA PLANET MAGAZINE</span><span>OCT 2021</span></figcaption>
     </figure>
     <div>
@@ -1051,8 +1122,8 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
     <p class="lead" data-reveal>Stages, classrooms, celebrations and quiet moments. Tap any frame to open it, and follow the journey as it happens.</p>
   </div>
   <div class="rows">
-    <div class="marquee" style="--dur:85s" id="rowA"></div>
-    <div class="marquee rev" style="--dur:95s" id="rowB"></div>
+    <div class="marquee" style="--dur:42s" id="rowA"></div>
+    <div class="marquee rev" style="--dur:48s" id="rowB"></div>
   </div>
   <div class="wrap follow">
     <a class="fcard" href="https://www.instagram.com/kaaurdrnavjot" data-cfg-href="instagram" target="_blank" rel="noopener" data-reveal>
@@ -1088,7 +1159,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 
 <footer class="footer">
   <div class="foot-grid">
-    <div class="foot-brand"><img src="/assets/monogram.svg" width="54" height="54" alt=""><div><b>Dr. Navjot Kaur</b><em>Beauty with purpose.</em></div></div>
+    <div class="foot-brand"><img src="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_limit,w_160/v1790515212/splash-favicon-logo_yxkwes.png" width="64" height="64" alt=""><div><b>Dr. Navjot Kaur</b><em>Beauty with purpose.</em></div></div>
     <nav class="foot-links" aria-label="Footer">
       <a href="#about">ABOUT</a><a href="#speaker">SPEAKER</a><a href="#books">BOOKS</a><a href="#leadership">LEADERSHIP</a>
       <a href="#honors">HONORS</a><a href="#impact">IMPACT</a><a href="#media">MEDIA</a><a href="#contact">CONTACT</a>
@@ -1104,7 +1175,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 
 <!-- ======================= DRAWER: order / invite → WhatsApp ======================= -->
 <div class="scrim" id="scrim" aria-hidden="true"></div>
-<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-h" hidden>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-h" data-lenis-prevent hidden>
   <div class="grab" aria-hidden="true"></div>
   <div class="d-head">
     <h2 id="drawer-h">Order a copy</h2>
@@ -1150,7 +1221,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 </div>
 
 <!-- ======================= LIGHTBOX ======================= -->
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Gallery viewer" hidden>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Gallery viewer" data-lenis-prevent hidden>
   <div class="lb-top"><span id="lbCount" aria-live="polite"></span><button class="icon-btn" type="button" data-lb-close aria-label="Close viewer"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button></div>
   <div class="lb-stage" id="lbStage">
     <button class="icon-btn lb-nav lb-prev" type="button" data-lb="-1" aria-label="Previous"><svg class="i" aria-hidden="true"><use href="#i-chev-l"/></svg></button>

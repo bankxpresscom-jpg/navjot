@@ -4,7 +4,7 @@
   "type": "module",
   "description": "One-page personal brand site for Dr. Navjot Kaur (static, Cloudflare Pages).",
   "scripts": {
-    "icons": "node scripts/generate-assets.mjs",
+    "og": "node scripts/generate-assets.mjs",
     "csp-hash": "node scripts/csp-hash.mjs",
     "set-domain": "node scripts/set-domain.mjs",
     "zip": "cd public && rm -f ../navjot-site.zip && zip -r -X ../navjot-site.zip . -x '.*'",
