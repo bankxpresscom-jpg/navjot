@@ -20,14 +20,14 @@ const CONFIG = {
   NAME: 'Dr. Navjot Kaur',
 
   // Orders and speaking invitations are sent to this WhatsApp number (country code, no +)
-  WHATSAPP_NUMBER: '917743031578',
-  CONTACT_PHONE: '+917743031578',
-  CONTACT_PHONE_DISPLAY: '+91 77430 31578',
-  CONTACT_EMAIL: 'hello@example.com',                   // dummy: replace with her email
+  WHATSAPP_NUMBER: '919814724488',
+  CONTACT_PHONE: '+919814724488',
+  CONTACT_PHONE_DISPLAY: '+91 98147 24488',
+  CONTACT_EMAIL: 'Drnavjotkaur2211@gmail.com',
   INSTAGRAM_URL: 'https://www.instagram.com/kaaurdrnavjot',
   LINKEDIN_URL: 'https://www.linkedin.com/in/dr-navjot-kaur-087a85318/',
   ORG: 'Quest International School',
-  JOB_TITLE: 'Keynote Speaker · Author · Educationist',
+  JOB_TITLE: 'Keynote Speaker · Author · Educationist · Founder & Pageant Director',
   MAX_QTY: 20,
 
   /* Books: order-form options, and the featured title in the Books section.
@@ -51,15 +51,16 @@ const CONFIG = {
    ------------------------------------------------------------------------ */
 const LIB = {
   // Brand photographs (her own)
-  hero:        `${C}/image/upload/v1790510343/hero_image_iadrrl.jpg`,
+  hero:        `${C}/image/upload/v1790660478/DR._NAVJOT_1_uneewy.png`,        // her chosen hero portrait
   author1:     `${C}/image/upload/v1790510349/author_photo_1_isytai.jpg`,
   author2:     `${C}/image/upload/v1790510351/author_photo_2_t5pztb.jpg`,
   author3:     `${C}/image/upload/v1790510346/author_photo_3_ww7rlr.jpg`,
   author4:     `${C}/image/upload/v1790510341/author_photo_4_bbqvwu.jpg`,
   author5:     `${C}/image/upload/v1790510342/author_photo_5_jq8mq8.jpg`,
-  author6:     `${C}/image/upload/v1790510342/author_photo_6_xlogdn.jpg`,
+  // author_photo_6 and the two 'coming soon' images (1000381797, 1000382977) must not be used anywhere
   // Organisation logos
-  logoWAAF:    `${C}/image/upload/v1790510338/world_academic_achievers_logo_geu0ea.jpg`,
+  logoWAAF:    `${C}/image/upload/v1790658467/ChatGPT_Image_Sep_29_2026_10_37_18_AM_kpfe3v.png`,
+  logoQuest:   `${C}/image/upload/v1790660033/ChatGPT_Image_Sep_29_2026_11_03_14_AM_gcsupj.png`,
   logoGWAC:    `${C}/image/upload/v1790510338/the_global_women_achievers_circle_logo_tmtstx.jpg`,
   logoYDC:     `${C}/image/upload/v1790510342/youth_diplomatic_conclave_logo_klpqwl.png`,
   // Brand logo (gold NK, transparent PNG): splash, header, footer and favicons reference it in index.html
@@ -84,7 +85,14 @@ const LIB = {
   p1000250327: `${C}/image/upload/v1790247993/1000250327.jpg_ymehoq.jpg`,
   wa20240919:  `${C}/image/upload/v1790247991/IMG-20240919-WA0015.jpg_qfulbr.jpg`,
   navjot07:    `${C}/image/upload/v1790247699/navjot-07.jpg_oa4wml.jpg`,
-  p1000381797: `${C}/image/upload/v1790247680/1000381797.jpg_v6eqxd.jpg`,
+  // Awards (2026 update)
+  legends:     `${C}/image/upload/v1790658819/WhatsApp_Image_2026-09-28_at_10.41.08_AM_skiefi.jpg`,
+  uae2025:     `${C}/image/upload/v1790659752/WhatsApp_Image_2026-09-28_at_12.53.34_PM_sxmxwd.jpg`,
+  // Extra photographs (replace the removed ones)
+  extra1:      `${C}/image/upload/v1790658821/1000071554.jpg_zsyqbb.jpg`,
+  extra2:      `${C}/image/upload/v1790658822/1000118012.jpg_ii6u0c.jpg`,
+  extra3:      `${C}/image/upload/v1790658821/file_00000000018872099e477456bcaee8ac_bxg7cq.png`,
+  extra4:      `${C}/image/upload/v1790658821/1000072343.jpg_wcjeqo.jpg`,
   drNavjotPng: `${C}/image/upload/v1790247661/DR._NAVJOT_ud6jom.png`,
   wa20260922:  `${C}/image/upload/v1790247660/IMG-20260922-WA0026.jpg_ztj4bw.jpg`,
   p20240713:   `${C}/image/upload/v1790247659/20240713_120931_1.jpg_vh6opi.jpg`,
@@ -114,7 +122,7 @@ const ASSETS = {
   hero: { src: LIB.hero, alt: 'Portrait of Dr. Navjot Kaur', pos: '50% 22%' },   // keep in sync with the <img> + preload in index.html
   about: {
     portrait:    img(LIB.author1, 'Dr. Navjot Kaur', { pos: '50% 20%' }),
-    portraitAlt: img(LIB.author6, 'Dr. Navjot Kaur', { pos: '50% 20%' }),         // cross-fades with the portrait
+    portraitAlt: img(LIB.extra2, 'Dr. Navjot Kaur', { pos: '50% 20%' }),          // cross-fades with the portrait
     second:      img(LIB.author2, 'Dr. Navjot Kaur', { pos: '50% 20%' })
   },
   speaker: {
@@ -129,16 +137,19 @@ const ASSETS = {
     gwb:            img(LIB.coverGWB, 'Cover of Gratitude, Wisdom & Blessing by Dr. Navjot Kaur')
   },
   leadership: {
+    quest: img(LIB.logoQuest, 'Quest International School logo'),
     waaf: img(LIB.logoWAAF, 'World Academic Achievers Forum logo'),
     ydc:  img(LIB.logoYDC,  'Youth Diplomatic Conclave logo'),
     gwac: img(LIB.logoGWAC, 'The Global Women Achievers Circle logo')
   },
   honors: {
     photos: [
-      img(LIB.dsc4235,     'Dr. Navjot Kaur, Mrs. India Planet 2022', { caption: 'Mrs. India Planet 2022', pos: '50% 20%' }),
+      img(LIB.legends,     'Dr. Navjot Kaur receiving the Honouring Legends of Education award', { caption: 'Honouring Legends of Education', pos: '50% 25%' }),
+      img(LIB.uae2025,     'Dr. Navjot Kaur honoured in the UAE, 2025', { caption: 'Visionary Leader in Global Education & Women Empowerment · UAE 2025', pos: '50% 25%' }),
       img(LIB.p20231201,   'Dr. Navjot Kaur at an awards ceremony', { caption: 'Honoured on an international stage', pos: '50% 25%' }),
+      img(LIB.dsc4235,     'Dr. Navjot Kaur, Mrs. India Planet 2022', { caption: 'Mrs. India Planet 2022', pos: '50% 20%' }),
       img(LIB.img2243,     'Dr. Navjot Kaur receiving an honour', { caption: 'Recognised for leadership in education', pos: '50% 25%' }),
-      img(LIB.p1000381797, 'Dr. Navjot Kaur at an award event', { caption: 'A moment of honour', pos: '50% 25%' })
+      img(LIB.extra1,      'Dr. Navjot Kaur at an award event', { caption: 'A moment of honour', pos: '50% 25%' })
     ]
   },
   media: { cover: img(LIB.navjot07, 'Dr. Navjot Kaur, cover feature of Diva Planet Magazine', { pos: '50% 20%' }) },
@@ -181,13 +192,15 @@ const ASSETS = {
     img(LIB.png2ca8,     'Dr. Navjot Kaur', { ar: '4:5' }),
     img(LIB.wa20260922,  'Dr. Navjot Kaur at a recent event', { ar: '1:1', small: true }),
     img(LIB.author2,     'Dr. Navjot Kaur', { ar: '4:5' }),
+    img(LIB.extra3,      'Dr. Navjot Kaur', { ar: '4:5' }),
+    img(LIB.extra4,      'Dr. Navjot Kaur', { ar: '1:1' }),
     // Disabled: probably a screenshot. Set enabled: true only if it is a clean photo.
     img(LIB.screenshot,  'Dr. Navjot Kaur', { ar: '4:5', enabled: false })
   ],
 
   menu: {
-    home: LIB.hero, about: LIB.author1, speaker: LIB.author3, books: LIB.bookCover, leadership: LIB.author6,
-    honors: LIB.dsc4235, impact: LIB.ayaam2022, media: LIB.navjot07, gallery: LIB.author4, contact: LIB.author5
+    home: LIB.hero, about: LIB.author1, speaker: LIB.author3, books: LIB.bookCover, leadership: LIB.extra3,
+    honors: LIB.dsc4235, impact: LIB.ayaam2022, media: LIB.navjot07, gallery: LIB.author4, appointments: LIB.extra4, contact: LIB.author5
   }
 };
 
@@ -765,8 +778,9 @@ const Lightbox = {
 const Drawer = {
   mode: 'order', qty: 1, isOpen: false, lastUrl: '',
   COPY: {
-    order: { title: 'Order a copy', sub: 'Add your details and send the order to Dr. Navjot Kaur on WhatsApp. She will confirm price, payment and delivery with you directly.' },
-    speak: { title: 'Invite to speak', sub: 'Share a few details about your event. The invitation opens in WhatsApp, ready to send to Dr. Navjot Kaur.' }
+    order: { title: 'Order a copy', sub: 'Add your details and send the order on WhatsApp. Our team will contact you to confirm the book price, securely process your payment and coordinate your delivery.' },
+    appt: { title: 'Book an appointment', sub: 'Choose a session and send your request on WhatsApp. Our team will coordinate the date, time, slot and payment with you.' },
+    speak: { title: 'Send Invitation for Speaking Engagements', sub: 'Share a few details about your event. The invitation opens in WhatsApp, ready to send to Dr. Navjot Kaur.' }
   },
   init() {
     this.d = $('#drawer'); this.scrim = $('#scrim'); this.form = $('#dForm'); this.err = $('#dErr'); this.mail = $('#altMail');
@@ -781,7 +795,7 @@ const Drawer = {
     this.form.addEventListener('submit', e => { e.preventDefault(); this.send(); });
   },
   open(mode, bookId, opener) {
-    this.mode = mode === 'speak' ? 'speak' : 'order';
+    this.mode = mode === 'speak' || mode === 'appt' ? mode : 'order';
     this.opener = opener || document.activeElement;
     $('#drawer-h').textContent = this.COPY[this.mode].title;
     $('#drawerSub').textContent = this.COPY[this.mode].sub;
@@ -810,6 +824,9 @@ const Drawer = {
       if (!/^[6-9]\d{9}$/.test(digits(this.v('phone')).replace(/^(91|0)(?=\d{10}$)/, ''))) return this.invalid('phone', 'Please enter a valid 10-digit mobile number.');
       if (!/^[1-9]\d{5}$/.test(this.v('pincode'))) return this.invalid('pincode', 'Please enter a valid 6-digit pincode.');
       if (this.v('address').length < 10) return this.invalid('address', 'Please enter your full delivery address.');
+    } else if (this.mode === 'appt') {
+      if (this.v('aname').length < 2) return this.invalid('aname', 'Please enter your name.');
+      if (digits(this.v('aphone')).length < 7) return this.invalid('aphone', 'Please enter a phone number we can reach you on.');
     } else {
       if (this.v('sname').length < 2) return this.invalid('sname', 'Please enter your name.');
       if (digits(this.v('sphone')).length < 7) return this.invalid('sphone', 'Please enter a phone number we can reach you on.');
@@ -825,7 +842,13 @@ const Drawer = {
       return `Hello Dr. Navjot Kaur, I would like to order your book.\n\n` +
         L('Book', b ? b.title : '') + L('Copies', this.qty) + L('Name', this.v('name')) + L('Phone', this.v('phone')) +
         L('Address', this.v('address')) + L('Pincode', this.v('pincode')) + L('Note', this.v('note')) +
-        `\nPlease confirm the price, payment and delivery. Thank you!`;
+        `\nPlease confirm the book price, payment and delivery. Thank you!`;
+    }
+    const fmt = v => (v ? new Date(v + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
+    if (this.mode === 'appt') {
+      return `Hello, I would like to book an appointment with Dr. Navjot Kaur.\n\n` +
+        L('Session', this.v('svc')) + L('Name', this.v('aname')) + L('Phone', this.v('aphone')) + L('Preferred date', fmt(this.v('adate'))) +
+        L('Preferred time', this.v('atime')) + L('Message', this.v('amsg')) + `\nPlease share the available slots and payment details. Thank you!`;
     }
     const date = this.v('date') ? new Date(this.v('date') + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     return `Hello Dr. Navjot Kaur, I would like to invite you to speak.\n\n` +
@@ -833,7 +856,7 @@ const Drawer = {
       L('Date', date) + L('City', this.v('city')) + L('Details', this.v('msg')) + `\nLooking forward to hearing from you.`;
   },
   syncMail() {
-    const subject = this.mode === 'order' ? 'Book order' : 'Speaking invitation';
+    const subject = this.mode === 'order' ? 'Book order' : this.mode === 'appt' ? 'Appointment request' : 'Speaking invitation';
     this.mail.href = `mailto:${CONFIG.CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.message())}`;
   },
   send() {

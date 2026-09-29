@@ -29,7 +29,9 @@ To rebuild the zip after edits, run `npm run zip`.
 
 - **Order on WhatsApp** (Books section, the hero book card, or clicking the 3D book) opens a short form: book, copies, name, phone, pincode, address.
   Submitting opens WhatsApp (the app on phones, WhatsApp Web on desktop) with the complete order message addressed to `CONFIG.WHATSAPP_NUMBER`.
-  She confirms price, payment and delivery in the chat.
+  Her team confirms the book price, payment and delivery in the chat.
+- **Book an appointment** (Appointments section) sends the chosen healing / guidance session, name, phone and preferred date and time on WhatsApp.
+  The team coordinates the slot and payment.
 - **Invite to speak** (top bar, hero, Speaker section, Contact) works the same way: name, phone, organisation, event, date, city and message are sent as a WhatsApp invitation.
 - Every form also offers **"Prefer email?"**, which opens the same message pre-filled in the visitor's email app.
 
@@ -37,8 +39,8 @@ To rebuild the zip after edits, run `npm run zip`.
 
 | What | Key |
 |---|---|
-| WhatsApp number for orders and invitations | `WHATSAPP_NUMBER` (currently `917743031578`) |
-| **Email**: `hello@example.com` is a dummy | `CONTACT_EMAIL` (also update the fallback text in `index.html` and the JSON-LD) |
+| WhatsApp number for orders, appointments and invitations | `WHATSAPP_NUMBER` (currently `919814724488`) |
+| Email | `CONTACT_EMAIL` (currently `Drnavjotkaur2211@gmail.com`; also update the fallback text in `index.html` and the JSON-LD) |
 | Book list in the order form | `BOOKS` (the featured book, the three Mother Trilogy books, a "whole trilogy" option, and Gratitude, Wisdom & Blessing) |
 | Footer credit | `CRAFTED_BY` |
 | Real domain | run `npm run set-domain -- https://www.your-domain.com` |
