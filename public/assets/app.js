@@ -109,7 +109,8 @@ const LIB = {
   v424527:     `${C}/video/upload/v1790247719/1000424527_ubi3fk.mp4`,
   v416510:     `${C}/video/upload/v1790247708/1000416510_j7odyb.mp4`,
   vWa251206:   `${C}/video/upload/v1790247699/VID-20251206-WA0006_1_2_ru2zyw.mp4`,
-  v416969:     `${C}/video/upload/v1790247697/1000416969_goj4gu.mov`
+  v416969:     `${C}/video/upload/v1790247697/1000416969_goj4gu.mov`,
+  vOnStage:    `${C}/video/upload/v1790662863/1000032928_shvu9a.mp4`
 };
 
 /* ---------------------------------------------------------------------------
@@ -127,7 +128,7 @@ const ASSETS = {
   },
   speaker: {
     portrait: img(LIB.author3, 'Dr. Navjot Kaur speaking', { pos: '50% 20%' }),
-    video: LIB.vStage                                                           // plays over the portrait when in view
+    video: ''                                                                   // none: the curtain-launch clip (vStage) is retired; the portrait shows instead
   },
   books: {
     cover:          img(LIB.bookCover, 'Cover of Cosmic Map of Answers by Dr. Navjot Kaur'),
@@ -173,7 +174,7 @@ const ASSETS = {
     img(LIB.wa20240919,  'Dr. Navjot Kaur at an awareness programme', { caption: 'Awareness drive', order: 6, small: true }),
     vid(LIB.v416969,     'Video from a women empowerment programme', { caption: 'Workshop moments', span: 'h2', order: 7 }),
     img(LIB.p20250325,   'Dr. Navjot Kaur addressing a gathering', { caption: 'Encouraging every woman', span: 'w2', order: 9 }),
-    vid(LIB.v418113,     'Video of Dr. Navjot Kaur speaking', { caption: 'On stage', order: 10 }),
+    vid(LIB.vOnStage,    'Video of Dr. Navjot Kaur on stage', { caption: 'On stage', order: 10 }),
     img(LIB.wa20250325,  'Dr. Navjot Kaur with participants', { caption: 'Together', order: 11, small: true })
   ],
 
