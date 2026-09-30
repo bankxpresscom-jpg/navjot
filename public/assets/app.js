@@ -42,7 +42,7 @@ const CONFIG = {
     { id: 'gwb', title: 'Gratitude, Wisdom & Blessing', amazon: 'https://www.amazon.in/Gratitude-Wisdom-Blessing-NAVJOT-KAUR/dp/B0F2F62YMG' }
   ],
 
-  CRAFTED_BY: { label: 'Crafted by', name: 'Your Studio', url: '' },
+  CRAFTED_BY: { label: 'Crafted with love by', name: 'Infinity Intelligence', url: 'https://infinityintelligence.io' },   // followed link (no nofollow)
   MAX_PLAYING_VIDEOS: 2
 };
 
