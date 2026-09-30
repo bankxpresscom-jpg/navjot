@@ -60,12 +60,14 @@ The favicons, Apple touch icon and app icons are the same logo padded on black b
 
 ## Photos (`ASSETS` in `app.js`)
 
-- **Hero:** `hero_image` only (her photo, as requested). If you change it, also update the `preload` link and `<img>` in `index.html`.
-- **About:** `author_photo_1`, which slowly cross-fades with `author_photo_6`, plus `author_photo_2`.
-- **Speaker:** `author_photo_3`, with the stage video playing over it when in view.
-- **Contact:** `author_photo_5`. `author_photo_4` opens the gallery.
-- **Leadership:** the three organisation logos.
-- **Moments of Honor, Impact, Media and the moving gallery rows:** the event, award and community photos and videos.
+- **Hero:** `LIB.hero` only (her chosen photo). If you change it, also update the `preload` link, `<img>`, social images and JSON-LD in `index.html`.
+- **About:** `LIB.aboutPortrait` in the arch, plus `author_photo_2`.
+- **Speaker ("On stage"):** a story-style slideshow (`ASSETS.speaker.slides`): `author_photo_3`, three stage photos and one stage video, all shown whole.
+- **Media:** the EdTalk World Conference interview (`author_photo_1`) as the featured photo, then `ASSETS.mediaInteractions` (media interactions and panel discussions) and the YouTube podcasts in `PODCASTS` (add a YouTube ID to add an episode).
+- **Magazines:** `ASSETS.magazines`, covers and feature pages, never cropped.
+- **Contact:** `author_photo_5`. The winning picture leads the gallery.
+- **Leadership:** the organisation logos.
+- **Moments of Honor, Impact and the moving gallery rows:** the event, award and community photos and videos. Each photo appears once on the site.
 
 Her portraits (hero, about, speaker, contact) use face-aware crops. **Event, award and community photos and videos are never cropped**: each is shown whole over a soft blurred copy of itself, so no one's head is cut off.
 Logos and the book cover are never cropped. The ChatGPT screenshot is kept but disabled (`enabled: false`).

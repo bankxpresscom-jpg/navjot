@@ -51,8 +51,10 @@ const CONFIG = {
    ------------------------------------------------------------------------ */
 const LIB = {
   // Brand photographs (her own)
-  hero:        `${C}/image/upload/v1790660478/DR._NAVJOT_1_uneewy.png`,        // her chosen hero portrait
-  author1:     `${C}/image/upload/v1790510349/author_photo_1_isytai.jpg`,
+  hero:        `${C}/image/upload/v1790774925/ChatGPT_Image_Sep_30_2026_06_56_08_PM_prezqe.png`,   // her chosen hero portrait (Sep 2026)
+  aboutPortrait: `${C}/image/upload/v1790772311/file_000000002ca87206b60a14e4c7c15940_1_bejygi.png`, // About arch portrait
+  winning:     `${C}/image/upload/v1790774355/file_00000000f4a871fda813fe0b975a5fbe_1_aaulnn.png`,   // her winning picture (gallery)
+  author1:     `${C}/image/upload/v1790510349/author_photo_1_isytai.jpg`,        // EdTalk World Conference media interaction
   author2:     `${C}/image/upload/v1790510351/author_photo_2_t5pztb.jpg`,
   author3:     `${C}/image/upload/v1790510346/author_photo_3_ww7rlr.jpg`,
   author4:     `${C}/image/upload/v1790510341/author_photo_4_bbqvwu.jpg`,
@@ -110,8 +112,41 @@ const LIB = {
   v416510:     `${C}/video/upload/v1790247708/1000416510_j7odyb.mp4`,
   vWa251206:   `${C}/video/upload/v1790247699/VID-20251206-WA0006_1_2_ru2zyw.mp4`,
   v416969:     `${C}/video/upload/v1790247697/1000416969_goj4gu.mov`,
-  vOnStage:    `${C}/video/upload/v1790662863/1000032928_shvu9a.mp4`
+  vOnStage:    `${C}/video/upload/v1790662863/1000032928_shvu9a.mp4`,
+  // On stage (speaker reel, Sep 2026)
+  stage1:      `${C}/image/upload/v1790772422/file_000000008eb48211956516e10f111b6b_1_d43dqw.png`,
+  stage2:      `${C}/image/upload/v1790772420/20260927_211051.jpg_lr4hzn.jpg`,
+  stageVideo:  `${C}/video/upload/v1790772419/DSC_6183_1_1_dfaur6.mp4`,
+  stage3:      `${C}/image/upload/v1790772419/IMG-20260831-WA0022.jpg_df0vw8.jpg`,
+  p20240713b:  `${C}/image/upload/v1790772687/20240713_120931_1.jpg_1_d8epgl.jpg`,   // replaces 20251206_145715 in the stage strip
+  // Magazines: covers and feature articles (always shown whole, never cropped)
+  mag1: `${C}/image/upload/v1790773471/IMG_20220511_111105_1.jpg_1_edbpkc.jpg`,
+  mag2: `${C}/image/upload/v1790773470/20220428_205212.jpg_rbc5on.jpg`,
+  mag3: `${C}/image/upload/v1790773469/IMG-20240919-WA0015.jpg_1_bim6z2.jpg`,
+  mag4: `${C}/image/upload/v1790773469/IMG-20220512-WA0007.jpg_frgumj.jpg`,
+  mag5: `${C}/image/upload/v1790773469/20240611_093429.jpg_git3tf.jpg`,
+  mag6: `${C}/image/upload/v1790773468/IMG-20220512-WA0006.jpg_1_di5q38.jpg`,
+  mag7: `${C}/image/upload/v1790773468/IMG-20220512-WA0002.jpg_ltlmj9.jpg`,
+  mag8: `${C}/image/upload/v1790773468/navjot3-1.jpg_bindcx.jpg`,
+  // Media interactions and panel discussions
+  mi1:  `${C}/image/upload/v1790773654/DSC_7583.JPG_ywdycs.jpg`,
+  mi2:  `${C}/image/upload/v1790773652/VideoCapture_20240130-181335.jpg_lvfnnl.jpg`,
+  mi3:  `${C}/video/upload/v1790773652/VID_20250727_064844_140_vldyza.mp4`,
+  mi4:  `${C}/image/upload/v1790773652/20250705_151114.jpg_isuyoz.jpg`,
+  mi5:  `${C}/image/upload/v1790773651/A28I8902.JPG_cw5oel.jpg`,
+  mi6:  `${C}/image/upload/v1790773651/file_000000000b807207bea17dbb1ebde00b_bsw8eh.png`,
+  mi7:  `${C}/image/upload/v1790773651/20251206_140152.jpg_o8harw.jpg`,
+  mi8:  `${C}/image/upload/v1790773649/IMG-20240610-WA0021.jpg_t3fcym.jpg`,
+  mi9:  `${C}/image/upload/v1790773649/20231012_151950.jpg_urliuz.jpg`,
+  mi10: `${C}/image/upload/v1790773648/IMG-20240905-WA0009.jpg_axknsy.jpg`
 };
+
+/* Podcasts and interviews on YouTube (IDs only; thumbnails load from YouTube, the player loads on click) */
+const PODCASTS = [
+  { id: 'rtbtYkFmsiY' }, { id: 'JCt0vqnclS4' }, { id: 'fj0uZMZiLxU' },
+  { id: 'qOPdVTojyOM' }, { id: 'gqIEj4zgyxo' }, { id: 'wqnVZuxsb2s' },
+  { id: 'aqPHro1BSiI', short: true }
+];
 
 /* ---------------------------------------------------------------------------
    3. ASSETS: slot mapping. `pos` = CSS object-position (crops are also
@@ -122,13 +157,19 @@ const vid = (src, alt, extra = {}) => ({ type: 'video', src, alt, ...extra });
 const ASSETS = {
   hero: { src: LIB.hero, alt: 'Portrait of Dr. Navjot Kaur', pos: '50% 22%' },   // keep in sync with the <img> + preload in index.html
   about: {
-    portrait:    img(LIB.author1, 'Dr. Navjot Kaur', { pos: '50% 20%' }),
-    portraitAlt: img(LIB.extra2, 'Dr. Navjot Kaur', { pos: '50% 20%' }),          // cross-fades with the portrait
+    portrait:    img(LIB.aboutPortrait, 'Portrait of Dr. Navjot Kaur', { pos: '50% 18%' }),
     second:      img(LIB.author2, 'Dr. Navjot Kaur', { pos: '50% 20%' })
   },
+  // Speaker section: "On stage" reel, a slideshow of whole (uncropped) photos and one video.
+  // The curtain-launch clip (vStage) is retired and not used.
   speaker: {
-    portrait: img(LIB.author3, 'Dr. Navjot Kaur speaking', { pos: '50% 20%' }),
-    video: ''                                                                   // none: the curtain-launch clip (vStage) is retired; the portrait shows instead
+    slides: [
+      img(LIB.author3,    'Dr. Navjot Kaur speaking on stage'),
+      img(LIB.stage1,     'Dr. Navjot Kaur on stage'),
+      img(LIB.stage2,     'Dr. Navjot Kaur addressing an audience'),
+      vid(LIB.stageVideo, 'Video of Dr. Navjot Kaur on stage'),
+      img(LIB.stage3,     'Dr. Navjot Kaur at a stage event')
+    ]
   },
   books: {
     cover:          img(LIB.bookCover, 'Cover of Cosmic Map of Answers by Dr. Navjot Kaur'),
@@ -153,17 +194,44 @@ const ASSETS = {
       img(LIB.extra1,      'Dr. Navjot Kaur at an award event', { caption: 'A moment of honour', pos: '50% 25%' })
     ]
   },
-  media: { cover: img(LIB.navjot07, 'Dr. Navjot Kaur, cover feature of Diva Planet Magazine', { pos: '50% 20%' }) },
+  // Media: the EdTalk World Conference interview is the featured, full-size photo
+  media: {
+    featured: img(LIB.author1, 'Dr. Navjot Kaur in a media interaction at the EdTalk World Conference', { caption: 'Media interaction · EdTalk World Conference' })
+  },
+  mediaInteractions: [
+    img(LIB.mi1,  'Dr. Navjot Kaur in a media interaction'),
+    img(LIB.mi2,  'Dr. Navjot Kaur in a televised interview'),
+    img(LIB.mi4,  'Dr. Navjot Kaur at a panel discussion'),
+    vid(LIB.mi3,  'Video of Dr. Navjot Kaur in a media interaction'),
+    img(LIB.mi5,  'Dr. Navjot Kaur speaking at a panel'),
+    img(LIB.mi6,  'Dr. Navjot Kaur in conversation with the media'),
+    img(LIB.mi7,  'Dr. Navjot Kaur at a panel discussion'),
+    img(LIB.mi8,  'Dr. Navjot Kaur in a media interaction'),
+    img(LIB.mi9,  'Dr. Navjot Kaur at a panel discussion'),
+    img(LIB.mi10, 'Dr. Navjot Kaur in a media interaction')
+  ],
+  magazines: [
+    img(LIB.mag1, 'Magazine feature on Dr. Navjot Kaur'),
+    img(LIB.mag2, 'Magazine feature on Dr. Navjot Kaur'),
+    img(LIB.mag3, 'Magazine feature on Dr. Navjot Kaur'),
+    img(LIB.mag4, 'Magazine feature on Dr. Navjot Kaur'),
+    img(LIB.mag5, 'Magazine feature on Dr. Navjot Kaur'),
+    img(LIB.mag6, 'Magazine feature on Dr. Navjot Kaur'),
+    img(LIB.mag7, 'Magazine feature on Dr. Navjot Kaur'),
+    img(LIB.mag8, 'Magazine feature on Dr. Navjot Kaur')
+  ],
   contact: { portrait: img(LIB.author5, 'Dr. Navjot Kaur', { pos: '50% 20%' }) },
 
-  // Speaker section: moving film strip
+  // Speaker section: moving film strip.
+  // 20251206_145715 looked like a repeat, so it is replaced by 20240713_120931_1 (_1 upload);
+  // the older upload of that same file (p20240713) is left out so it never appears twice.
+  // The 2022 magazine page (IMG_20220511) now lives in the Magazines section.
   stageStrip: [
     img(LIB.navjot05,   'Dr. Navjot Kaur', { ar: '3:4' }),
-    img(LIB.p20240713,  'Dr. Navjot Kaur at an education summit', { ar: '4:5' }),
+    img(LIB.p20240713b, 'Dr. Navjot Kaur at an education summit', { ar: '4:5' }),
     img(LIB.dsc4230,    'Dr. Navjot Kaur', { ar: '3:4' }),
-    img(LIB.p20251206,  'Dr. Navjot Kaur at an event', { ar: '4:5' }),
-    img(LIB.p20250705a, 'Dr. Navjot Kaur addressing guests', { ar: '3:4' }),
-    img(LIB.img20220511,'Dr. Navjot Kaur at an event in 2022', { ar: '4:5' })
+    img(LIB.extra2,     'Dr. Navjot Kaur', { ar: '4:5' }),
+    img(LIB.p20250705a, 'Dr. Navjot Kaur addressing guests', { ar: '3:4' })
   ],
 
   // Impact bento. `span` = grid spans; `order` interleaves with the static text tiles (2, 5, 8)
@@ -171,28 +239,28 @@ const ASSETS = {
     img(LIB.ayaam2022,   'Dr. Navjot Kaur as Chief Guest at Ayaam 2022', { caption: 'Chief Guest · Ayaam 2022', span: 'w2 h2', order: 1 }),
     vid(LIB.v416510,     'Video from a community event', { caption: 'In the community', span: 'h2', order: 3 }),
     img(LIB.p1000250327, 'Dr. Navjot Kaur with women at a social event', { caption: 'Women empowerment', order: 4 }),
-    img(LIB.wa20240919,  'Dr. Navjot Kaur at an awareness programme', { caption: 'Awareness drive', order: 6, small: true }),
     vid(LIB.v416969,     'Video from a women empowerment programme', { caption: 'Workshop moments', span: 'h2', order: 7 }),
     img(LIB.p20250325,   'Dr. Navjot Kaur addressing a gathering', { caption: 'Encouraging every woman', span: 'w2', order: 9 }),
     vid(LIB.vOnStage,    'Video of Dr. Navjot Kaur on stage', { caption: 'On stage', order: 10 }),
     img(LIB.wa20250325,  'Dr. Navjot Kaur with participants', { caption: 'Together', order: 11, small: true })
   ],
 
-  // Gallery: two rows of moving images (open in the lightbox)
+  // Gallery ("Life in frames"): two rows of moving images (open in the lightbox).
+  // Each photo appears once on the whole site: png2ca8 (same photo as the About portrait)
+  // and author2 (already in About) were removed; the winning picture leads row A.
   galleryA: [
+    img(LIB.winning,     'Dr. Navjot Kaur, winning moment', { ar: '4:5' }),
     img(LIB.author4,     'Dr. Navjot Kaur', { ar: '4:5' }),
-    img(LIB.p20250705b,  'Dr. Navjot Kaur with guests', { ar: '1:1' }),
     vid(LIB.v211837,     'Highlight video of Dr. Navjot Kaur', { ar: '4:5' }),
     img(LIB.pngF3dc,     'Dr. Navjot Kaur', { ar: '4:5' }),
-    img(LIB.pngF774,     'Dr. Navjot Kaur', { ar: '1:1' }),
-    vid(LIB.vWa251206,   'Short video clip, December 2025', { ar: '4:5', small: true })
+    vid(LIB.vWa251206,   'Short video clip, December 2025', { ar: '4:5', small: true }),
+    img(LIB.pngF774,     'Dr. Navjot Kaur', { ar: '1:1' })
   ],
   galleryB: [
     img(LIB.drNavjotPng, 'Dr. Navjot Kaur', { ar: '1:1' }),
     vid(LIB.v424527,     'Video of Dr. Navjot Kaur at an event', { ar: '4:5' }),
-    img(LIB.png2ca8,     'Dr. Navjot Kaur', { ar: '4:5' }),
+    img(LIB.p20250705b,  'Dr. Navjot Kaur with guests', { ar: '1:1' }),
     img(LIB.wa20260922,  'Dr. Navjot Kaur at a recent event', { ar: '1:1', small: true }),
-    img(LIB.author2,     'Dr. Navjot Kaur', { ar: '4:5' }),
     img(LIB.extra3,      'Dr. Navjot Kaur', { ar: '4:5' }),
     img(LIB.extra4,      'Dr. Navjot Kaur', { ar: '1:1' }),
     // Disabled: probably a screenshot. Set enabled: true only if it is a clean photo.
@@ -200,8 +268,9 @@ const ASSETS = {
   ],
 
   menu: {
-    home: LIB.hero, about: LIB.author1, speaker: LIB.author3, books: LIB.bookCover, leadership: LIB.extra3,
-    honors: LIB.dsc4235, impact: LIB.ayaam2022, media: LIB.navjot07, gallery: LIB.author4, appointments: LIB.extra4, contact: LIB.author5
+    home: LIB.hero, about: LIB.aboutPortrait, speaker: LIB.author3, books: LIB.bookCover, leadership: LIB.extra3,
+    honors: LIB.dsc4235, impact: LIB.ayaam2022, media: LIB.author1, magazines: LIB.mag8, gallery: LIB.winning,
+    appointments: LIB.extra4, contact: LIB.author5
   }
 };
 
@@ -378,12 +447,69 @@ const Videos = {
 };
 document.addEventListener('visibilitychange', () => { if (document.hidden) Videos.pauseAll(); });
 
+/* "On stage" reel: whole photos (never cropped) that cross-fade like stories, with one video.
+   Advances only while on screen; hover (desktop) holds the current slide; tap opens the lightbox. */
 function mountReel() {
-  const reel = $('#reel'); if (!reel || !ASSETS.speaker.video || saveData || reduced) return;
-  const v = Videos.make(ASSETS.speaker.video, finePointer ? 1080 : 720);
-  v.style.objectPosition = '50% 25%';
-  reel.insertBefore(v, $('.tag', reel));
-  Videos.register(v, reel, { threshold: 0.35, hover: false });
+  const reel = $('#reel'); if (!reel) return;
+  const items = (ASSETS.speaker.slides || []).filter(i => i.enabled !== false);
+  if (!items.length) return;
+  const tag = $('.tag', reel), count = $('.tag .n', reel);
+  const base = LB_ITEMS.length; LB_ITEMS.push(...items);
+  const bars = document.createElement('div'); bars.className = 'reel-bars';
+  const slides = items.map((item, i) => {
+    const isVideo = item.type === 'video';
+    const holder = document.createElement('div');
+    fullPhoto(holder, item, '(min-width: 900px) 36vw, 90vw', isVideo);
+    const inner = $('.inner', holder);
+    inner.classList.add('slide');
+    let v = null;
+    if (isVideo && !saveData && !reduced) {
+      v = Videos.make(item.src, finePointer ? 1080 : 720);
+      inner.appendChild(v);
+      v.addEventListener('playing', () => inner.classList.add('is-playing'));
+    }
+    reel.insertBefore(inner, tag);
+    failSafe($('img:not(.bgblur)', inner), reel);
+    const b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('aria-label', `Show ${isVideo ? 'video' : 'photo'} ${i + 1} of ${items.length}`);
+    b.addEventListener('click', e => { e.stopPropagation(); go(i); });
+    bars.appendChild(b);
+    return { inner, v, bar: b, dur: isVideo ? 9000 : 4200 };
+  });
+  reel.classList.add('fit', 'has-slides');
+  reel.appendChild(bars);
+  reel.insertAdjacentHTML('beforeend', `<button class="open" type="button" aria-label="Open this photo or video full screen" data-cursor="VIEW"></button>`);
+  let cur = -1, timer = 0, visible = false, held = false;
+  const schedule = () => {
+    clearTimeout(timer);
+    if (!visible || held || reduced || slides.length < 2) return;
+    timer = setTimeout(() => go((cur + 1) % slides.length), slides[cur].dur);
+  };
+  function go(i) {
+    if (cur >= 0) { const o = slides[cur]; o.inner.classList.remove('is-on'); o.bar.classList.remove('is-on'); o.bar.classList.add('is-done'); if (o.v) Videos.pause(o.v); }
+    slides.forEach((s, j) => { if (j >= i) s.bar.classList.remove('is-done'); });
+    cur = i;
+    const s = slides[i];
+    s.inner.classList.add('is-on');
+    s.bar.style.setProperty('--d', `${s.dur}ms`);
+    s.bar.classList.remove('is-on'); void s.bar.offsetWidth; s.bar.classList.add('is-on');   // restart the progress fill
+    reel.dataset.lbIndex = base + i;
+    if (count) count.textContent = `${String(i + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    if (s.v && visible) Videos.play(s.v);
+    schedule();
+  }
+  go(0);
+  new IntersectionObserver(([e]) => {
+    visible = e.isIntersecting && !document.hidden;
+    reel.classList.toggle('is-paused', !visible);
+    const s = slides[cur];
+    if (s.v) visible ? Videos.play(s.v) : Videos.pause(s.v);
+    if (visible) go(cur); else clearTimeout(timer);
+  }, { threshold: 0.3 }).observe(reel);
+  if (finePointer) {
+    reel.addEventListener('pointerenter', () => { held = true; clearTimeout(timer); reel.classList.add('is-held'); });
+    reel.addEventListener('pointerleave', () => { held = false; reel.classList.remove('is-held'); if (visible) go(cur); });
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -417,11 +543,82 @@ function tile(item, { ar, sizes, cls = '', tag = 'figure', caption = true, hover
     `<button class="open" type="button" aria-label="Open ${isVideo ? 'video' : 'photo'}: ${esc(item.caption || item.alt)}" data-cursor="${isVideo ? 'PLAY' : 'VIEW'}"></button>`);
   return el;
 }
+/** Whole-image masonry (magazines, media interactions): natural proportions, never cropped.
+    Items are dealt left to right into 2 / 3 / 4 columns, re-dealt when the breakpoint changes. */
+function masonry(host, items, { sizes = '(min-width: 900px) 30vw, 50vw', cls = 'mz', w = 800 } = {}) {
+  if (!host) return;
+  const figs = [];
+  items.filter(i => i.enabled !== false).forEach((item, n) => {
+    const idx = LB_ITEMS.push(item) - 1;
+    const isVideo = item.type === 'video';
+    const fig = document.createElement('figure');
+    fig.className = `${cls}${isVideo ? ' vtile' : ''}`;
+    fig.dataset.lbIndex = idx;
+    if (cls !== 'mag') fig.setAttribute('data-reveal', '');   // magazine pages have their own scroll motion
+    fig.style.setProperty('--r', `${[-2.2, 1.6, -1.2, 2, -1.8, 1.1][n % 6]}deg`);
+    const pic = document.createElement('div'); pic.className = 'pic';
+    const im = new Image(); im.loading = 'lazy'; im.decoding = 'async'; im.alt = item.alt || ''; im.sizes = sizes;
+    if (isVideo) { im.srcset = [480, 720, 1080].map(x => `${cPoster(item.src, x)} ${x}w`).join(', '); im.src = cPoster(item.src, 720); }
+    else { im.srcset = cSrcset(item.src, null, [480, 800, 1200]); im.src = cImg(item.src, w); }
+    im.addEventListener('error', () => fig.remove(), { once: true });
+    pic.appendChild(im);
+    if (isVideo && !saveData) { const v = Videos.make(item.src, finePointer ? 720 : 480); pic.appendChild(v); Videos.register(v, fig); }
+    if (cls === 'mag') { const sheet = document.createElement('div'); sheet.className = 'sheet'; sheet.appendChild(pic); fig.appendChild(sheet); }
+    else fig.appendChild(pic);
+    fig.insertAdjacentHTML('beforeend',
+      (isVideo ? `<span class="play" aria-hidden="true">${icon('play')}</span>` : '') +
+      `<button class="open" type="button" aria-label="Open ${isVideo ? 'video' : 'image'}: ${esc(item.caption || item.alt)}" data-cursor="${isVideo ? 'PLAY' : cls === 'mag' ? 'READ' : 'VIEW'}"></button>`);
+    figs.push(fig);
+  });
+  let cols = 0;
+  const deal = () => {
+    const n = innerWidth >= 1100 ? 4 : innerWidth >= 700 ? 3 : 2;
+    if (n === cols) return;
+    cols = n;
+    const cs = Array.from({ length: n }, () => { const c = document.createElement('div'); c.className = 'mcol'; return c; });
+    figs.forEach((f, i) => cs[i % n].appendChild(f));
+    host.replaceChildren(...cs);
+  };
+  deal();
+  addEventListener('resize', deal, { passive: true });
+}
+
+/** Podcasts: YouTube thumbnail first; the privacy-enhanced player only loads when tapped */
+function mountPodcasts() {
+  const host = $('#podGrid'); if (!host) return;
+  let n = 0;
+  PODCASTS.forEach(p => {
+    const label = p.short ? 'SHORT' : `EPISODE ${String(++n).padStart(2, '0')}`;
+    const el = document.createElement('article');
+    el.className = `pod${p.short ? ' short' : ''}`;
+    el.setAttribute('data-reveal', '');
+    el.innerHTML =
+      `<div class="pod-media"><img src="https://i.ytimg.com/vi/${p.id}/hqdefault.jpg" alt="" loading="lazy" decoding="async" width="480" height="360">` +
+      `<button class="pod-play" type="button" aria-label="Play ${p.short ? 'YouTube short' : `podcast ${label.toLowerCase()}`} with Dr. Navjot Kaur" data-cursor="PLAY"><span>${icon('play')}</span></button></div>` +
+      `<div class="pod-meta"><span>${label}</span><a class="link" href="https://${p.short ? `youtube.com/shorts/${p.id}` : `youtu.be/${p.id}`}" target="_blank" rel="noopener">YOUTUBE ${icon('arrow-ur')}</a></div>`;
+    $('.pod-play', el).addEventListener('click', () => {
+      Videos.pauseAll();
+      $$('.pod.is-live').forEach(o => { if (o !== el) { o.classList.remove('is-live'); const f = $('iframe', o); if (f) f.remove(); } });
+      const f = document.createElement('iframe');
+      f.src = `https://www.youtube-nocookie.com/embed/${p.id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+      f.title = `YouTube video with Dr. Navjot Kaur`;
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      f.referrerPolicy = 'strict-origin-when-cross-origin';
+      $('.pod-media', el).appendChild(f);
+      el.classList.add('is-live');
+    });
+    host.appendChild(el);
+  });
+}
+
 function marqueeRow(host, items, { ar = null, sizes = '280px', cls = 'gi' }) {
   if (!host) return;
   const track = document.createElement('div'); track.className = 'marquee-track';
   const set = document.createElement('div'); set.className = 'marquee-set';
-  items.filter(i => i.enabled !== false).forEach(item => set.appendChild(tile(item, { ar: ar || item.ar || '4:5', sizes, cls, caption: false, hover: false })));
+  const list = items.filter(i => i.enabled !== false);
+  host.style.setProperty('--n', list.length);   // CSS keeps each set wider than the screen, so no photo shows twice at once
+  list.forEach(item => set.appendChild(tile(item, { ar: ar || item.ar || '4:5', sizes, cls, caption: false, hover: false })));
   track.appendChild(set);
   host.appendChild(track);
   if (reduced) return;
@@ -445,9 +642,31 @@ function mountGalleries() {
     });
     [...statics, ...gen].sort((a, b) => a.order - b.order).forEach(({ el }) => bento.appendChild(el));
   }
-  marqueeRow($('#stageStrip'), ASSETS.stageStrip, { sizes: '(min-width: 900px) 19vw, 45vw' });
-  marqueeRow($('#rowA'), ASSETS.galleryA, { sizes: '(min-width: 900px) 18vw, 45vw' });
-  marqueeRow($('#rowB'), ASSETS.galleryB, { sizes: '(min-width: 900px) 18vw, 45vw' });
+  marqueeRow($('#stageStrip'), ASSETS.stageStrip, { sizes: '(min-width: 900px) 22vw, 45vw' });
+  marqueeRow($('#rowA'), ASSETS.galleryA, { sizes: '(min-width: 900px) 20vw, 45vw' });
+  marqueeRow($('#rowB'), ASSETS.galleryB, { sizes: '(min-width: 900px) 20vw, 45vw' });
+  const feat = $('#mediaFeature');
+  if (feat && ASSETS.media.featured) {
+    const it = ASSETS.media.featured, idx = LB_ITEMS.push(it) - 1;
+    feat.dataset.lbIndex = idx;
+    const frame = $('.frame', feat);
+    failSafe(fullPhoto(frame, it, '(min-width: 900px) 60vw, 100vw'), frame);
+    feat.insertAdjacentHTML('beforeend', `<button class="open" type="button" aria-label="Open photo: ${esc(it.caption)}" data-cursor="VIEW"></button>`);
+  }
+  masonry($('#miGrid'), ASSETS.mediaInteractions, { sizes: '(min-width: 1100px) 24vw, (min-width: 700px) 33vw, 50vw' });
+  masonry($('#magGrid'), ASSETS.magazines, { cls: 'mag', sizes: '(min-width: 1100px) 24vw, (min-width: 700px) 33vw, 50vw', w: 1200 });
+  mountPodcasts();
+  initHoldToPause();
+}
+/** Photo rows: hover (mouse) or touch-and-hold pauses the movement; letting go starts it again */
+function initHoldToPause() {
+  $$('.strip, .rows .marquee').forEach(row => {
+    const hold = () => row.classList.add('is-held');
+    const release = () => setTimeout(() => row.classList.remove('is-held'), 250);
+    row.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') hold(); }, { passive: true });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => row.addEventListener(t, e => { if (e.pointerType !== 'mouse') release(); }, { passive: true }));
+    row.addEventListener('touchend', release, { passive: true });
+  });
 }
 function initMarquees() {
   if (reduced) return;
@@ -676,6 +895,17 @@ function initMotion() {
     gsap.fromTo(tri[2], { xPercent: -70, rotation: 8, y: 30 }, { xPercent: 0, rotation: 0, y: 0, ease: 'none', scrollTrigger: { trigger: '#trilogy', start: 'top 85%', end: 'center 60%', scrub: 0.8 } });
     gsap.fromTo(tri[1], { y: -20, scale: 1.06 }, { y: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: '#trilogy', start: 'top 85%', end: 'center 60%', scrub: 0.8 } });
   }
+  // Magazines: pages drop in with a slight tilt and settle as they scroll into view
+  $$('#magGrid .mag').forEach((m, i) => {
+    gsap.fromTo(m, { y: 90 + (i % 3) * 30, rotation: (i % 2 ? 6 : -6) }, { y: 0, rotation: 0, ease: 'none',
+      scrollTrigger: { trigger: m, start: 'top bottom', end: 'top 55%', scrub: 0.9 } });
+  });
+  // Photo rows lean with scroll speed (Lenis velocity), then settle
+  if (lenis) {
+    const rows = $$('[data-skew]');
+    const setters = rows.map(r => gsap.quickTo(r, 'skewY', { duration: 0.6, ease: 'power3' }));
+    lenis.on('scroll', ({ velocity }) => { const k = Math.max(-4, Math.min(4, velocity * -0.12)); setters.forEach(f => f(k)); });
+  }
   gsap.fromTo('.solo-wrap', { rotation: -6, y: 40 }, { rotation: 0, y: 0, ease: 'none', scrollTrigger: { trigger: '.solo', start: 'top bottom', end: 'center 60%', scrub: 0.8 } });
 
   // Moments of Honor: pinned horizontal rail on desktop
@@ -712,6 +942,12 @@ function initPointer() {
     stage.addEventListener('pointerleave', () => { bY(-22); bX(4); });
   }
   if (book) book.addEventListener('click', () => Drawer.open('order'));
+  // Magnetic buttons
+  $$('.btn, .top-cta, .btn-tarot').forEach(b => {
+    const mx = gsap.quickTo(b, 'x', { duration: 0.5, ease: 'power3' }), my = gsap.quickTo(b, 'y', { duration: 0.5, ease: 'power3' });
+    b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); mx((e.clientX - r.left - r.width / 2) * 0.18); my((e.clientY - r.top - r.height / 2) * 0.3); });
+    b.addEventListener('pointerleave', () => { mx(0); my(0); });
+  });
 }
 
 /* ---------------------------------------------------------------------------
@@ -781,13 +1017,14 @@ const Drawer = {
   COPY: {
     order: { title: 'Order a copy', sub: 'Add your details and send the order on WhatsApp. Our team will contact you to confirm the book price, securely process your payment and coordinate your delivery.' },
     appt: { title: 'Book an appointment', sub: 'Choose a session and send your request on WhatsApp. Our team will coordinate the date, time, slot and payment with you.' },
-    speak: { title: 'Send Invitation for Speaking Engagements', sub: 'Share a few details about your event. The invitation opens in WhatsApp, ready to send to Dr. Navjot Kaur.' }
+    speak: { title: 'Speaking invitation', sub: 'Share a few details about your event. The invitation opens in WhatsApp, ready to send to Dr. Navjot Kaur.' },
+    podcast: { title: 'Podcast invite', sub: 'Host a podcast or channel? Invite Dr. Navjot Kaur as a guest. The invitation opens in WhatsApp, ready to send.' }
   },
   init() {
     this.d = $('#drawer'); this.scrim = $('#scrim'); this.form = $('#dForm'); this.err = $('#dErr'); this.mail = $('#altMail');
     const sel = $('#o-book');
     books().forEach(b => sel.add(new Option(b.title, b.id, b.featured, b.featured)));
-    document.addEventListener('click', e => { const t = e.target.closest('[data-open]'); if (t) { e.preventDefault(); this.open(t.dataset.open, t.dataset.book, t); } });
+    document.addEventListener('click', e => { const t = e.target.closest('[data-open]'); if (t) { e.preventDefault(); this.open(t.dataset.open, t.dataset.book, t, t.dataset.svc); } });
     this.scrim.addEventListener('click', () => this.close());
     $$('[data-close]', this.d).forEach(b => b.addEventListener('click', () => this.close()));
     this.d.addEventListener('keydown', e => { if (e.key === 'Escape') this.close(); else trap(e, [this.d]); });
@@ -795,13 +1032,14 @@ const Drawer = {
     this.form.addEventListener('input', e => { e.target.removeAttribute('aria-invalid'); this.err.textContent = ''; this.syncMail(); });
     this.form.addEventListener('submit', e => { e.preventDefault(); this.send(); });
   },
-  open(mode, bookId, opener) {
-    this.mode = mode === 'speak' || mode === 'appt' ? mode : 'order';
+  open(mode, bookId, opener, svc) {
+    this.mode = ['speak', 'appt', 'podcast'].includes(mode) ? mode : 'order';
     this.opener = opener || document.activeElement;
     $('#drawer-h').textContent = this.COPY[this.mode].title;
     $('#drawerSub').textContent = this.COPY[this.mode].sub;
     $$('.mode', this.d).forEach(m => m.classList.toggle('is-on', m.dataset.mode === this.mode));
     if (bookId) $('#o-book').value = bookId;
+    if (svc) $('#a-svc').value = svc;
     this.err.textContent = '';
     this.syncMail();
     this.isOpen = true; this.d.hidden = false; lockScroll(true);
@@ -825,6 +1063,10 @@ const Drawer = {
       if (!/^[6-9]\d{9}$/.test(digits(this.v('phone')).replace(/^(91|0)(?=\d{10}$)/, ''))) return this.invalid('phone', 'Please enter a valid 10-digit mobile number.');
       if (!/^[1-9]\d{5}$/.test(this.v('pincode'))) return this.invalid('pincode', 'Please enter a valid 6-digit pincode.');
       if (this.v('address').length < 10) return this.invalid('address', 'Please enter your full delivery address.');
+    } else if (this.mode === 'podcast') {
+      if (this.v('pname').length < 2) return this.invalid('pname', 'Please enter your name.');
+      if (digits(this.v('pphone')).length < 7) return this.invalid('pphone', 'Please enter a phone number we can reach you on.');
+      if (this.v('pshow').length < 2) return this.invalid('pshow', 'Please enter the podcast or channel name.');
     } else if (this.mode === 'appt') {
       if (this.v('aname').length < 2) return this.invalid('aname', 'Please enter your name.');
       if (digits(this.v('aphone')).length < 7) return this.invalid('aphone', 'Please enter a phone number we can reach you on.');
@@ -846,6 +1088,11 @@ const Drawer = {
         `\nPlease confirm the book price, payment and delivery. Thank you!`;
     }
     const fmt = v => (v ? new Date(v + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
+    if (this.mode === 'podcast') {
+      return `Hello Dr. Navjot Kaur, I would like to invite you as a guest on our podcast.\n\n` +
+        L('Name', this.v('pname')) + L('Phone', this.v('pphone')) + L('Podcast / channel', this.v('pshow')) + L('Link', this.v('plink')) +
+        L('Topic', this.v('ptopic')) + L('Preferred date', fmt(this.v('pdate'))) + L('Details', this.v('pmsg')) + `\nLooking forward to hearing from you.`;
+    }
     if (this.mode === 'appt') {
       return `Hello, I would like to book an appointment with Dr. Navjot Kaur.\n\n` +
         L('Session', this.v('svc')) + L('Name', this.v('aname')) + L('Phone', this.v('aphone')) + L('Preferred date', fmt(this.v('adate'))) +
@@ -857,7 +1104,7 @@ const Drawer = {
       L('Date', date) + L('City', this.v('city')) + L('Details', this.v('msg')) + `\nLooking forward to hearing from you.`;
   },
   syncMail() {
-    const subject = this.mode === 'order' ? 'Book order' : this.mode === 'appt' ? 'Appointment request' : 'Speaking invitation';
+    const subject = { order: 'Book order', appt: 'Appointment request', podcast: 'Podcast invitation' }[this.mode] || 'Speaking invitation';
     this.mail.href = `mailto:${CONFIG.CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.message())}`;
   },
   send() {
