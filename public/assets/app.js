@@ -839,6 +839,26 @@ function startRoles() {
     i = (i + 1) % items.length; items[i].classList.add('is-on');
   }, 2600);
 }
+/* Selected stages (desktop): the big year follows whichever stage is in the middle of the screen */
+function initStageYear() {
+  const wrap = $('.stages'), out = $('#stageYear'); if (!wrap || !out || !mq('(min-width: 900px)').matches) return;
+  const ghost = $('.sy-ghost', wrap), items = $$('.stage-list li', wrap);
+  let cur = null, t = 0;
+  wrap.classList.add('is-tracking');
+  const set = li => {
+    if (li === cur) return;
+    if (cur) cur.classList.remove('is-active');
+    cur = li; li.classList.add('is-active');
+    const y = $('.y', li).textContent;
+    if (y === out.textContent) return;
+    clearTimeout(t);
+    out.classList.add('is-swap');
+    t = setTimeout(() => { out.textContent = y; ghost.textContent = y; out.classList.remove('is-swap'); }, reduced ? 0 : 350);
+  };
+  set(items[0]);
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) set(e.target); }), { rootMargin: '-45% 0px -50% 0px' });
+  items.forEach(li => io.observe(li));
+}
 function countersStatic() { $$('[data-count]').forEach(el => { el.textContent = el.dataset.count; }); }
 function countUp(el) {
   const end = +el.dataset.count, o = { v: 0 };
@@ -1129,7 +1149,7 @@ async function boot() {
   Menu.init();
   initScrollUI();
   setTimeout(startRoles, heroDelay * 1000 + 1200);
-  for (const step of [mountSlots, mountReel, mountGalleries, initMarquees, initMotion, initPointer, () => { initVCard(); Lightbox.init(); Drawer.init(); }]) {
+  for (const step of [mountSlots, mountReel, mountGalleries, initMarquees, initMotion, initStageYear, initPointer, () => { initVCard(); Lightbox.init(); Drawer.init(); }]) {
     await yieldToMain();
     step();
   }

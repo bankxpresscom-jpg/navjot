@@ -442,7 +442,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 .lcard.wide .role{color:var(--gold-2)}
 .lcard.wide .logo{background:transparent;border-color:var(--line-l)}
 .lcard.wide .logo .i{color:var(--gold-2)}
-@media (min-width:1100px){.lcard.wide{grid-column:span 2;grid-template-columns:auto 1fr;column-gap:30px}.lcard.wide .logo{grid-row:span 3}}
+
 
 /* =========================================================================
    MOMENTS OF HONOR
@@ -748,6 +748,29 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 .pod-meta .link{font-size:.9rem;padding-bottom:4px}
 .pod-meta .link:hover{color:var(--gold-2)}
 .contact .lead{margin-top:16px}
+.clinks small{display:block}
+.clinks small.em{margin-top:3px;color:var(--gold-2);letter-spacing:.02em}
+
+@media (min-width:700px){.lead-grid{grid-auto-rows:1fr}}
+/* 2026-10-01: Selected stages, sticky side panel with a year that follows the list (desktop) */
+.stage-aside .stage-year,.stage-aside .stage-roles,.stage-aside>.btn{display:none}
+.stage-list li{transition:opacity .5s,padding .6s var(--ease)}
+@media (min-width:900px){
+  .stages{align-items:start}
+  .stage-aside{position:sticky;top:110px}
+  .stage-aside .stage-year{display:grid;margin:clamp(20px,3vw,40px) 0 6px;font:400 clamp(7rem,12vw,11.5rem)/.82 var(--label);letter-spacing:.01em;user-select:none}
+  .stage-year>span{grid-area:1/1}
+  .sy-ghost{color:transparent;-webkit-text-stroke:1px rgba(217,188,132,.35)}
+  .sy-fill{background:linear-gradient(135deg,#FFF1C9,#F1C96B 45%,#C8963E);-webkit-background-clip:text;background-clip:text;color:transparent;clip-path:inset(0 0 0 0);transition:clip-path .9s var(--ease-io)}
+  .sy-fill.is-swap{clip-path:inset(0 0 100% 0);transition:clip-path .35s var(--ease-io)}
+  .stage-aside .stage-roles{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 28px}
+  .stage-roles li{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line-l);border-radius:999px;font-size:.92rem;color:var(--t-light)}
+  .stage-roles .i{width:15px;height:15px;color:var(--gold-2)}
+  .stage-aside>.btn{display:inline-flex}
+  .stages.is-tracking .stage-list li>*{opacity:.42;transition:opacity .5s}
+  .stages.is-tracking .stage-list li.is-active>*{opacity:1}
+  .stages.is-tracking .stage-list li.is-active{padding-left:14px;box-shadow:inset 2px 0 0 var(--gold-2)}
+}
 
 </style>
 
@@ -765,7 +788,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-<script defer src="/assets/app.js?v=20260930b"></script>
+<script defer src="/assets/app.js?v=20261001a"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -1020,9 +1043,18 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
     </div>
 
     <div class="stages">
-      <div>
+      <div class="stage-aside">
         <p class="label" data-reveal>SELECTED STAGES</p>
         <p class="lead" data-reveal>Invited as Chief Guest, Guest of Honour, Jury to international platforms, Keynote Speaker and Panelist.</p>
+        <div class="stage-year" aria-hidden="true"><span class="sy-ghost">2025</span><span class="sy-fill" id="stageYear">2025</span></div>
+        <ul class="stage-roles" aria-label="Invited as">
+          <li><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg>Chief Guest</li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-star"/></svg>Guest of Honour</li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-award"/></svg>Jury</li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>Keynote Speaker</li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-users"/></svg>Panelist</li>
+        </ul>
+        <button class="btn btn-gold" type="button" data-open="speak" aria-haspopup="dialog">Invite to speak<svg class="i i-go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
       </div>
       <ul class="stage-list">
         <li data-reveal><span class="y">2025</span><div><b>EdTalk World Conference 2025</b><span>Keynote Speaker · New Delhi</span></div></li>
@@ -1333,11 +1365,11 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
       <h2 class="h2" id="contact-h" data-split>Let’s Connect. Let’s <em>Create.</em></h2>
       <p class="lead" data-reveal>Send Invitations for Speaking Engagements / Podcast Invites</p>
       <div class="clinks">
-        <button type="button" data-open="speak" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg></span><span><b>Speaking invitation</b><small>Keynotes, panels, chief-guest addresses</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
-        <button type="button" data-open="podcast" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-video"/></svg></span><span><b>Podcast invite</b><small>Invite her as a guest on your podcast or channel</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
-        <button type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-sparkles"/></svg></span><span><b>Tarot &amp; Oracle Guidance</b><small>By appointment</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
-        <a href="https://wa.me/919814724488" data-cfg-href="whatsapp" target="_blank" rel="noopener" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg></span><span><b>WhatsApp</b><small>Book orders, appointments &amp; quick messages</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
-        <a href="mailto:Drnavjotkaur2211@gmail.com" data-cfg-href="mailto" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span><span><b>Email</b><small data-cfg-text="email">Drnavjotkaur2211@gmail.com</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
+        <button type="button" data-open="speak" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg></span><span><b>Speaking Engagements</b><small>Keynotes, panel discussions &amp; chief guest addresses</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+        <button type="button" data-open="podcast" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-video"/></svg></span><span><b>Podcast &amp; Media Invitations</b><small>Invite her to be a guest on your podcast, channel or media platform</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+        <button type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-sparkles"/></svg></span><span><b>Tarot &amp; Oracle Guidance</b><small>Private sessions by appointment</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+        <a href="https://wa.me/919814724488" data-cfg-href="whatsapp" target="_blank" rel="noopener" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg></span><span><b>WhatsApp</b><small>Book orders, appointments &amp; quick enquiries</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></a>
+        <a href="mailto:Drnavjotkaur2211@gmail.com" data-cfg-href="mailto" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span><span><b>Email</b><small>For enquiries, collaborations &amp; invitations</small><small class="em" data-cfg-text="email">Drnavjotkaur2211@gmail.com</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></a>
       </div>
     </div>
     <div class="frame arch clip-reveal" data-slot="contact.portrait" data-ar="4:5" data-sizes="(min-width: 900px) 34vw, 90vw"></div>
