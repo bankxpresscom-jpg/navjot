@@ -19,11 +19,50 @@ Fonts come from Google Fonts (Cormorant Garamond, Bebas Neue, Jost), with the `@
 ## Deploy to Cloudflare Pages
 
 **Direct upload (no Git):** Cloudflare dashboard → Workers & Pages → Create → Pages → *Upload assets*, then drop in `navjot-site.zip`.
-`index.html` sits at the root of the zip.
+`index.html`, `_worker.js` and `_routes.json` sit at the root of the zip.
 
 **From Git:** connect the repo. Framework preset: *None*. Build command: *(empty)*. Output directory: `public`.
 
 To rebuild the zip after edits, run `npm run zip`.
+
+## The Studio (`/admin`): edit everything visually
+
+Open `https://your-site/admin/` and sign in. The website appears in the Studio exactly as visitors see it:
+
+- **Texts:** click any text in the preview and type. Use the toolbar for bold, gold italic and line breaks.
+- **Photos:** click any photo to replace it. You can upload, pick from your Cloudinary library or paste a Cloudinary link, then add a description and set the focus point.
+- **Lists:** the **Photos** panel reorders, adds or removes photos in every gallery, slideshow and magazine wall.
+- **Podcasts:** paste YouTube links.
+- **Contact & links:** WhatsApp, email, phone, Instagram, LinkedIn and book links update everywhere at once.
+- **Sections:** show or hide whole sections.
+- **Google & sharing:** page title and description, with a live Google preview.
+- **Safety net:**
+  - undo and redo
+  - drafts saved automatically in the browser
+  - a version history that can reopen any published version, or the original site
+  - nothing goes live until **Publish**
+
+**Setup (once).** In Cloudflare go to Workers & Pages → this project → Settings → Variables and Secrets, add these for Production, then redeploy (upload the ZIP again).
+
+| Variable | What it is |
+|---|---|
+| `ADMIN_USER` | Studio login ID |
+| `ADMIN_PASSWORD` | Studio password (choose type *Secret*) |
+| `CLOUDINARY_API_KEY` | Cloudinary → Settings → API Keys |
+| `CLOUDINARY_API_SECRET` | Same page (type *Secret*) |
+| `CLOUDINARY_CLOUD_NAME` | Optional, defaults to `dhn6pvsr1` |
+
+**How it works.** The site runs on Cloudflare Pages alone, with no KV, R2, D1 or other Cloudflare services.
+
+- `public/_worker.js` serves the page, the Studio API and the login. The login is an HttpOnly cookie signed with the password, and expires after 12 hours.
+- Published content is one JSON file (`navjot-site/content.json`) in the site's own Cloudinary account, next to the photos. Every publish also keeps a copy in `navjot-site/history/`.
+- Uploaded photos go to the `navjot-site/media` folder.
+- Visitors get the published texts and links applied on the server, so Google sees them too. Changes appear within about a minute.
+- Every photo must be a Cloudinary link; the server refuses anything else.
+
+**For developers.**
+- Editable texts carry `data-e` keys and external links carry `data-l` keys. After adding new HTML, run `python3 scripts/tag-editables.py`: existing keys never change.
+- `npm run csp-hash` updates the boot-script hash in both `_headers` and `_worker.js`.
 
 ## How ordering works (no payments on the site)
 

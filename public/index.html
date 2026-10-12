@@ -277,7 +277,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   .hero{grid-template-columns:1fr 1fr;min-height:100vh;min-height:100svh}
   .hero-media{order:2;height:auto;min-height:100%}
   .hero-media::after{background:linear-gradient(90deg,var(--ink) 0%,rgba(21,18,26,0) 24%),linear-gradient(180deg,rgba(21,18,26,.5),transparent 20%)}
-  .hero-copy{order:1;align-self:center;margin:0;padding:120px 4vw 100px var(--pad)}
+  .hero-copy{order:1;align-self:center;margin:0;padding:110px 4vw 110px var(--pad)}
   .book-chip{top:auto;bottom:40px;right:40px}
   .hero-foot{position:absolute;left:var(--pad);bottom:34px;z-index:2;display:flex;align-items:center;gap:26px;color:var(--m-light);font:400 1rem/1 var(--label);letter-spacing:.2em}
   .hero-foot .icon-btn{width:38px;height:38px;border-color:var(--line-l)}
@@ -748,6 +748,26 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 .pod-meta .link{font-size:.9rem;padding-bottom:4px}
 .pod-meta .link:hover{color:var(--gold-2)}
 .contact .lead{margin-top:16px}
+/* Hero actions (her order): Tarot → Kali Oracle Course → Cosmic Map → Invite */
+.hero-actions{display:grid;gap:10px;margin-top:4px;max-width:540px}
+.act{position:relative;display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:9px 18px 9px 9px;border:1px solid rgba(217,188,132,.42);border-radius:18px;background:rgba(21,18,26,.45);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--t-light);text-align:left;overflow:hidden;isolation:isolate;transition:border-color .4s,box-shadow .6s var(--ease),background .4s,transform .5s var(--ease)}
+.act::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 30%,rgba(241,201,107,.22) 48%,transparent 66%);transform:translateX(-100%)}
+@media (hover:hover){.act:hover{border-color:var(--gold-2);box-shadow:0 0 34px -8px rgba(217,188,132,.55)}.act:hover::before{transform:translateX(100%);transition:transform 1s var(--ease)}.act:hover .go{transform:translateX(4px)}}
+.act .ai{width:44px;height:44px;flex:none;border-radius:14px;display:grid;place-items:center;border:1px solid rgba(217,188,132,.45);color:var(--gold-2)}
+.act .ai .i{width:21px;height:21px}
+.act .tt{display:grid;gap:3px;min-width:0;flex:1}
+.act b{font:500 1.12rem/1.15 var(--serif)}
+.act small{font:400 .78rem/1.1 var(--label);letter-spacing:.18em;color:var(--gold-2)}
+.act small.s2{font:italic 400 .98rem/1.2 var(--serif);letter-spacing:0;color:var(--m-light)}
+.act .go{width:1.1em;height:1.1em;flex:none;color:var(--gold-2);transition:transform .45s var(--ease)}
+.act-gold{background:linear-gradient(135deg,rgba(255,241,201,.16),rgba(200,150,62,.16));border-color:rgba(241,201,107,.75)}
+.act-gold::before{animation:sheen 4.8s var(--ease-io) 2.4s infinite}
+.act-gold .ai{border:0;background:linear-gradient(135deg,#FFF1C9,#F1C96B 45%,#C8963E);color:var(--ink)}
+.act-gold .ai .i{animation:spin 14s linear infinite}
+.d-switch{display:none;gap:4px;padding:4px;margin:4px 0 16px;border:1px solid var(--line-d);border-radius:999px;width:max-content;background:#fff}
+.d-switch.is-on{display:flex}
+.d-switch button{padding:8px 18px;border-radius:999px;font:400 .95rem/1 var(--label);letter-spacing:.14em;color:var(--m-dark);transition:background .3s,color .3s}
+.d-switch button[aria-pressed="true"]{background:var(--ink);color:var(--t-light)}
 .clinks small{display:block}
 .clinks small.em{margin-top:3px;color:var(--gold-2);letter-spacing:.02em}
 
@@ -788,7 +808,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-<script defer src="/assets/app.js?v=20261001a"></script>
+<script defer src="/assets/app.js?v=20261012a"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -859,7 +879,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   <symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
 </svg>
 
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main" data-e="site.1">Skip to content</a>
 
 <div class="splash" aria-hidden="true">
   <div class="splash-inner">
@@ -873,9 +893,9 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 
 <!-- ======================= TOP BAR ======================= -->
 <header class="topbar" id="topbar">
-  <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="bars" aria-hidden="true"><span></span><span></span></span><span class="word" aria-hidden="true">MENU</span></button>
-  <a class="brand" href="#home" aria-label="Dr. Navjot Kaur, back to top"><img src="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_limit,w_120/v1790515212/splash-favicon-logo_yxkwes.png" width="46" height="46" alt=""><b>Dr. Navjot Kaur</b></a>
-  <button class="top-cta" type="button" data-open="speak" aria-haspopup="dialog" aria-label="Invite Dr. Navjot Kaur to speak"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span>INVITE TO SPEAK</span></button>
+  <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="bars" aria-hidden="true"><span></span><span></span></span><span class="word" aria-hidden="true" data-e="topbar.1">MENU</span></button>
+  <a class="brand" href="#home" aria-label="Dr. Navjot Kaur, back to top"><img src="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_limit,w_120/v1790515212/splash-favicon-logo_yxkwes.png" width="46" height="46" alt=""><b data-e="topbar.2">Dr. Navjot Kaur</b></a>
+  <button class="top-cta" type="button" data-open="speak" aria-haspopup="dialog" aria-label="Invite Dr. Navjot Kaur to speak"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span data-e="topbar.3">INVITE TO SPEAK</span></button>
 </header>
 
 <!-- ======================= MENU ======================= -->
@@ -883,27 +903,27 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   <div class="menu-wrap">
     <nav aria-label="Primary">
       <ol class="menu-links">
-        <li><a href="#home" data-preview="home"><span class="mn">01</span>Home</a></li>
-        <li><a href="#about" data-preview="about"><span class="mn">02</span>About</a></li>
-        <li><a href="#speaker" data-preview="speaker"><span class="mn">03</span>Speaker</a></li>
-        <li><a href="#books" data-preview="books"><span class="mn">04</span>Books</a></li>
-        <li><a href="#leadership" data-preview="leadership"><span class="mn">05</span>Leadership</a></li>
-        <li><a href="#honors" data-preview="honors"><span class="mn">06</span>Moments of Honor</a></li>
-        <li><a href="#impact" data-preview="impact"><span class="mn">07</span>Impact</a></li>
-        <li><a href="#media" data-preview="media"><span class="mn">08</span>Media &amp; Podcasts</a></li>
-        <li><a href="#magazines" data-preview="magazines"><span class="mn">09</span>Magazines</a></li>
-        <li><a href="#gallery" data-preview="gallery"><span class="mn">10</span>Gallery &amp; Social</a></li>
-        <li><a href="#appointments" data-preview="appointments"><span class="mn">11</span>Appointments</a></li>
-        <li><a href="#contact" data-preview="contact"><span class="mn">12</span>Contact</a></li>
+        <li><a href="#home" data-preview="home" data-e="menu.1"><span class="mn">01</span>Home</a></li>
+        <li><a href="#about" data-preview="about" data-e="menu.2"><span class="mn">02</span>About</a></li>
+        <li><a href="#speaker" data-preview="speaker" data-e="menu.3"><span class="mn">03</span>Speaker</a></li>
+        <li><a href="#books" data-preview="books" data-e="menu.4"><span class="mn">04</span>Books</a></li>
+        <li><a href="#leadership" data-preview="leadership" data-e="menu.5"><span class="mn">05</span>Leadership</a></li>
+        <li><a href="#honors" data-preview="honors" data-e="menu.6"><span class="mn">06</span>Moments of Honor</a></li>
+        <li><a href="#impact" data-preview="impact" data-e="menu.7"><span class="mn">07</span>Impact</a></li>
+        <li><a href="#media" data-preview="media" data-e="menu.8"><span class="mn">08</span>Media &amp; Podcasts</a></li>
+        <li><a href="#magazines" data-preview="magazines" data-e="menu.9"><span class="mn">09</span>Magazines</a></li>
+        <li><a href="#gallery" data-preview="gallery" data-e="menu.10"><span class="mn">10</span>Gallery &amp; Social</a></li>
+        <li><a href="#appointments" data-preview="appointments" data-e="menu.11"><span class="mn">11</span>Appointments</a></li>
+        <li><a href="#contact" data-preview="contact" data-e="menu.12"><span class="mn">12</span>Contact</a></li>
       </ol>
     </nav>
     <div class="menu-side" aria-hidden="true"></div>
     <div class="menu-foot">
       <div class="menu-contact">
-        <a href="https://wa.me/919814724488" data-cfg-href="whatsapp" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg><span>WhatsApp</span></a>
+        <a href="https://wa.me/919814724488" data-cfg-href="whatsapp" target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg><span data-e="menu.13">WhatsApp</span></a>
         <a href="mailto:Drnavjotkaur2211@gmail.com" data-cfg-href="mailto"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg><span data-cfg-text="email">Drnavjotkaur2211@gmail.com</span></a>
       </div>
-      <button class="btn-tarot sm" type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog"><span class="tg" aria-hidden="true"><svg class="i"><use href="#i-sparkles"/></svg></span><span class="tt"><b>Tarot &amp; Oracle Guidance</b><small>BY APPOINTMENT</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+      <button class="btn-tarot sm" type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog"><span class="tg" aria-hidden="true"><svg class="i"><use href="#i-sparkles"/></svg></span><span class="tt"><b data-e="menu.14">Tarot &amp; Oracle Guidance</b><small data-e="menu.15">BY APPOINTMENT</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
       <div class="socials">
         <a class="icon-btn" href="https://www.instagram.com/kaaurdrnavjot" data-cfg-href="instagram" target="_blank" rel="noopener" aria-label="Instagram"><svg class="i" aria-hidden="true"><use href="#i-instagram"/></svg></a>
         <a class="icon-btn" href="https://www.linkedin.com/in/dr-navjot-kaur-087a85318/" data-cfg-href="linkedin" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="i" aria-hidden="true"><use href="#i-linkedin"/></svg></a>
@@ -915,11 +935,11 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 
 <nav class="tabbar" id="tabbar" aria-label="Quick navigation">
   <span class="tab-pill" aria-hidden="true"></span>
-  <a href="#home" data-tab="home"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg><span>HOME</span></a>
-  <a href="#speaker" data-tab="speaker"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span>SPEAKER</span></a>
-  <a href="#books" data-tab="books"><svg class="i" aria-hidden="true"><use href="#i-book-open"/></svg><span>BOOKS</span></a>
-  <a href="#honors" data-tab="honors"><svg class="i" aria-hidden="true"><use href="#i-award"/></svg><span>HONORS</span></a>
-  <a href="#contact" data-tab="contact"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg><span>CONTACT</span></a>
+  <a href="#home" data-tab="home"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg><span data-e="tabbar.1">HOME</span></a>
+  <a href="#speaker" data-tab="speaker"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span data-e="tabbar.2">SPEAKER</span></a>
+  <a href="#books" data-tab="books"><svg class="i" aria-hidden="true"><use href="#i-book-open"/></svg><span data-e="tabbar.3">BOOKS</span></a>
+  <a href="#honors" data-tab="honors"><svg class="i" aria-hidden="true"><use href="#i-award"/></svg><span data-e="tabbar.4">HONORS</span></a>
+  <a href="#contact" data-tab="contact"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg><span data-e="tabbar.5">CONTACT</span></a>
 </nav>
 
 <main id="main">
@@ -931,47 +951,48 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   </div>
   <a class="book-chip" href="#books" data-hero style="--i:7">
     <span class="cv-thumb" data-slot="books.cover" data-fit="limit" data-sizes="46px"></span>
-    <span><small>THE LATEST BOOK</small><b data-cfg-text="featuredTitle">Cosmic Map of Answers</b></span>
+    <span><small data-e="home.1">THE LATEST BOOK</small><b data-cfg-text="featuredTitle">Cosmic Map of Answers</b></span>
   </a>
   <div class="hero-copy">
-    <p class="label" data-hero style="--i:0">EDUCATIONIST · AUTHOR</p>
+    <p class="label" data-hero style="--i:0" data-e="home.2">EDUCATIONIST · AUTHOR</p>
     <h1 class="h1" id="heroTitle">
-      <span class="ln"><span data-hero style="--i:1">Dr. Navjot</span></span>
-      <span class="ln"><span data-hero style="--i:2"><em>Kaur</em></span></span>
+      <span class="ln"><span data-hero style="--i:1" data-e="home.3">Dr. Navjot</span></span>
+      <span class="ln"><span data-hero style="--i:2"><em data-e="home.4">Kaur</em></span></span>
     </h1>
     <p class="roles" data-hero style="--i:3">
       <span class="sr-only">Educationist, Keynote Speaker, Motivational Speaker, Author</span>
-      <span class="role-rot" id="roleRot" aria-hidden="true"><span>Educationist</span><span>Keynote Speaker</span><span>Motivational Speaker</span><span>Author</span></span>
+      <span class="role-rot" id="roleRot" aria-hidden="true"><span data-e="home.5">Educationist</span><span data-e="home.6">Keynote Speaker</span><span data-e="home.7">Motivational Speaker</span><span data-e="home.8">Author</span></span>
     </p>
-    <p class="hero-p" data-hero style="--i:4">Beauty with Purpose | Leadership with Vision</p>
-    <div class="btn-row" data-hero style="--i:5">
-      <button class="btn btn-gold" type="button" data-open="speak" aria-haspopup="dialog">Invite to speak<svg class="i i-go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
-      <a class="btn btn-line" href="#books">Explore books</a>
+    <p class="hero-p" data-hero style="--i:4" data-e="home.9">Beauty with Purpose | Leadership with Vision</p>
+    <div class="hero-actions" data-hero style="--i:5">
+      <button class="act act-gold" type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog"><span class="ai" aria-hidden="true"><svg class="i"><use href="#i-sparkles"/></svg></span><span class="tt"><b data-e="home.10">Tarot &amp; Oracle Guidance</b><small data-e="home.11">BY APPOINTMENT</small><small class="s2" data-e="home.12">Life Alignment | Soul Purpose Guidance</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+      <button class="act" type="button" data-open="appt" data-svc="Kali Oracle Course" aria-haspopup="dialog"><span class="ai" aria-hidden="true"><svg class="i"><use href="#i-flower"/></svg></span><span class="tt"><b data-e="home.13">Kali Oracle Course</b><small data-e="home.14">DIVINE PATH GUIDANCE</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+      <button class="act" type="button" data-open="order" data-book="cosmic" aria-haspopup="dialog"><span class="ai" aria-hidden="true"><svg class="i"><use href="#i-book-open"/></svg></span><span class="tt"><b data-e="home.15">Buy Cosmic Map of Answers</b><small data-e="home.16">THE LATEST BOOK</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+      <button class="act" type="button" data-open="speak" aria-haspopup="dialog"><span class="ai" aria-hidden="true"><svg class="i"><use href="#i-mic"/></svg></span><span class="tt"><b data-e="home.17">Invite to Speak / Podcast</b><small data-e="home.18">KEYNOTES · PANELS · PODCASTS</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
     </div>
-    <div data-hero style="--i:6"><button class="btn-tarot" type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog"><span class="tg" aria-hidden="true"><svg class="i"><use href="#i-sparkles"/></svg></span><span class="tt"><b>Tarot &amp; Oracle Guidance</b><small>BY APPOINTMENT</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
   </div>
   <div class="hero-foot">
     <div class="socials">
       <a class="icon-btn" href="https://www.instagram.com/kaaurdrnavjot" data-cfg-href="instagram" target="_blank" rel="noopener" aria-label="Instagram"><svg class="i" aria-hidden="true"><use href="#i-instagram"/></svg></a>
       <a class="icon-btn" href="https://www.linkedin.com/in/dr-navjot-kaur-087a85318/" data-cfg-href="linkedin" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="i" aria-hidden="true"><use href="#i-linkedin"/></svg></a>
     </div>
-    <a class="cue" href="#about">SCROLL</a>
+    <a class="cue" href="#about" data-e="home.19">SCROLL</a>
   </div>
 </section>
 
 <div class="ribbon marquee" style="--dur:30s">
   <div class="marquee-track"><div class="marquee-set">
-    <span class="m-item">KEYNOTE SPEAKER<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">MOTIVATIONAL SPEAKER<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">AMAZON BESTSELLING AUTHOR<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">EDUCATIONIST<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">GLOBAL EDUCATION LEADER<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">FOUNDER &amp; CHAIRPERSON<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">HOLISTIC HEALER<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">TAROT &amp; ORACLE GUIDANCE — BY APPOINTMENT<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">ORACLE CARD READER<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">ENERGY HEALER<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
-    <span class="m-item">ANGEL HEALING<svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.1">KEYNOTE SPEAKER</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.2">MOTIVATIONAL SPEAKER</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.3">AMAZON BESTSELLING AUTHOR</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.4">EDUCATIONIST</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.5">GLOBAL EDUCATION LEADER</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.6">FOUNDER &amp; CHAIRPERSON</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.7">HOLISTIC HEALER</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.8">TAROT &amp; ORACLE GUIDANCE — BY APPOINTMENT</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.9">ORACLE CARD READER</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.10">ENERGY HEALER</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
+    <span class="m-item"><span data-e="ribbon.11">ANGEL HEALING</span><svg class="i star" aria-hidden="true"><use href="#i-star"/></svg></span>
   </div></div>
 </div>
 
@@ -988,15 +1009,15 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
       </div>
     </div>
     <div>
-      <p class="label" data-reveal><span class="n">01</span> THE WOMAN | THE VISION | THE LEGACY</p>
-      <h2 class="h2" id="about-h" data-split>Beauty with <em>Purpose.</em> Leadership with <em>Vision.</em></h2>
-      <p class="lead" data-reveal>Dr. Navjot Kaur is a distinguished educationist, visionary leader, Founder-Chairperson of international forums, Motivational Speaker &amp; Amazon bestselling author, whose journey reflects a profound commitment to knowledge, empowerment, and excellence.</p>
-      <p data-reveal style="margin-top:16px">She serves as Director of Administration at Quest International School in India and as an advisory board member to educational institutions. She is the founder and Chairperson of the World Academic Achievers Forum, the Youth Diplomatic Conclave and The Global Women Achievers Circle across India and the UAE, and Founder &amp; Pageant Director of Inspirational Miss India and Miss Celestial Punjab Queen. Holding a PhD and an MBA in International Business, her research focuses on work-life balance and innovative teaching methods.</p>
-      <blockquote class="quote" data-reveal>To ignite potential.<br>To inspire purpose.<br>To empower people to think bigger, rise higher, and create meaningful <em>impact.</em><span class="q-after">Because greatness doesn’t wait to be discovered — it is awakened from within.</span><cite>HER MISSION</cite></blockquote>
-      <p class="sign" data-reveal aria-hidden="true">Dr. Navjot Kaur</p>
+      <p class="label" data-reveal data-e="about.1"><span class="n">01</span> THE WOMAN | THE VISION | THE LEGACY</p>
+      <h2 class="h2" id="about-h" data-split data-e="about.2">Beauty with <em>Purpose.</em> Leadership with <em>Vision.</em></h2>
+      <p class="lead" data-reveal data-e="about.3">Dr. Navjot Kaur is a distinguished educationist, visionary leader, Founder-Chairperson of international forums, Motivational Speaker &amp; Amazon bestselling author, whose journey reflects a profound commitment to knowledge, empowerment, and excellence.</p>
+      <p data-reveal style="margin-top:16px" data-e="about.4">She serves as Director of Administration at Quest International School in India and as an advisory board member to educational institutions. She is the founder and Chairperson of the World Academic Achievers Forum, the Youth Diplomatic Conclave and The Global Women Achievers Circle across India and the UAE, and Founder &amp; Pageant Director of Inspirational Miss India and Miss Celestial Punjab Queen. Holding a PhD and an MBA in International Business, her research focuses on work-life balance and innovative teaching methods.</p>
+      <blockquote class="quote" data-reveal data-e="about.5">To ignite potential.<br>To inspire purpose.<br>To empower people to think bigger, rise higher, and create meaningful <em>impact.</em><span class="q-after">Because greatness doesn’t wait to be discovered — it is awakened from within.</span><cite>HER MISSION</cite></blockquote>
+      <p class="sign" data-reveal aria-hidden="true" data-e="about.6">Dr. Navjot Kaur</p>
       <div class="btn-row" data-reveal>
-        <button class="btn btn-line" type="button" id="saveContact"><svg class="i" aria-hidden="true"><use href="#i-contact"/></svg>Save contact</button>
-        <a class="link" href="https://www.instagram.com/kaaurdrnavjot" data-cfg-href="instagram" target="_blank" rel="noopener" style="align-self:center">FOLLOW HER JOURNEY <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
+        <button class="btn btn-line" type="button" id="saveContact"><svg class="i" aria-hidden="true"><use href="#i-contact"/></svg><span data-e="about.7">Save contact</span></button>
+        <a class="link" href="https://www.instagram.com/kaaurdrnavjot" data-cfg-href="instagram" target="_blank" rel="noopener" style="align-self:center"><span data-e="about.8">FOLLOW HER JOURNEY</span> <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
       </div>
     </div>
   </div>
@@ -1005,11 +1026,11 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <!-- ======================= NUMBERS ======================= -->
 <section class="numbers dark" aria-label="At a glance">
   <div class="num-grid">
-    <div class="num" data-reveal><span class="v"><span data-count="5">5</span></span><span class="l">Books published</span></div>
-    <div class="num" data-reveal><span class="v"><span data-count="4">4</span></span><span class="l">International awards</span></div>
-    <div class="num" data-reveal><span class="v"><span data-count="16">16</span>+</span><span class="l">National honours</span></div>
-    <div class="num" data-reveal><span class="v"><span data-count="7">7</span>+</span><span class="l">Keynote addresses</span></div>
-    <div class="num" data-reveal><span class="v"><span data-count="3">3</span></span><span class="l">Global forums founded</span></div>
+    <div class="num" data-reveal><span class="v"><span data-count="5" data-e="numbers.1">5</span></span><span class="l" data-e="numbers.2">Books published</span></div>
+    <div class="num" data-reveal><span class="v"><span data-count="4" data-e="numbers.3">4</span></span><span class="l" data-e="numbers.4">International awards</span></div>
+    <div class="num" data-reveal><span class="v" data-e="numbers.5"><span data-count="16">16</span>+</span><span class="l" data-e="numbers.6">National honours</span></div>
+    <div class="num" data-reveal><span class="v" data-e="numbers.7"><span data-count="7">7</span>+</span><span class="l" data-e="numbers.8">Keynote addresses</span></div>
+    <div class="num" data-reveal><span class="v"><span data-count="3" data-e="numbers.9">3</span></span><span class="l" data-e="numbers.10">Global forums founded</span></div>
   </div>
 </section>
 
@@ -1018,63 +1039,63 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   <div class="wrap">
     <div class="speaker-top">
       <div>
-        <p class="label" data-reveal><span class="n">02</span> ON STAGE</p>
-        <h2 class="h2" id="speaker-h" data-split>A Voice That <em>Inspires</em> and <em>Empowers.</em></h2>
-        <p class="lead" data-reveal>From prestigious international forums to influential community stages, Dr. Navjot Kaur brings together the insight of an educator, the vision of a leader, and the presence of a woman who inspires action.</p>
-        <p class="lead" data-reveal style="margin-top:14px">Her words don’t simply fill a room — they ignite thought, awaken ambition, and inspire people to believe in themselves, embrace their potential, and achieve greatness in life.</p>
+        <p class="label" data-reveal data-e="speaker.1"><span class="n">02</span> ON STAGE</p>
+        <h2 class="h2" id="speaker-h" data-split data-e="speaker.2">A Voice That <em>Inspires</em> and <em>Empowers.</em></h2>
+        <p class="lead" data-reveal data-e="speaker.3">From prestigious international forums to influential community stages, Dr. Navjot Kaur brings together the insight of an educator, the vision of a leader, and the presence of a woman who inspires action.</p>
+        <p class="lead" data-reveal style="margin-top:14px" data-e="speaker.4">Her words don’t simply fill a room — they ignite thought, awaken ambition, and inspire people to believe in themselves, embrace their potential, and achieve greatness in life.</p>
         <div class="topics" data-reveal>
-          <span class="chip">Women empowerment &amp; leadership</span>
-          <span class="chip">Innovation in education</span>
-          <span class="chip">Work-life balance</span>
-          <span class="chip">Youth leadership</span>
-          <span class="chip">Entrepreneurship in education</span>
-          <span class="chip">Beauty with purpose</span>
+          <span class="chip" data-e="speaker.5">Women empowerment &amp; leadership</span>
+          <span class="chip" data-e="speaker.6">Innovation in education</span>
+          <span class="chip" data-e="speaker.7">Work-life balance</span>
+          <span class="chip" data-e="speaker.8">Youth leadership</span>
+          <span class="chip" data-e="speaker.9">Entrepreneurship in education</span>
+          <span class="chip" data-e="speaker.10">Beauty with purpose</span>
         </div>
       </div>
       <div class="frame reel clip-reveal" id="reel" data-ar="4:5" role="group" aria-roledescription="slideshow" aria-label="Dr. Navjot Kaur on stage">
-        <span class="tag"><span class="dot" aria-hidden="true"></span>ON STAGE<span class="n" aria-hidden="true"></span></span>
+        <span class="tag" data-e="reel.1"><span class="dot" aria-hidden="true"></span>ON STAGE<span class="n" aria-hidden="true"></span></span>
       </div>
     </div>
 
     <div class="formats">
-      <article class="format" data-reveal><span class="k">01 · KEYNOTE</span><h3>Keynote Speaker</h3><p>Opening and closing addresses for conferences, summits and education forums, grounded in research and real-world leadership.</p></article>
-      <article class="format" data-reveal><span class="k">02 · CHIEF GUEST</span><h3>Chief-Guest Addresses &amp; Panelist</h3><p>Chief guest at India Diva’s Award 2022, several book launches in 2023 and 2024, the 2nd Rugby State Championship 2025 at Maharaja Ranjit Singh University, Ayaam 2022 and Nari Chetna, and a panelist at education summits.</p></article>
-      <article class="format" data-reveal><span class="k">03 · MOTIVATIONAL</span><h3>Motivational Speaker</h3><p>Talks for women, students and teams on believing in your dreams, balancing life and work, and leading with purpose.</p></article>
+      <article class="format" data-reveal><span class="k" data-e="speaker.11">01 · KEYNOTE</span><h3 data-e="speaker.12">Keynote Speaker</h3><p data-e="speaker.13">Opening and closing addresses for conferences, summits and education forums, grounded in research and real-world leadership.</p></article>
+      <article class="format" data-reveal><span class="k" data-e="speaker.14">02 · CHIEF GUEST</span><h3 data-e="speaker.15">Chief-Guest Addresses &amp; Panelist</h3><p data-e="speaker.16">Chief guest at India Diva’s Award 2022, several book launches in 2023 and 2024, the 2nd Rugby State Championship 2025 at Maharaja Ranjit Singh University, Ayaam 2022 and Nari Chetna, and a panelist at education summits.</p></article>
+      <article class="format" data-reveal><span class="k" data-e="speaker.17">03 · MOTIVATIONAL</span><h3 data-e="speaker.18">Motivational Speaker</h3><p data-e="speaker.19">Talks for women, students and teams on believing in your dreams, balancing life and work, and leading with purpose.</p></article>
     </div>
 
     <div class="stages">
       <div class="stage-aside">
-        <p class="label" data-reveal>SELECTED STAGES</p>
-        <p class="lead" data-reveal>Invited as Chief Guest, Guest of Honour, Jury to international platforms, Keynote Speaker and Panelist.</p>
+        <p class="label" data-reveal data-e="speaker.20">SELECTED STAGES</p>
+        <p class="lead" data-reveal data-e="speaker.21">Invited as Chief Guest, Guest of Honour, Jury to international platforms, Keynote Speaker and Panelist.</p>
         <div class="stage-year" aria-hidden="true"><span class="sy-ghost">2025</span><span class="sy-fill" id="stageYear">2025</span></div>
         <ul class="stage-roles" aria-label="Invited as">
-          <li><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg>Chief Guest</li>
-          <li><svg class="i" aria-hidden="true"><use href="#i-star"/></svg>Guest of Honour</li>
-          <li><svg class="i" aria-hidden="true"><use href="#i-award"/></svg>Jury</li>
-          <li><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>Keynote Speaker</li>
-          <li><svg class="i" aria-hidden="true"><use href="#i-users"/></svg>Panelist</li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg><span data-e="speaker.22">Chief Guest</span></li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-star"/></svg><span data-e="speaker.23">Guest of Honour</span></li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-award"/></svg><span data-e="speaker.24">Jury</span></li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span data-e="speaker.25">Keynote Speaker</span></li>
+          <li><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><span data-e="speaker.26">Panelist</span></li>
         </ul>
-        <button class="btn btn-gold" type="button" data-open="speak" aria-haspopup="dialog">Invite to speak<svg class="i i-go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+        <button class="btn btn-gold" type="button" data-open="speak" aria-haspopup="dialog"><span data-e="speaker.27">Invite to speak</span><svg class="i i-go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
       </div>
       <ul class="stage-list">
-        <li data-reveal><span class="y">2025</span><div><b>EdTalk World Conference 2025</b><span>Keynote Speaker · New Delhi</span></div></li>
-        <li data-reveal><span class="y">2025</span><div><b>28th Education Summit 2025</b><span>Guest Speaker</span></div></li>
-        <li data-reveal><span class="y">2025</span><div><b>Education Excellence Conclave</b><span>Speaker · Zirakpur</span></div></li>
-        <li data-reveal><span class="y">2025</span><div><b>2nd Rugby State Championship</b><span>Chief Guest · Maharaja Ranjit Singh University</span></div></li>
-        <li data-reveal><span class="y">2024</span><div><b>21st Education Summit (Amritsar)</b><span>Guest Speaker · by Time2Grow Media</span></div></li>
-        <li data-reveal><span class="y">2024</span><div><b>22nd Education Summit (Chandigarh)</b><span>Speaker</span></div></li>
-        <li data-reveal><span class="y">2023</span><div><b>International Convention for Global Partnerships</b><span>Educational delegate · New Delhi</span></div></li>
-        <li data-reveal><span class="y">2023</span><div><b>STTAR Global School Education Conference</b><span>“Education for a Sustainable Future” · New Delhi</span></div></li>
-        <li data-reveal><span class="y">2022</span><div><b>6th Canadian International Conference on Advances in Education, Teaching &amp; Technology</b><span>Paper: “Promoting Innovation and Entrepreneurship in the Educational Ecosystem”</span></div></li>
-        <li data-reveal><span class="y">2022</span><div><b>India Diva’s Award 2022</b><span>Chief Guest</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.28">2025</span><div><b data-e="speaker.29">EdTalk World Conference 2025</b><span data-e="speaker.30">Keynote Speaker · New Delhi</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.31">2025</span><div><b data-e="speaker.32">28th Education Summit 2025</b><span data-e="speaker.33">Guest Speaker</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.34">2025</span><div><b data-e="speaker.35">Education Excellence Conclave</b><span data-e="speaker.36">Speaker · Zirakpur</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.37">2025</span><div><b data-e="speaker.38">2nd Rugby State Championship</b><span data-e="speaker.39">Chief Guest · Maharaja Ranjit Singh University</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.40">2024</span><div><b data-e="speaker.41">21st Education Summit (Amritsar)</b><span data-e="speaker.42">Guest Speaker · by Time2Grow Media</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.43">2024</span><div><b data-e="speaker.44">22nd Education Summit (Chandigarh)</b><span data-e="speaker.45">Speaker</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.46">2023</span><div><b data-e="speaker.47">International Convention for Global Partnerships</b><span data-e="speaker.48">Educational delegate · New Delhi</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.49">2023</span><div><b data-e="speaker.50">STTAR Global School Education Conference</b><span data-e="speaker.51">“Education for a Sustainable Future” · New Delhi</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.52">2022</span><div><b data-e="speaker.53">6th Canadian International Conference on Advances in Education, Teaching &amp; Technology</b><span data-e="speaker.54">Paper: “Promoting Innovation and Entrepreneurship in the Educational Ecosystem”</span></div></li>
+        <li data-reveal><span class="y" data-e="speaker.55">2022</span><div><b data-e="speaker.56">India Diva’s Award 2022</b><span data-e="speaker.57">Chief Guest</span></div></li>
       </ul>
     </div>
   </div>
   <div class="strip marquee" style="--dur:9s" id="stageStrip" data-skew></div>
   <div class="wrap">
     <div class="speak-cta" data-reveal>
-      <p>Planning a conference, school event or women's forum? <em>Invite Dr. Navjot Kaur to speak.</em></p>
-      <div class="btn-row"><button class="btn btn-gold" type="button" data-open="speak" aria-haspopup="dialog">Invite to speak<svg class="i i-go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button><button class="btn btn-line" type="button" data-open="podcast" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>Podcast invite</button></div>
+      <p data-e="speaker.58">Planning a conference, school event or women's forum? <em>Invite Dr. Navjot Kaur to speak.</em></p>
+      <div class="btn-row"><button class="btn btn-gold" type="button" data-open="speak" aria-haspopup="dialog"><span data-e="speaker.59">Invite to speak</span><svg class="i i-go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button><button class="btn btn-line" type="button" data-open="podcast" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span data-e="speaker.60">Podcast invite</span></button></div>
     </div>
   </div>
 </section>
@@ -1090,57 +1111,57 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
       </div>
     </div>
     <div>
-      <p class="label" data-reveal><span class="n">03</span> BOOKS</p>
+      <p class="label" data-reveal data-e="books.1"><span class="n">03</span> BOOKS</p>
       <h2 class="h2" id="books-h" data-split><span class="t" data-cfg-text="featuredTitle">Cosmic Map of Answers</span></h2>
-      <p class="badge" data-reveal style="margin-top:22px"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg>AMAZON BESTSELLING AUTHOR</p>
-      <p class="lead" data-reveal><em>Cosmic Map of Answers</em> is a mystical guide to finding clarity when life feels uncertain.</p>
-      <p data-reveal style="margin-top:12px">Each page becomes a gentle compass, guiding your thoughts, choices and inner journey. A book to open with a question and close with more clarity, courage and cosmic wisdom.</p>
-      <p data-reveal style="margin-top:12px">Open these pages with a question, surrender to the moment, and allow the universe to offer a gentle answer.</p>
-      <blockquote class="quote book-quote" data-reveal>When you are confused, pause.<br>When you are searching, open.<br>Perhaps the answer is already <em>waiting</em> for you.<cite>— DR. NAVJOT KAUR · AUTHOR OF A COSMIC MAP OF ANSWERS</cite></blockquote>
+      <p class="badge" data-reveal style="margin-top:22px"><svg class="i" aria-hidden="true"><use href="#i-star"/></svg><span data-e="books.2">AMAZON BESTSELLING AUTHOR</span></p>
+      <p class="lead" data-reveal data-e="books.3"><em>Cosmic Map of Answers</em> is a mystical guide to finding clarity when life feels uncertain.</p>
+      <p data-reveal style="margin-top:12px" data-e="books.4">Each page becomes a gentle compass, guiding your thoughts, choices and inner journey. A book to open with a question and close with more clarity, courage and cosmic wisdom.</p>
+      <p data-reveal style="margin-top:12px" data-e="books.5">Open these pages with a question, surrender to the moment, and allow the universe to offer a gentle answer.</p>
+      <blockquote class="quote book-quote" data-reveal data-e="books.6">When you are confused, pause.<br>When you are searching, open.<br>Perhaps the answer is already <em>waiting</em> for you.<cite>— DR. NAVJOT KAUR · AUTHOR OF A COSMIC MAP OF ANSWERS</cite></blockquote>
       <ol class="steps3" aria-label="How to order a copy" data-reveal>
-        <li>Tap <b>Order on WhatsApp</b> and add the copies and delivery address.</li>
-        <li>Your order opens in WhatsApp.</li>
-        <li>Our team will contact you directly to confirm the book price, securely process your payment, and coordinate your delivery.</li>
+        <li data-e="books.7">Tap <b>Order on WhatsApp</b> and add the copies and delivery address.</li>
+        <li data-e="books.8">Your order opens in WhatsApp.</li>
+        <li data-e="books.9">Our team will contact you directly to confirm the book price, securely process your payment, and coordinate your delivery.</li>
       </ol>
       <div class="btn-row" data-reveal>
-        <button class="btn btn-gold" type="button" data-open="order" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg>Order on WhatsApp</button>
-        <a class="btn btn-line" href="https://amzn.in/d/0aum2eAt" data-cfg-href="amazon" target="_blank" rel="noopener">Buy on Amazon<svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
+        <button class="btn btn-gold" type="button" data-open="order" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg><span data-e="books.10">Order on WhatsApp</span></button>
+        <a class="btn btn-line" href="https://amzn.in/d/0aum2eAt" data-cfg-href="amazon" target="_blank" rel="noopener"><span data-e="books.11">Buy on Amazon</span><svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
       </div>
-      <p class="d-note" data-reveal><svg class="i" aria-hidden="true"><use href="#i-truck"/></svg>Physical copies, shipped across India. No payment is taken on this website.</p>
+      <p class="d-note" data-reveal><svg class="i" aria-hidden="true"><use href="#i-truck"/></svg><span data-e="books.12">Physical copies, shipped across India. No payment is taken on this website.</span></p>
     </div>
   </div>
   <div class="wrap library" id="library">
     <div class="lib-head">
-      <p class="label" data-reveal>THE LIBRARY</p>
-      <h3 class="h2" data-split>Five books, one <em>calling.</em></h3>
-      <p class="lead" data-reveal>Every title can be ordered directly from the author on WhatsApp, or bought online.</p>
+      <p class="label" data-reveal data-e="library.1">THE LIBRARY</p>
+      <h3 class="h2" data-split data-e="library.2">Five books, one <em>calling.</em></h3>
+      <p class="lead" data-reveal data-e="library.3">Every title can be ordered directly from the author on WhatsApp, or bought online.</p>
     </div>
 
     <div class="trilogy" id="trilogy">
       <div class="tri-text">
-        <p class="label">A TRILOGY · THREE BOOKS</p>
-        <h3 class="tri-title">The <em>Mother</em> Trilogy</h3>
-        <p>Three books honouring motherhood: as a blessing, as a gift and as a creation.</p>
-        <button class="btn btn-gold" type="button" data-open="order" data-book="mother-trilogy" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg>Order the trilogy</button>
+        <p class="label" data-e="trilogy.1">A TRILOGY · THREE BOOKS</p>
+        <h3 class="tri-title" data-e="trilogy.2">The <em>Mother</em> Trilogy</h3>
+        <p data-e="trilogy.3">Three books honouring motherhood: as a blessing, as a gift and as a creation.</p>
+        <button class="btn btn-gold" type="button" data-open="order" data-book="mother-trilogy" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg><span data-e="trilogy.4">Order the trilogy</span></button>
       </div>
       <div class="tri-covers">
         <article class="bk" data-tri>
           <div class="bk-cover" data-slot="books.motherBlessing" data-fit="book" data-sizes="(min-width: 900px) 220px, 30vw" data-cursor="ORDER" data-open="order" data-book="mother-blessing"></div>
-          <span class="bk-n">BOOK I</span>
-          <h4>Mother: A Divine Blessing</h4>
-          <div class="bk-actions"><a class="link" href="https://www.amazon.in/dp/9364526813" target="_blank" rel="noopener">AMAZON <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-blessing">WHATSAPP <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
+          <span class="bk-n" data-e="trilogy.5">BOOK I</span>
+          <h4 data-e="trilogy.6">Mother: A Divine Blessing</h4>
+          <div class="bk-actions"><a class="link" href="https://www.amazon.in/dp/9364526813" target="_blank" rel="noopener" data-l="link.1"><span data-e="trilogy.7">AMAZON</span> <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-blessing"><span data-e="trilogy.8">WHATSAPP</span> <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
         </article>
         <article class="bk" data-tri>
           <div class="bk-cover" data-slot="books.motherGift" data-fit="book" data-sizes="(min-width: 900px) 220px, 30vw" data-cursor="ORDER" data-open="order" data-book="mother-gift"></div>
-          <span class="bk-n">BOOK II</span>
-          <h4>Mother: A Divine Gift</h4>
-          <div class="bk-actions"><a class="link" href="https://pnpacademy.in/product/mother-a-divine-gift/" target="_blank" rel="noopener">BUY ONLINE <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-gift">WHATSAPP <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
+          <span class="bk-n" data-e="trilogy.9">BOOK II</span>
+          <h4 data-e="trilogy.10">Mother: A Divine Gift</h4>
+          <div class="bk-actions"><a class="link" href="https://pnpacademy.in/product/mother-a-divine-gift/" target="_blank" rel="noopener" data-l="link.2"><span data-e="trilogy.11">BUY ONLINE</span> <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-gift"><span data-e="trilogy.12">WHATSAPP</span> <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
         </article>
         <article class="bk" data-tri>
           <div class="bk-cover" data-slot="books.motherCreation" data-fit="book" data-sizes="(min-width: 900px) 220px, 30vw" data-cursor="ORDER" data-open="order" data-book="mother-creation"></div>
-          <span class="bk-n">BOOK III</span>
-          <h4>Mother: A Divine Creation</h4>
-          <div class="bk-actions"><a class="link" href="https://www.amazon.in/dp/B0G1YVZVYZ" target="_blank" rel="noopener">AMAZON <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-creation">WHATSAPP <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
+          <span class="bk-n" data-e="trilogy.13">BOOK III</span>
+          <h4 data-e="trilogy.14">Mother: A Divine Creation</h4>
+          <div class="bk-actions"><a class="link" href="https://www.amazon.in/dp/B0G1YVZVYZ" target="_blank" rel="noopener" data-l="link.3"><span data-e="trilogy.15">AMAZON</span> <svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a><button class="link" type="button" data-open="order" data-book="mother-creation"><span data-e="trilogy.16">WHATSAPP</span> <svg class="i" aria-hidden="true"><use href="#i-arrow-r"/></svg></button></div>
         </article>
       </div>
     </div>
@@ -1148,12 +1169,12 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
     <article class="solo" data-reveal>
       <div class="solo-wrap"><div class="bk-cover solo-cover" data-slot="books.gwb" data-fit="book" data-sizes="(min-width: 900px) 260px, 56vw" data-cursor="ORDER" data-open="order" data-book="gwb"></div></div>
       <div>
-        <p class="label">ALSO BY DR. NAVJOT KAUR</p>
-        <h3 class="tri-title">Gratitude, Wisdom <em>&amp;</em> Blessing</h3>
-        <p class="lead">An invitation to live with gratitude, lead with wisdom and recognise the blessings in every day.</p>
+        <p class="label" data-e="library.4">ALSO BY DR. NAVJOT KAUR</p>
+        <h3 class="tri-title" data-e="library.5">Gratitude, Wisdom <em>&amp;</em> Blessing</h3>
+        <p class="lead" data-e="library.6">An invitation to live with gratitude, lead with wisdom and recognise the blessings in every day.</p>
         <div class="btn-row" style="margin-top:28px">
-          <button class="btn btn-gold" type="button" data-open="order" data-book="gwb" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg>Order on WhatsApp</button>
-          <a class="btn btn-line" href="https://www.amazon.in/Gratitude-Wisdom-Blessing-NAVJOT-KAUR/dp/B0F2F62YMG" target="_blank" rel="noopener">Buy on Amazon<svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
+          <button class="btn btn-gold" type="button" data-open="order" data-book="gwb" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg><span data-e="library.7">Order on WhatsApp</span></button>
+          <a class="btn btn-line" href="https://www.amazon.in/Gratitude-Wisdom-Blessing-NAVJOT-KAUR/dp/B0F2F62YMG" target="_blank" rel="noopener" data-l="link.4"><span data-e="library.8">Buy on Amazon</span><svg class="i" aria-hidden="true"><use href="#i-arrow-ur"/></svg></a>
         </div>
       </div>
     </article>
@@ -1163,45 +1184,45 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <!-- ======================= LEADERSHIP ======================= -->
 <section class="section sand cv" id="leadership" data-section="leadership" aria-labelledby="lead-h">
   <div class="wrap">
-    <p class="label" data-reveal><span class="n">04</span> LEADERSHIP</p>
-    <h2 class="h2" id="lead-h" data-split>Roles that <em>build</em> futures.</h2>
-    <p class="lead" data-reveal>In education and in the forums she founded, each role turns knowledge into opportunity for students, young leaders and women.</p>
+    <p class="label" data-reveal data-e="leadership.1"><span class="n">04</span> LEADERSHIP</p>
+    <h2 class="h2" id="lead-h" data-split data-e="leadership.2">Roles that <em>build</em> futures.</h2>
+    <p class="lead" data-reveal data-e="leadership.3">In education and in the forums she founded, each role turns knowledge into opportunity for students, young leaders and women.</p>
     <div class="lead-grid">
       <article class="lcard wide" data-reveal>
         <span class="logo fill" data-slot="leadership.quest" data-fit="limit" data-sizes="88px"></span>
-        <span class="role">DIRECTOR OF ADMINISTRATION</span>
-        <h3>Quest International School</h3>
-        <p>Leading administration at a school in India, where she brings her research on innovative teaching methods into practice. She also serves as an advisory board member to educational institutions.</p>
+        <span class="role" data-e="leadership.4">DIRECTOR OF ADMINISTRATION</span>
+        <h3 data-e="leadership.5">Quest International School</h3>
+        <p data-e="leadership.6">Leading administration at a school in India, where she brings her research on innovative teaching methods into practice. She also serves as an advisory board member to educational institutions.</p>
       </article>
       <article class="lcard" data-reveal>
         <span class="logo fill" data-slot="leadership.waaf" data-fit="limit" data-sizes="88px"></span>
-        <span class="role">FOUNDER &amp; CHAIRPERSON</span>
-        <h3>World Academic Achievers Forum</h3>
-        <p>A platform that celebrates academic excellence and brings achievers together.</p>
+        <span class="role" data-e="leadership.7">FOUNDER &amp; CHAIRPERSON</span>
+        <h3 data-e="leadership.8">World Academic Achievers Forum</h3>
+        <p data-e="leadership.9">A platform that celebrates academic excellence and brings achievers together.</p>
       </article>
       <article class="lcard" data-reveal>
         <span class="logo" data-slot="leadership.ydc" data-fit="limit" data-sizes="88px"></span>
-        <span class="role">FOUNDER &amp; CHAIRPERSON</span>
-        <h3>Youth Diplomatic Conclave</h3>
-        <p>A conclave that gives young people a voice and nurtures tomorrow's leaders.</p>
+        <span class="role" data-e="leadership.10">FOUNDER &amp; CHAIRPERSON</span>
+        <h3 data-e="leadership.11">Youth Diplomatic Conclave</h3>
+        <p data-e="leadership.12">A conclave that gives young people a voice and nurtures tomorrow's leaders.</p>
       </article>
       <article class="lcard" data-reveal>
         <span class="logo" data-slot="leadership.gwac" data-fit="limit" data-sizes="88px"></span>
-        <span class="role">FOUNDER &amp; CHAIRPERSON · INDIA / UAE</span>
-        <h3>The Global Women Achievers Circle</h3>
-        <p>A circle across India and the UAE that honours women who lead and encourages every woman to believe in her dreams.</p>
+        <span class="role" data-e="leadership.13">FOUNDER &amp; CHAIRPERSON · INDIA / UAE</span>
+        <h3 data-e="leadership.14">The Global Women Achievers Circle</h3>
+        <p data-e="leadership.15">A circle across India and the UAE that honours women who lead and encourages every woman to believe in her dreams.</p>
       </article>
       <article class="lcard" data-reveal>
         <span class="logo"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></span>
-        <span class="role">FOUNDER &amp; PAGEANT DIRECTOR</span>
-        <h3>Inspirational Miss India · Miss Celestial Punjab Queen</h3>
-        <p>She founded and runs both pageants as platforms for confidence, grace and purpose. She herself holds the title of Mrs. India Planet 2022.</p>
+        <span class="role" data-e="leadership.16">FOUNDER &amp; PAGEANT DIRECTOR</span>
+        <h3 data-e="leadership.17">Inspirational Miss India · Miss Celestial Punjab Queen</h3>
+        <p data-e="leadership.18">She founded and runs both pageants as platforms for confidence, grace and purpose. She herself holds the title of Mrs. India Planet 2022.</p>
       </article>
       <article class="lcard" data-reveal>
         <span class="logo"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
-        <span class="role">SCHOLAR</span>
-        <h3>PhD · MBA, International Business</h3>
-        <p>Research in work-life balance and innovative teaching methods, with numerous published papers.</p>
+        <span class="role" data-e="leadership.19">SCHOLAR</span>
+        <h3 data-e="leadership.20">PhD · MBA, International Business</h3>
+        <p data-e="leadership.21">Research in work-life balance and innovative teaching methods, with numerous published papers.</p>
       </article>
     </div>
   </div>
@@ -1211,33 +1232,33 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <section class="section dark honors" id="honors" data-section="honors" aria-labelledby="honors-h">
   <div class="wrap honor-head">
     <div>
-      <p class="label" data-reveal><span class="n">05</span> MOMENTS OF HONOR</p>
-      <h2 class="h2" id="honors-h" data-split>Recognised on <em>global</em> stages.</h2>
+      <p class="label" data-reveal data-e="honors.1"><span class="n">05</span> MOMENTS OF HONOR</p>
+      <h2 class="h2" id="honors-h" data-split data-e="honors.2">Recognised on <em>global</em> stages.</h2>
     </div>
     <div class="honor-count" data-reveal>
-      <div><span class="v"><span data-count="4">4</span></span><span class="l">International awards</span></div>
-      <div><span class="v"><span data-count="16">16</span>+</span><span class="l">National honours</span></div>
-      <div><span class="v"><span data-count="7">7</span>+</span><span class="l">Keynote addresses</span></div>
+      <div><span class="v"><span data-count="4" data-e="honors.3">4</span></span><span class="l" data-e="honors.4">International awards</span></div>
+      <div><span class="v" data-e="honors.5"><span data-count="16">16</span>+</span><span class="l" data-e="honors.6">National honours</span></div>
+      <div><span class="v" data-e="honors.7"><span data-count="7">7</span>+</span><span class="l" data-e="honors.8">Keynote addresses</span></div>
     </div>
   </div>
   <div class="rail-pin" id="railPin">
     <div class="rail" id="rail">
-      <article class="hcard crown" data-reveal><span class="y">★</span><span class="kind">PRESTIGIOUS AWARD</span><h3>Honouring Legends of Education</h3><p class="by">Recognised among the legends of education for her contribution to learning and leadership.</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-award"/></svg>EDUCATION</span></article>
+      <article class="hcard crown" data-reveal><span class="y" data-e="rail.1">★</span><span class="kind" data-e="rail.2">PRESTIGIOUS AWARD</span><h3 data-e="rail.3">Honouring Legends of Education</h3><p class="by" data-e="rail.4">Recognised among the legends of education for her contribution to learning and leadership.</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-award"/></svg><span data-e="rail.5">EDUCATION</span></span></article>
       <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.0" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.0"></figcaption></figure>
-      <p class="rail-group">INTERNATIONAL</p>
-      <article class="hcard" data-reveal><span class="y">2025</span><span class="kind">INTERNATIONAL · PANELIST &amp; AWARDEE</span><h3>Visionary Leader in Global Education &amp; Women Empowerment</h3><p class="by">She Talks</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>UAE</span></article>
+      <p class="rail-group" data-e="rail.6">INTERNATIONAL</p>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.7">2025</span><span class="kind" data-e="rail.8">INTERNATIONAL · PANELIST &amp; AWARDEE</span><h3 data-e="rail.9">Visionary Leader in Global Education &amp; Women Empowerment</h3><p class="by" data-e="rail.10">She Talks</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><span data-e="rail.11">UAE</span></span></article>
       <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.1" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.1"></figcaption></figure>
-      <article class="hcard" data-reveal><span class="y">2023</span><span class="kind">INTERNATIONAL</span><h3>Inspirational Educator Award</h3><p class="by">International School Awards</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>THAILAND</span></article>
-      <article class="hcard" data-reveal><span class="y">2023</span><span class="kind">INTERNATIONAL</span><h3>Educationist of the Year 2023</h3><p class="by">Dubai YUJ International Awards</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>DUBAI, UAE</span></article>
-      <article class="hcard" data-reveal><span class="y">2022</span><span class="kind">INTERNATIONAL</span><h3>Indian Achievers Award 2022</h3><p class="by">“Outstanding Leadership in Education”</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>DUBAI</span></article>
-      <p class="rail-group">ON STAGE · CONFERENCES</p>
-      <article class="hcard" data-reveal><span class="y">7+</span><span class="kind">SPEAKER</span><h3>Keynote Addresses</h3><p class="by">Keynote Speaker at the EdTalk World Conference 2025, New Delhi, and at education summits and conclaves across India.</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>INDIA &amp; ABROAD</span></article>
-      <article class="hcard" data-reveal><span class="y">2024–25</span><span class="kind">SPEAKER · PANELIST</span><h3>Education Summits</h3><p class="by">28th Education Summit 2025 · 21st (Amritsar) and 22nd (Chandigarh) Education Summits 2024 · Education Excellence Conclave, Zirakpur 2025</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>INDIA</span></article>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.12">2023</span><span class="kind" data-e="rail.13">INTERNATIONAL</span><h3 data-e="rail.14">Inspirational Educator Award</h3><p class="by" data-e="rail.15">International School Awards</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><span data-e="rail.16">THAILAND</span></span></article>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.17">2023</span><span class="kind" data-e="rail.18">INTERNATIONAL</span><h3 data-e="rail.19">Educationist of the Year 2023</h3><p class="by" data-e="rail.20">Dubai YUJ International Awards</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><span data-e="rail.21">DUBAI, UAE</span></span></article>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.22">2022</span><span class="kind" data-e="rail.23">INTERNATIONAL</span><h3 data-e="rail.24">Indian Achievers Award 2022</h3><p class="by" data-e="rail.25">“Outstanding Leadership in Education”</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><span data-e="rail.26">DUBAI</span></span></article>
+      <p class="rail-group" data-e="rail.27">ON STAGE · CONFERENCES</p>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.28">7+</span><span class="kind" data-e="rail.29">SPEAKER</span><h3 data-e="rail.30">Keynote Addresses</h3><p class="by" data-e="rail.31">Keynote Speaker at the EdTalk World Conference 2025, New Delhi, and at education summits and conclaves across India.</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span data-e="rail.32">INDIA &amp; ABROAD</span></span></article>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.33">2024–25</span><span class="kind" data-e="rail.34">SPEAKER · PANELIST</span><h3 data-e="rail.35">Education Summits</h3><p class="by" data-e="rail.36">28th Education Summit 2025 · 21st (Amritsar) and 22nd (Chandigarh) Education Summits 2024 · Education Excellence Conclave, Zirakpur 2025</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span data-e="rail.37">INDIA</span></span></article>
       <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.2" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.2"></figcaption></figure>
-      <p class="rail-group">NATIONAL</p>
-      <article class="hcard" data-reveal><span class="y">2023</span><span class="kind">NATIONAL</span><h3>Young Woman Director of the Year 2023</h3><p class="by">Women Leaders Forum</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>NEW DELHI</span></article>
-      <article class="hcard" data-reveal><span class="y">2023</span><span class="kind">NATIONAL</span><h3>Director of the Year – Education 2023</h3><p class="by">Women Entrepreneurship Summit / India Business Conclave, Global Triumph Foundation</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>CHENNAI</span></article>
-      <article class="hcard" data-reveal><span class="y">2022</span><span class="kind">TITLE WINNER</span><h3>Mrs. India Planet 2022</h3><p class="by">Her winning title, carried as a platform for women’s empowerment: beauty with purpose.</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg>INDIA</span></article>
+      <p class="rail-group" data-e="rail.38">NATIONAL</p>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.39">2023</span><span class="kind" data-e="rail.40">NATIONAL</span><h3 data-e="rail.41">Young Woman Director of the Year 2023</h3><p class="by" data-e="rail.42">Women Leaders Forum</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><span data-e="rail.43">NEW DELHI</span></span></article>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.44">2023</span><span class="kind" data-e="rail.45">NATIONAL</span><h3 data-e="rail.46">Director of the Year – Education 2023</h3><p class="by" data-e="rail.47">Women Entrepreneurship Summit / India Business Conclave, Global Triumph Foundation</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg><span data-e="rail.48">CHENNAI</span></span></article>
+      <article class="hcard" data-reveal><span class="y" data-e="rail.49">2022</span><span class="kind" data-e="rail.50">TITLE WINNER</span><h3 data-e="rail.51">Mrs. India Planet 2022</h3><p class="by" data-e="rail.52">Her winning title, carried as a platform for women’s empowerment: beauty with purpose.</p><span class="at"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg><span data-e="rail.53">INDIA</span></span></article>
       <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.3" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.3"></figcaption></figure>
       <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.4" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.4"></figcaption></figure>
       <figure class="hphoto" data-reveal><div class="frame clip-reveal" data-slot="honors.photos.5" data-ar="4:5" data-fit="contain" data-sizes="(min-width: 1025px) 350px, (min-width: 640px) 45vw, 90vw"></div><figcaption data-slot-caption="honors.photos.5"></figcaption></figure>
@@ -1248,14 +1269,14 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <!-- ======================= IMPACT ======================= -->
 <section class="section cv" id="impact" data-section="impact" aria-labelledby="impact-h">
   <div class="wrap">
-    <p class="label" data-reveal><span class="n">06</span> IMPACT</p>
-    <h2 class="statement" id="impact-h" data-split>When women rise, <em>communities</em> rise with them.</h2>
+    <p class="label" data-reveal data-e="impact.1"><span class="n">06</span> IMPACT</p>
+    <h2 class="statement" id="impact-h" data-split data-e="impact.2">When women rise, <em>communities</em> rise with them.</h2>
     <div class="bento" id="impactGrid">
-      <article class="tile text ink" data-reveal data-order="2"><svg class="i" aria-hidden="true"><use href="#i-heart-hand"/></svg><div><h3>Save Girl Child · Educate Girl Child</h3><p>Awareness drives that champion every girl's right to be born, valued and educated.</p></div></article>
-      <article class="tile text" data-reveal data-order="5"><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg><div><h3>Craft &amp; skill workshops</h3><p>Hands-on sessions with rural women and girls, building skills and self-reliance.</p></div></article>
-      <article class="tile text gold" data-reveal data-order="8"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg><div><h3>Chief Guest</h3><p>India Diva’s Award 2022 · Ayaam 2022 · Nari Chetna · several book launches in 2023 and 2024 · 2nd Rugby State Championship 2025 at Maharaja Ranjit Singh University.</p></div></article>
+      <article class="tile text ink" data-reveal data-order="2"><svg class="i" aria-hidden="true"><use href="#i-heart-hand"/></svg><div><h3 data-e="impactGrid.1">Save Girl Child · Educate Girl Child</h3><p data-e="impactGrid.2">Awareness drives that champion every girl's right to be born, valued and educated.</p></div></article>
+      <article class="tile text" data-reveal data-order="5"><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg><div><h3 data-e="impactGrid.3">Craft &amp; skill workshops</h3><p data-e="impactGrid.4">Hands-on sessions with rural women and girls, building skills and self-reliance.</p></div></article>
+      <article class="tile text gold" data-reveal data-order="8"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg><div><h3 data-e="impactGrid.5">Chief Guest</h3><p data-e="impactGrid.6">India Diva’s Award 2022 · Ayaam 2022 · Nari Chetna · several book launches in 2023 and 2024 · 2nd Rugby State Championship 2025 at Maharaja Ranjit Singh University.</p></div></article>
     </div>
-    <p class="lead" data-reveal style="margin-top:clamp(36px,5vw,60px)">Beyond the podium, she works at the grassroots, encouraging women to take responsibility for their personal and social development and to see their dreams as within reach.</p>
+    <p class="lead" data-reveal style="margin-top:clamp(36px,5vw,60px)" data-e="impact.3">Beyond the podium, she works at the grassroots, encouraging women to take responsibility for their personal and social development and to see their dreams as within reach.</p>
   </div>
 </section>
 
@@ -1264,28 +1285,28 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   <div class="wrap">
     <div class="media-head">
       <div>
-        <p class="label" data-reveal><span class="n">07</span> IN THE MEDIA</p>
-        <h2 class="h2" id="media-h" data-split>In the <em>headlines.</em></h2>
+        <p class="label" data-reveal data-e="media.1"><span class="n">07</span> IN THE MEDIA</p>
+        <h2 class="h2" id="media-h" data-split data-e="media.2">In the <em>headlines.</em></h2>
       </div>
-      <p class="lead" data-reveal>Media interactions, panel discussions and podcast conversations, in India and on international platforms.</p>
+      <p class="lead" data-reveal data-e="media.3">Media interactions, panel discussions and podcast conversations, in India and on international platforms.</p>
     </div>
     <figure class="media-feature" id="mediaFeature" data-reveal>
       <div class="frame clip-reveal" style="--ar:3/2"></div>
-      <figcaption><span>MEDIA INTERACTION</span><span>EDTALK WORLD CONFERENCE</span></figcaption>
+      <figcaption><span data-e="media.4">MEDIA INTERACTION</span><span data-e="media.5">EDTALK WORLD CONFERENCE</span></figcaption>
     </figure>
 
     <div class="sub-head">
-      <p class="label" data-reveal>MEDIA INTERACTIONS &amp; PANEL DISCUSSIONS</p>
-      <h3 class="h3" data-split>On camera, on <em>panels.</em></h3>
+      <p class="label" data-reveal data-e="media.6">MEDIA INTERACTIONS &amp; PANEL DISCUSSIONS</p>
+      <h3 class="h3" data-split data-e="media.7">On camera, on <em>panels.</em></h3>
     </div>
     <div class="masonry" id="miGrid"></div>
 
     <div class="sub-head pods-head">
       <div>
-        <p class="label" data-reveal>PODCASTS &amp; INTERVIEWS</p>
-        <h3 class="h3" data-split>Press play on the <em>conversation.</em></h3>
+        <p class="label" data-reveal data-e="media.8">PODCASTS &amp; INTERVIEWS</p>
+        <h3 class="h3" data-split data-e="media.9">Press play on the <em>conversation.</em></h3>
       </div>
-      <button class="btn btn-gold" type="button" data-open="podcast" aria-haspopup="dialog" data-reveal><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg>Podcast invite</button>
+      <button class="btn btn-gold" type="button" data-open="podcast" aria-haspopup="dialog" data-reveal><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg><span data-e="media.10">Podcast invite</span></button>
     </div>
     <div class="pod-grid" id="podGrid"></div>
   </div>
@@ -1296,10 +1317,10 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   <div class="wrap">
     <div class="media-head">
       <div>
-        <p class="label" data-reveal><span class="n">08</span> MAGAZINES</p>
-        <h2 class="h2" id="mag-h" data-split>Covers &amp; <em>features.</em></h2>
+        <p class="label" data-reveal data-e="magazines.1"><span class="n">08</span> MAGAZINES</p>
+        <h2 class="h2" id="mag-h" data-split data-e="magazines.2">Covers &amp; <em>features.</em></h2>
       </div>
-      <p class="lead" data-reveal>Magazine covers and the feature stories inside. Tap any page to read it full size.</p>
+      <p class="lead" data-reveal data-e="magazines.3">Magazine covers and the feature stories inside. Tap any page to read it full size.</p>
     </div>
     <div class="masonry mag-grid" id="magGrid"></div>
   </div>
@@ -1308,9 +1329,9 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <!-- ======================= GALLERY + SOCIAL ======================= -->
 <section class="section paper cv" id="gallery" data-section="gallery" aria-labelledby="gallery-h" style="overflow:hidden">
   <div class="wrap center">
-    <p class="label" data-reveal><span class="n">09</span> GALLERY &amp; SOCIAL</p>
-    <h2 class="h2" id="gallery-h" data-split>Life in <em>frames.</em></h2>
-    <p class="lead" data-reveal>From grand stages to cherished moments, every frame captures a moment, a milestone, and a chapter of the journey.</p>
+    <p class="label" data-reveal data-e="gallery.1"><span class="n">09</span> GALLERY &amp; SOCIAL</p>
+    <h2 class="h2" id="gallery-h" data-split data-e="gallery.2">Life in <em>frames.</em></h2>
+    <p class="lead" data-reveal data-e="gallery.3">From grand stages to cherished moments, every frame captures a moment, a milestone, and a chapter of the journey.</p>
   </div>
   <div class="rows">
     <div class="marquee" style="--dur:10.5s" id="rowA" data-skew></div>
@@ -1319,12 +1340,12 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
   <div class="wrap follow">
     <a class="fcard" href="https://www.instagram.com/kaaurdrnavjot" data-cfg-href="instagram" target="_blank" rel="noopener" data-reveal>
       <span class="ic"><svg class="i" aria-hidden="true"><use href="#i-instagram"/></svg></span>
-      <span><b>Follow on Instagram</b><span>@KAAURDRNAVJOT</span></span>
+      <span><b data-e="gallery.4">Follow on Instagram</b><span data-e="gallery.5">@KAAURDRNAVJOT</span></span>
       <svg class="i go" aria-hidden="true"><use href="#i-arrow-ur"/></svg>
     </a>
     <a class="fcard" href="https://www.linkedin.com/in/dr-navjot-kaur-087a85318/" data-cfg-href="linkedin" target="_blank" rel="noopener" data-reveal>
       <span class="ic"><svg class="i" aria-hidden="true"><use href="#i-linkedin"/></svg></span>
-      <span><b>Connect on LinkedIn</b><span>DR. NAVJOT KAUR</span></span>
+      <span><b data-e="gallery.6">Connect on LinkedIn</b><span data-e="gallery.7">DR. NAVJOT KAUR</span></span>
       <svg class="i go" aria-hidden="true"><use href="#i-arrow-ur"/></svg>
     </a>
   </div>
@@ -1334,25 +1355,26 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <section class="section sand appt" id="appointments" data-section="appointments" aria-labelledby="appt-h">
   <div class="wrap appt-grid">
     <div>
-      <p class="label" data-reveal><span class="n">10</span> APPOINTMENTS</p>
-      <h2 class="h2" id="appt-h" data-split>Healing &amp; <em>guidance</em> sessions.</h2>
-      <p class="lead" data-reveal>Book a personal session with Dr. Navjot Kaur. Send your request on WhatsApp, and our team will coordinate the date, time, slot and payment with you.</p>
+      <p class="label" data-reveal data-e="appointments.1"><span class="n">10</span> APPOINTMENTS</p>
+      <h2 class="h2" id="appt-h" data-split data-e="appointments.2">Healing &amp; <em>guidance</em> sessions.</h2>
+      <p class="lead" data-reveal data-e="appointments.3">Book a personal session with Dr. Navjot Kaur. Send your request on WhatsApp, and our team will coordinate the date, time, slot and payment with you.</p>
       <div class="topics" data-reveal>
-        <span class="chip">Tarot &amp; Oracle Guidance</span>
-        <span class="chip">Holistic Healing</span>
-        <span class="chip">Oracle Card Reading</span>
-        <span class="chip">Energy Healing</span>
-        <span class="chip">Angel Healing</span>
+        <span class="chip" data-e="appointments.4">Tarot &amp; Oracle Guidance</span>
+        <span class="chip" data-e="appointments.5">Kali Oracle Course</span>
+        <span class="chip" data-e="appointments.6">Holistic Healing</span>
+        <span class="chip" data-e="appointments.7">Oracle Card Reading</span>
+        <span class="chip" data-e="appointments.8">Energy Healing</span>
+        <span class="chip" data-e="appointments.9">Angel Healing</span>
       </div>
       <div class="btn-row" data-reveal>
-        <button class="btn btn-gold" type="button" data-open="appt" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg>Book a session</button>
+        <button class="btn btn-gold" type="button" data-open="appt" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg><span data-e="appointments.10">Book a session</span></button>
       </div>
-      <button class="btn-tarot light" type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog" data-reveal><span class="tg" aria-hidden="true"><svg class="i"><use href="#i-sparkles"/></svg></span><span class="tt"><b>Tarot &amp; Oracle Guidance</b><small>BY APPOINTMENT</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+      <button class="btn-tarot light" type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog" data-reveal><span class="tg" aria-hidden="true"><svg class="i"><use href="#i-sparkles"/></svg></span><span class="tt"><b data-e="appointments.11">Tarot &amp; Oracle Guidance</b><small data-e="appointments.12">BY APPOINTMENT</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
     </div>
     <ol class="steps3 appt-steps" aria-label="How booking works" data-reveal>
-      <li>Tap <b>Book a session</b> and choose the session.</li>
-      <li>Your request opens in WhatsApp.</li>
-      <li>Our team confirms the date, time, slot and payment with you.</li>
+      <li data-e="appointments.13">Tap <b>Book a session</b> and choose the session.</li>
+      <li data-e="appointments.14">Your request opens in WhatsApp.</li>
+      <li data-e="appointments.15">Our team confirms the date, time, slot and payment with you.</li>
     </ol>
   </div>
 </section>
@@ -1361,15 +1383,15 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 <section class="section dark contact" id="contact" data-section="contact" aria-labelledby="contact-h">
   <div class="wrap contact-grid">
     <div>
-      <p class="label" data-reveal><span class="n">11</span> CONTACT</p>
-      <h2 class="h2" id="contact-h" data-split>Let’s Connect. Let’s <em>Create.</em></h2>
-      <p class="lead" data-reveal>Send Invitations for Speaking Engagements / Podcast Invites</p>
+      <p class="label" data-reveal data-e="contact.1"><span class="n">11</span> CONTACT</p>
+      <h2 class="h2" id="contact-h" data-split data-e="contact.2">Let’s Connect. Let’s <em>Create.</em></h2>
+      <p class="lead" data-reveal data-e="contact.3">Send Invitations for Speaking Engagements / Podcast Invites</p>
       <div class="clinks">
-        <button type="button" data-open="speak" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg></span><span><b>Speaking Engagements</b><small>Keynotes, panel discussions &amp; chief guest addresses</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
-        <button type="button" data-open="podcast" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-video"/></svg></span><span><b>Podcast &amp; Media Invitations</b><small>Invite her to be a guest on your podcast, channel or media platform</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
-        <button type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-sparkles"/></svg></span><span><b>Tarot &amp; Oracle Guidance</b><small>Private sessions by appointment</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
-        <a href="https://wa.me/919814724488" data-cfg-href="whatsapp" target="_blank" rel="noopener" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg></span><span><b>WhatsApp</b><small>Book orders, appointments &amp; quick enquiries</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></a>
-        <a href="mailto:Drnavjotkaur2211@gmail.com" data-cfg-href="mailto" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span><span><b>Email</b><small>For enquiries, collaborations &amp; invitations</small><small class="em" data-cfg-text="email">Drnavjotkaur2211@gmail.com</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></a>
+        <button type="button" data-open="speak" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg></span><span><b data-e="contact.4">Speaking Engagements</b><small data-e="contact.5">Keynotes, panel discussions &amp; chief guest addresses</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+        <button type="button" data-open="podcast" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-video"/></svg></span><span><b data-e="contact.6">Podcast &amp; Media Invitations</b><small data-e="contact.7">Invite her to be a guest on your podcast, channel or media platform</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+        <button type="button" data-open="appt" data-svc="Tarot &amp; Oracle Guidance" aria-haspopup="dialog" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-sparkles"/></svg></span><span><b data-e="contact.8">Tarot &amp; Oracle Guidance</b><small data-e="contact.9">Private sessions by appointment</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></button>
+        <a href="https://wa.me/919814724488" data-cfg-href="whatsapp" target="_blank" rel="noopener" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg></span><span><b data-e="contact.10">WhatsApp</b><small data-e="contact.11">Book orders, appointments &amp; quick enquiries</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></a>
+        <a href="mailto:Drnavjotkaur2211@gmail.com" data-cfg-href="mailto" data-reveal><span class="ic"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span><span><b data-e="contact.12">Email</b><small data-e="contact.13">For enquiries, collaborations &amp; invitations</small><small class="em" data-cfg-text="email">Drnavjotkaur2211@gmail.com</small></span><svg class="i go" aria-hidden="true"><use href="#i-arrow-r"/></svg></a>
       </div>
     </div>
     <div class="frame arch clip-reveal" data-slot="contact.portrait" data-ar="4:5" data-sizes="(min-width: 900px) 34vw, 90vw"></div>
@@ -1379,10 +1401,10 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
 
 <footer class="footer">
   <div class="foot-grid">
-    <div class="foot-brand"><img src="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_limit,w_160/v1790515212/splash-favicon-logo_yxkwes.png" width="64" height="64" alt=""><div><b>Dr. Navjot Kaur</b><em>Beauty with Purpose | Leadership with Vision</em></div></div>
+    <div class="foot-brand"><img src="https://res.cloudinary.com/dhn6pvsr1/image/upload/f_auto,q_auto,c_limit,w_160/v1790515212/splash-favicon-logo_yxkwes.png" width="64" height="64" alt=""><div><b data-e="footer.1">Dr. Navjot Kaur</b><em data-e="footer.2">Beauty with Purpose | Leadership with Vision</em></div></div>
     <nav class="foot-links" aria-label="Footer">
-      <a href="#about">ABOUT</a><a href="#speaker">SPEAKER</a><a href="#books">BOOKS</a><a href="#leadership">LEADERSHIP</a>
-      <a href="#honors">HONORS</a><a href="#impact">IMPACT</a><a href="#media">MEDIA</a><a href="#magazines">MAGAZINES</a><a href="#appointments">APPOINTMENTS</a><a href="#contact">CONTACT</a>
+      <a href="#about" data-e="footer.3">ABOUT</a><a href="#speaker" data-e="footer.4">SPEAKER</a><a href="#books" data-e="footer.5">BOOKS</a><a href="#leadership" data-e="footer.6">LEADERSHIP</a>
+      <a href="#honors" data-e="footer.7">HONORS</a><a href="#impact" data-e="footer.8">IMPACT</a><a href="#media" data-e="footer.9">MEDIA</a><a href="#magazines" data-e="footer.10">MAGAZINES</a><a href="#appointments" data-e="footer.11">APPOINTMENTS</a><a href="#contact" data-e="footer.12">CONTACT</a>
     </nav>
     <div class="socials">
       <a class="icon-btn" href="https://www.instagram.com/kaaurdrnavjot" data-cfg-href="instagram" target="_blank" rel="noopener" aria-label="Instagram"><svg class="i" aria-hidden="true"><use href="#i-instagram"/></svg></a>
@@ -1390,7 +1412,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
       <a class="icon-btn" href="#home" aria-label="Back to top"><svg class="i" aria-hidden="true"><use href="#i-arrow-up"/></svg></a>
     </div>
   </div>
-  <div class="foot-base"><span>© <span id="year">2026</span> Dr. Navjot Kaur. All rights reserved.</span><span id="craftedBy">Crafted with love by <a href="https://infinityintelligence.io" target="_blank" rel="noopener">Infinity Intelligence</a></span></div>
+  <div class="foot-base"><span><span data-e="footer.13">©</span> <span id="year">2026</span> <span data-e="footer.14">Dr. Navjot Kaur. All rights reserved.</span></span><span id="craftedBy">Crafted with love by <a href="https://infinityintelligence.io" target="_blank" rel="noopener">Infinity Intelligence</a></span></div>
 </footer>
 
 <!-- ======================= DRAWER: order / invite → WhatsApp ======================= -->
@@ -1401,6 +1423,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
     <h2 id="drawer-h">Order a copy</h2>
     <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
   </div>
+  <div class="d-switch" id="dSwitch" role="group" aria-label="Type of invitation"><button type="button" data-switch="speak">Speaking</button><button type="button" data-switch="podcast">Podcast</button></div>
   <p class="d-sub" id="drawerSub"></p>
   <form id="dForm" novalidate>
     <div class="mode" data-mode="order">
@@ -1448,7 +1471,7 @@ em.is-split .w{padding-right:.06em;margin-right:-.06em}
       <div class="field"><label for="p-msg">MESSAGE (OPTIONAL)</label><textarea id="p-msg" name="pmsg" maxlength="500" placeholder="Format, audience, recording details…"></textarea></div>
     </div>
     <div class="mode" data-mode="appt">
-      <div class="field"><label for="a-svc">SESSION</label><select id="a-svc" name="svc"><option>Tarot &amp; Oracle Guidance</option><option>Holistic Healing</option><option>Oracle Card Reading</option><option>Energy Healing</option><option>Angel Healing</option><option>Not sure yet: please advise</option></select></div>
+      <div class="field"><label for="a-svc">SESSION</label><select id="a-svc" name="svc"><option>Tarot &amp; Oracle Guidance</option><option>Kali Oracle Course</option><option>Holistic Healing</option><option>Oracle Card Reading</option><option>Energy Healing</option><option>Angel Healing</option><option>Not sure yet: please advise</option></select></div>
       <div class="row2">
         <div class="field"><label for="a-name">YOUR NAME</label><input id="a-name" name="aname" type="text" autocomplete="name" maxlength="80"></div>
         <div class="field"><label for="a-phone">PHONE</label><input id="a-phone" name="aphone" type="tel" inputmode="tel" autocomplete="tel" maxlength="16"></div>

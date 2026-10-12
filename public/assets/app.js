@@ -275,6 +275,39 @@ const ASSETS = {
 };
 
 /* ---------------------------------------------------------------------------
+   Published content (from /admin). The site worker embeds the latest published
+   content as JSON in <script id="nk-content">; text, links and hidden sections are
+   already applied server-side. Here we merge contact details, photos and podcasts.
+   In the admin's live preview (?nk-edit inside the admin frame) the unsaved draft
+   from the admin window is used instead, and everything is applied client-side.
+   ------------------------------------------------------------------------ */
+const EDIT = /[?&]nk-edit\b/.test(location.search) && window.parent !== window;
+const DEFAULTS = JSON.parse(JSON.stringify({ CONFIG, ASSETS, PODCASTS }));
+const DATA = (() => {
+  let d = null;
+  if (EDIT) { try { d = window.parent.NK_DRAFT || null; } catch (e) { /* not the admin */ } }
+  if (!d) { try { const el = document.getElementById('nk-content'); d = el ? JSON.parse(el.textContent) : null; } catch (e) { d = null; } }
+  return d && typeof d === 'object' ? d : null;
+})();
+const isCdn = u => typeof u === 'string' && /^https:\/\/res\.cloudinary\.com\//.test(u);
+function applyData(d) {
+  if (!d) return;
+  const c = d.config || {};
+  ['WHATSAPP_NUMBER', 'CONTACT_PHONE', 'CONTACT_PHONE_DISPLAY', 'CONTACT_EMAIL', 'INSTAGRAM_URL', 'LINKEDIN_URL'].forEach(k => {
+    if (typeof c[k] === 'string' && c[k].trim()) CONFIG[k] = c[k].trim();
+  });
+  if (Array.isArray(c.BOOKS)) CONFIG.BOOKS.forEach(b => {
+    const o = c.BOOKS.find(x => x && x.id === b.id); if (!o) return;
+    ['title', 'amazon', 'store'].forEach(k => { if (typeof o[k] === 'string') b[k] = o[k].trim(); });
+  });
+  // Photos and videos: only Cloudinary links are accepted
+  const okTree = v => Array.isArray(v) ? v.every(okTree) : v && typeof v === 'object' ? Object.entries(v).every(([k, x]) => (k === 'src' ? isCdn(x) : okTree(x))) : true;
+  if (d.assets && typeof d.assets === 'object') Object.entries(d.assets).forEach(([k, v]) => { if (k in ASSETS && v && typeof v === 'object' && okTree(v)) ASSETS[k] = v; });
+  if (Array.isArray(d.podcasts)) PODCASTS.splice(0, PODCASTS.length, ...d.podcasts.filter(x => x && /^[\w-]{6,20}$/.test(x.id)));
+}
+applyData(DATA);
+
+/* ---------------------------------------------------------------------------
    Cloudinary helpers
    ------------------------------------------------------------------------ */
 const WIDTHS = [480, 800, 1200, 1600];
@@ -294,7 +327,7 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const html = document.documentElement;
 const mq = q => window.matchMedia(q);
-const reduced = mq('(prefers-reduced-motion: reduce)').matches;
+const reduced = EDIT || mq('(prefers-reduced-motion: reduce)').matches;   // the admin preview stays still so everything can be clicked
 const finePointer = mq('(hover: hover) and (pointer: fine)').matches;
 const saveData = !!(navigator.connection && navigator.connection.saveData);
 const gsap = window.gsap;
@@ -328,7 +361,7 @@ function bindConfig() {
     const { label, name, url } = CONFIG.CRAFTED_BY;
     cb.innerHTML = url ? `${esc(label)} <a href="${esc(url)}" target="_blank" rel="noopener">${esc(name)}</a>` : `${esc(label)} ${esc(name)}`;
   }
-  if (f && f.cover) ASSETS.books.cover.src = f.cover;
+  if (f && f.cover && !(DATA && DATA.assets && DATA.assets.books)) ASSETS.books.cover.src = f.cover;
 }
 
 /* ---------------------------------------------------------------------------
@@ -405,6 +438,7 @@ function mountHero() {
   const media = $('#heroMedia'), im = $('#heroImg'); if (!media || !im) return;
   const h = ASSETS.hero;
   im.srcset = cSrcset(h.src, '4:5');       // identical to the preloaded URLs → cache hit
+  if (EDIT) im.src = cImg(h.src, 800, '4:5');
   im.alt = h.alt;
   media.style.setProperty('--pos', h.pos);
   failSafe(im, media);
@@ -454,6 +488,7 @@ function mountReel() {
   const items = (ASSETS.speaker.slides || []).filter(i => i.enabled !== false);
   if (!items.length) return;
   const tag = $('.tag', reel), count = $('.tag .n', reel);
+  reel.dataset.asset = 'speaker.slides';
   const base = LB_ITEMS.length; LB_ITEMS.push(...items);
   const bars = document.createElement('div'); bars.className = 'reel-bars';
   const slides = items.map((item, i) => {
@@ -462,6 +497,7 @@ function mountReel() {
     fullPhoto(holder, item, '(min-width: 900px) 36vw, 90vw', isVideo);
     const inner = $('.inner', holder);
     inner.classList.add('slide');
+    inner.dataset.slide = ASSETS.speaker.slides.indexOf(item);
     let v = null;
     if (isVideo && !saveData && !reduced) {
       v = Videos.make(item.src, finePointer ? 1080 : 720);
@@ -516,9 +552,10 @@ function mountReel() {
    Galleries: bento, film strip, gallery rows (all share the lightbox)
    ------------------------------------------------------------------------ */
 const LB_ITEMS = [];
-function tile(item, { ar, sizes, cls = '', tag = 'figure', caption = true, hover = true }) {
+function tile(item, { ar, sizes, cls = '', tag = 'figure', caption = true, hover = true, path = '' }) {
   const idx = LB_ITEMS.push(item) - 1;
   const el = document.createElement(tag);
+  if (path) el.dataset.asset = path;
   const isVideo = item.type === 'video';
   el.className = `${cls} ${isVideo ? 'vtile' : ''}`.trim();
   el.dataset.lbIndex = idx;
@@ -545,7 +582,7 @@ function tile(item, { ar, sizes, cls = '', tag = 'figure', caption = true, hover
 }
 /** Whole-image masonry (magazines, media interactions): natural proportions, never cropped.
     Items are dealt left to right into 2 / 3 / 4 columns, re-dealt when the breakpoint changes. */
-function masonry(host, items, { sizes = '(min-width: 900px) 30vw, 50vw', cls = 'mz', w = 800 } = {}) {
+function masonry(host, items, { sizes = '(min-width: 900px) 30vw, 50vw', cls = 'mz', w = 800, name = '' } = {}) {
   if (!host) return;
   const figs = [];
   items.filter(i => i.enabled !== false).forEach((item, n) => {
@@ -554,6 +591,7 @@ function masonry(host, items, { sizes = '(min-width: 900px) 30vw, 50vw', cls = '
     const fig = document.createElement('figure');
     fig.className = `${cls}${isVideo ? ' vtile' : ''}`;
     fig.dataset.lbIndex = idx;
+    if (name) fig.dataset.asset = `${name}.${items.indexOf(item)}`;
     if (cls !== 'mag') fig.setAttribute('data-reveal', '');   // magazine pages have their own scroll motion
     fig.style.setProperty('--r', `${[-2.2, 1.6, -1.2, 2, -1.8, 1.1][n % 6]}deg`);
     const pic = document.createElement('div'); pic.className = 'pic';
@@ -588,13 +626,15 @@ function mountPodcasts() {
   const host = $('#podGrid'); if (!host) return;
   let n = 0;
   PODCASTS.forEach(p => {
-    const label = p.short ? 'SHORT' : `EPISODE ${String(++n).padStart(2, '0')}`;
+    const num = p.short ? 'SHORT' : `EPISODE ${String(++n).padStart(2, '0')}`;
+    const label = p.title ? esc(p.title) : num;
     const el = document.createElement('article');
     el.className = `pod${p.short ? ' short' : ''}`;
+    el.dataset.podcast = PODCASTS.indexOf(p);
     el.setAttribute('data-reveal', '');
     el.innerHTML =
       `<div class="pod-media"><img src="https://i.ytimg.com/vi/${p.id}/hqdefault.jpg" alt="" loading="lazy" decoding="async" width="480" height="360">` +
-      `<button class="pod-play" type="button" aria-label="Play ${p.short ? 'YouTube short' : `podcast ${label.toLowerCase()}`} with Dr. Navjot Kaur" data-cursor="PLAY"><span>${icon('play')}</span></button></div>` +
+      `<button class="pod-play" type="button" aria-label="Play ${p.short ? 'YouTube short' : `podcast ${num.toLowerCase()}`} with Dr. Navjot Kaur" data-cursor="PLAY"><span>${icon('play')}</span></button></div>` +
       `<div class="pod-meta"><span>${label}</span><a class="link" href="https://${p.short ? `youtube.com/shorts/${p.id}` : `youtu.be/${p.id}`}" target="_blank" rel="noopener">YOUTUBE ${icon('arrow-ur')}</a></div>`;
     $('.pod-play', el).addEventListener('click', () => {
       Videos.pauseAll();
@@ -603,7 +643,6 @@ function mountPodcasts() {
       f.src = `https://www.youtube-nocookie.com/embed/${p.id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
       f.title = `YouTube video with Dr. Navjot Kaur`;
       f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-      f.allowFullscreen = true;
       f.referrerPolicy = 'strict-origin-when-cross-origin';
       $('.pod-media', el).appendChild(f);
       el.classList.add('is-live');
@@ -612,13 +651,13 @@ function mountPodcasts() {
   });
 }
 
-function marqueeRow(host, items, { ar = null, sizes = '280px', cls = 'gi' }) {
+function marqueeRow(host, items, { ar = null, sizes = '280px', cls = 'gi', name = '' }) {
   if (!host) return;
   const track = document.createElement('div'); track.className = 'marquee-track';
   const set = document.createElement('div'); set.className = 'marquee-set';
   const list = items.filter(i => i.enabled !== false);
   host.style.setProperty('--n', list.length);   // CSS keeps each set wider than the screen, so no photo shows twice at once
-  list.forEach(item => set.appendChild(tile(item, { ar: ar || item.ar || '4:5', sizes, cls, caption: false, hover: false })));
+  list.forEach(item => set.appendChild(tile(item, { ar: ar || item.ar || '4:5', sizes, cls, caption: false, hover: false, path: name ? `${name}.${items.indexOf(item)}` : '' })));
   track.appendChild(set);
   host.appendChild(track);
   if (reduced) return;
@@ -638,23 +677,24 @@ function mountGalleries() {
       const span = item.span || '';
       const ar = span.includes('w2') && !span.includes('h2') ? '2:1' : span.includes('h2') && !span.includes('w2') ? '1:2' : '1:1';
       const sizes = span.includes('w2') ? '(min-width: 900px) 50vw, 100vw' : '(min-width: 900px) 25vw, 50vw';
-      return { el: tile(item, { ar, sizes, cls: `tile ${span}` }), order: item.order };
+      return { el: tile(item, { ar, sizes, cls: `tile ${span}`, path: `impact.${ASSETS.impact.indexOf(item)}` }), order: item.order };
     });
     [...statics, ...gen].sort((a, b) => a.order - b.order).forEach(({ el }) => bento.appendChild(el));
   }
-  marqueeRow($('#stageStrip'), ASSETS.stageStrip, { sizes: '(min-width: 900px) 22vw, 45vw' });
-  marqueeRow($('#rowA'), ASSETS.galleryA, { sizes: '(min-width: 900px) 20vw, 45vw' });
-  marqueeRow($('#rowB'), ASSETS.galleryB, { sizes: '(min-width: 900px) 20vw, 45vw' });
+  marqueeRow($('#stageStrip'), ASSETS.stageStrip, { sizes: '(min-width: 900px) 22vw, 45vw', name: 'stageStrip' });
+  marqueeRow($('#rowA'), ASSETS.galleryA, { sizes: '(min-width: 900px) 20vw, 45vw', name: 'galleryA' });
+  marqueeRow($('#rowB'), ASSETS.galleryB, { sizes: '(min-width: 900px) 20vw, 45vw', name: 'galleryB' });
   const feat = $('#mediaFeature');
   if (feat && ASSETS.media.featured) {
     const it = ASSETS.media.featured, idx = LB_ITEMS.push(it) - 1;
     feat.dataset.lbIndex = idx;
+    feat.dataset.asset = 'media.featured';
     const frame = $('.frame', feat);
     failSafe(fullPhoto(frame, it, '(min-width: 900px) 60vw, 100vw'), frame);
     feat.insertAdjacentHTML('beforeend', `<button class="open" type="button" aria-label="Open photo: ${esc(it.caption)}" data-cursor="VIEW"></button>`);
   }
-  masonry($('#miGrid'), ASSETS.mediaInteractions, { sizes: '(min-width: 1100px) 24vw, (min-width: 700px) 33vw, 50vw' });
-  masonry($('#magGrid'), ASSETS.magazines, { cls: 'mag', sizes: '(min-width: 1100px) 24vw, (min-width: 700px) 33vw, 50vw', w: 1200 });
+  masonry($('#miGrid'), ASSETS.mediaInteractions, { sizes: '(min-width: 1100px) 24vw, (min-width: 700px) 33vw, 50vw', name: 'mediaInteractions' });
+  masonry($('#magGrid'), ASSETS.magazines, { cls: 'mag', sizes: '(min-width: 1100px) 24vw, (min-width: 700px) 33vw, 50vw', w: 1200, name: 'magazines' });
   mountPodcasts();
   initHoldToPause();
 }
@@ -681,6 +721,7 @@ function initMarquees() {
 /* ---------------------------------------------------------------------------
    Splash + text splitting
    ------------------------------------------------------------------------ */
+if (EDIT) { html.classList.add('no-splash', 'nk-edit'); const s = document.querySelector('.splash'); if (s) s.remove(); }
 const splashShown = !html.classList.contains('no-splash');
 try { sessionStorage.setItem('nk-splash', '1'); } catch (e) { /* storage blocked */ }
 if (splashShown) setTimeout(() => { const s = $('.splash'); if (s) s.remove(); }, Math.max(0, 1900 - performance.now()));
@@ -866,6 +907,7 @@ function countUp(el) {
 }
 
 function initMotion() {
+  if (EDIT) { countersStatic(); return; }   // admin preview: real text nodes, nothing hidden
   $$('[data-split]').forEach(splitWords);
   if (!hasGSAP) { countersStatic(); return; }
 
@@ -963,7 +1005,7 @@ function initPointer() {
   }
   if (book) book.addEventListener('click', () => Drawer.open('order'));
   // Magnetic buttons
-  $$('.btn, .top-cta, .btn-tarot').forEach(b => {
+  $$('.btn, .top-cta, .btn-tarot, .act').forEach(b => {
     const mx = gsap.quickTo(b, 'x', { duration: 0.5, ease: 'power3' }), my = gsap.quickTo(b, 'y', { duration: 0.5, ease: 'power3' });
     b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect(); mx((e.clientX - r.left - r.width / 2) * 0.18); my((e.clientY - r.top - r.height / 2) * 0.3); });
     b.addEventListener('pointerleave', () => { mx(0); my(0); });
@@ -1046,6 +1088,7 @@ const Drawer = {
     books().forEach(b => sel.add(new Option(b.title, b.id, b.featured, b.featured)));
     document.addEventListener('click', e => { const t = e.target.closest('[data-open]'); if (t) { e.preventDefault(); this.open(t.dataset.open, t.dataset.book, t, t.dataset.svc); } });
     this.scrim.addEventListener('click', () => this.close());
+    $$('[data-switch]', this.d).forEach(b => b.addEventListener('click', () => { if (b.dataset.switch !== this.mode) this.open(b.dataset.switch, null, this.opener); }));
     $$('[data-close]', this.d).forEach(b => b.addEventListener('click', () => this.close()));
     this.d.addEventListener('keydown', e => { if (e.key === 'Escape') this.close(); else trap(e, [this.d]); });
     $$('[data-qty]', this.d).forEach(b => b.addEventListener('click', () => { this.qty = Math.min(CONFIG.MAX_QTY, Math.max(1, this.qty + +b.dataset.qty)); $('#qtyOut').textContent = this.qty; this.syncMail(); }));
@@ -1058,6 +1101,8 @@ const Drawer = {
     $('#drawer-h').textContent = this.COPY[this.mode].title;
     $('#drawerSub').textContent = this.COPY[this.mode].sub;
     $$('.mode', this.d).forEach(m => m.classList.toggle('is-on', m.dataset.mode === this.mode));
+    const sw = $('#dSwitch');
+    if (sw) { sw.classList.toggle('is-on', this.mode === 'speak' || this.mode === 'podcast'); $$('[data-switch]', sw).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.switch === this.mode))); }
     if (bookId) $('#o-book').value = bookId;
     if (svc) $('#a-svc').value = svc;
     this.err.textContent = '';
@@ -1142,7 +1187,20 @@ const Drawer = {
    Boot: critical first, then yield between chunks
    ------------------------------------------------------------------------ */
 const yieldToMain = () => new Promise(r => setTimeout(r, 0));
+/** Admin preview only: apply the unsaved draft's texts, links and hidden sections */
+function applyEditDraft() {
+  if (!EDIT || !DATA) return;
+  const t = DATA.text || {}, l = DATA.links || {};
+  $$('[data-e]').forEach(el => {
+    const v = t[el.dataset.e]; if (typeof v !== 'string') return;
+    el.innerHTML = v;
+    if (el.hasAttribute('data-count')) el.dataset.count = (el.textContent.match(/\d+/) || [el.dataset.count])[0];
+  });
+  $$('[data-l]').forEach(a => { const v = l[a.dataset.l]; if (typeof v === 'string' && /^(https?:|mailto:|tel:)/.test(v)) a.href = v; });
+  (DATA.hidden || []).forEach(id => { const s = document.getElementById(id); if (s) s.classList.add('nk-off'); });
+}
 async function boot() {
+  applyEditDraft();
   bindConfig();
   mountHero();
   initLenis();
@@ -1159,7 +1217,11 @@ async function boot() {
     let lastH = 0;
     new ResizeObserver(() => { const h = document.body.scrollHeight; if (Math.abs(h - lastH) > 2) { lastH = h; refresh(); } }).observe(document.body);
   }
-  if (location.hash.length > 1) { const t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(() => scrollToTarget(t), splashShown ? 1300 : 100); }
+  if (location.hash.length > 1 && !EDIT) { const t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(() => scrollToTarget(t), splashShown ? 1300 : 100); }
+  if (EDIT) {
+    window.NK = { ASSETS, CONFIG, PODCASTS, DEFAULTS, ready: true, openMenu: () => Menu.open(), closeMenu: () => Menu.close(false) };
+    try { window.parent.postMessage({ nk: 'ready' }, location.origin); } catch (e) { /* ignore */ }
+  }
 }
 boot().catch(err => console.error(err));
 })();
