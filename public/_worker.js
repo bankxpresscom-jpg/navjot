@@ -10,6 +10,14 @@
      CLOUDINARY_API_KEY      from Cloudinary → Settings → API Keys
      CLOUDINARY_API_SECRET   (Secret)
      CLOUDINARY_CLOUD_NAME   optional, defaults to dhn6pvsr1
+     SITE_URL                optional, e.g. https://www.drnavjotkaur.com (canonical links,
+                             sitemap). Without it the custom domain in use is detected.
+     SUPPORT_NAME            optional, shown in the Studio (default "Infinity")
+     SUPPORT_EMAIL           optional, where Studio help and DNS requests are sent
+     SUPPORT_WHATSAPP        optional, same, by WhatsApp (digits with country code)
+
+   Photos added in the Studio are links from the owner's own Cloudinary account;
+   this worker never uploads photos. These keys only store the published content.
 
    Routes
      /                 the website, with the latest published content applied
@@ -20,7 +28,6 @@
 const DEFAULT_CLOUD = 'dhn6pvsr1';
 const CONTENT_ID = 'navjot-site/content.json';
 const HISTORY_PREFIX = 'navjot-site/history/';
-const MEDIA_FOLDER = 'navjot-site/media';
 const SESSION_COOKIE = 'nk_admin';
 const SESSION_HOURS = 12;
 const MAX_CONTENT_BYTES = 400 * 1024;
@@ -39,7 +46,7 @@ const BAKED = {
 };
 
 const CSP_SITE = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-2Q2kdTWLRV5Pw0/VFbK7C6PFjbTsrFxyRbEzSeqv8f0='; style-src 'self' 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://res.cloudinary.com https://i.ytimg.com; media-src 'self' blob: https://res.cloudinary.com; connect-src 'self'; frame-src https://www.youtube-nocookie.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests";
-const CSP_ADMIN = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://res.cloudinary.com https://i.ytimg.com; media-src 'self' blob: https://res.cloudinary.com; connect-src 'self' https://api.cloudinary.com; frame-src 'self' https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
+const CSP_ADMIN = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://res.cloudinary.com https://i.ytimg.com; media-src 'self' blob: https://res.cloudinary.com; connect-src 'self' https://cloudflare-dns.com; frame-src 'self' https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'";
 
 const BASE_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
@@ -55,6 +62,12 @@ export default {
     try {
       if (path.startsWith('/api/')) return withHeaders(await api(request, env, ctx, url), { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' });
       if ((path === '/' || path === '/index.html') && (request.method === 'GET' || request.method === 'HEAD')) return await renderHome(request, env, ctx, url);
+      if (path === '/robots.txt' || path === '/sitemap.xml') {
+        const res = await env.ASSETS.fetch(request);
+        const origin = siteOrigin(env, url);
+        if (!res.ok || !origin) return res;
+        return new Response((await res.text()).split(PLACEHOLDER_ORIGIN).join(origin), { headers: res.headers });
+      }
       if (path === '/admin') return Response.redirect(new URL('/admin/', url).toString(), 301);
       if (path.startsWith('/admin/')) {
         const res = await env.ASSETS.fetch(request);
@@ -71,6 +84,15 @@ export default {
 /* ---------------------------------------------------------------------------
    Website
    ------------------------------------------------------------------------ */
+// index.html, robots.txt and sitemap.xml use this placeholder; it becomes the real domain
+const PLACEHOLDER_ORIGIN = 'https://drnavjotkaur.example';
+function siteOrigin(env, url) {
+  const set = String(env.SITE_URL || '').trim().replace(/\/+$/, '');
+  if (/^https:\/\/[a-z0-9.-]+$/i.test(set)) return set;
+  const h = url.hostname;
+  if (h === 'localhost' || h.endsWith('.pages.dev') || /^[\d.]+$/.test(h)) return null;
+  return `https://${h}`;
+}
 async function renderHome(request, env, ctx, url) {
   const res = await env.ASSETS.fetch(new Request(new URL('/', url).toString()));   // no conditional headers: the page changes with published content
   if (!res.ok || !(res.headers.get('content-type') || '').includes('text/html')) return res;
@@ -78,6 +100,8 @@ async function renderHome(request, env, ctx, url) {
   const edit = url.searchParams.has('nk-edit');
   const content = await publicContent(env, ctx);
   html = render(html, content, { edit, cloud: cloudName(env) });
+  const origin = siteOrigin(env, url);
+  if (origin) html = html.split(PLACEHOLDER_ORIGIN).join(origin);
   return new Response(request.method === 'HEAD' ? null : html, {
     headers: {
       ...BASE_HEADERS,
@@ -356,7 +380,10 @@ async function api(request, env, ctx, url) {
   if (!session) return json({ error: 'Please sign in again.' }, 401);
   if (method !== 'GET' && request.headers.get('X-NK') !== '1') return json({ error: 'Bad request' }, 400);
 
-  if (route === '/me' && method === 'GET') return json({ user: session.user, exp: session.exp, cloud: cloudName(env), cloudinary: hasCloudinary(env) });
+  if (route === '/me' && method === 'GET') return json({
+    user: session.user, exp: session.exp, cloudinary: hasCloudinary(env), site: siteOrigin(env, url),
+    support: { name: (env.SUPPORT_NAME || 'Infinity').trim(), email: (env.SUPPORT_EMAIL || '').trim(), whatsapp: String(env.SUPPORT_WHATSAPP || '').replace(/\D/g, '') }
+  });
 
   if (route === '/original' && method === 'GET') {
     const r = await env.ASSETS.fetch(new Request(new URL('/', url).toString()));
@@ -400,21 +427,6 @@ async function api(request, env, ctx, url) {
     if (!meta.ok) return json({ error: 'Not found' }, 404);
     const r = await fetch(meta.body.secure_url);
     return json({ content: await r.json().catch(() => null), at: meta.body.created_at });
-  }
-
-  if (route === '/sign' && method === 'POST') {
-    const timestamp = Math.floor(Date.now() / 1000);
-    const params = { folder: MEDIA_FOLDER, timestamp };
-    return json({ cloud: cloudName(env), api_key: env.CLOUDINARY_API_KEY, timestamp, folder: MEDIA_FOLDER, signature: await signParams(params, env.CLOUDINARY_API_SECRET) });
-  }
-
-  if (route === '/media' && method === 'GET') {
-    const type = url.searchParams.get('type') === 'video' ? 'video' : 'image';
-    const cursor = url.searchParams.get('cursor');
-    const r = await cloudAdmin(env, `resources/${type}/upload?max_results=48&direction=desc${cursor ? `&next_cursor=${encodeURIComponent(cursor)}` : ''}`);
-    if (!r.ok) return json({ error: (r.body.error && r.body.error.message) || 'Could not load the library' }, 502);
-    const items = (r.body.resources || []).map(x => ({ url: x.secure_url, id: x.public_id, w: x.width, h: x.height, type, format: x.format, at: x.created_at, bytes: x.bytes }));
-    return json({ items, next: r.body.next_cursor || null });
   }
 
   return json({ error: 'Not found' }, 404);

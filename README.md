@@ -1,16 +1,20 @@
-# Dr. Navjot Kaur: personal brand site
+# Dr. Navjot Kaur: personal brand site + Studio
 
-A one-page, editorial brand portfolio. Pure static files: no build step, no server, no database.
-Deploy the `public/` folder (or `navjot-site.zip`) to **Cloudflare Pages**.
+A one-page, editorial brand portfolio with a visual editor (the **Studio**) at `/admin`.
+It runs on **Cloudflare Pages only**: no KV, R2, D1 or any other Cloudflare service, and no build step.
+Deploy `navjot-site.zip` (the contents of `public/`).
 
 ```
 public/
   index.html            page, inline critical CSS, icon sprite, SEO + JSON-LD
   assets/app.js         CONFIG → LIB → ASSETS at the top, then all behaviour
+  _worker.js            Pages worker: applies published edits, Studio login + API, real domain in SEO tags
+  _routes.json          which paths the worker handles (static assets skip it)
+  admin/                the Studio (index.html, admin.css, admin.js)
   _headers              security headers, CSP, cache rules
   _redirects            /favicon.ico → the NK logo on black (Cloudinary)
   robots.txt  sitemap.xml  site.webmanifest  og.jpg
-scripts/                og.jpg generator (sharp), CSP hash, domain swap
+scripts/                CSP hash, editable-text tagging, og.jpg generator, domain swap
 ```
 
 Libraries load from jsDelivr at pinned versions with SRI: GSAP 3.12.5 + ScrollTrigger and Lenis 1.1.13.
@@ -19,50 +23,77 @@ Fonts come from Google Fonts (Cormorant Garamond, Bebas Neue, Jost), with the `@
 ## Deploy to Cloudflare Pages
 
 **Direct upload (no Git):** Cloudflare dashboard → Workers & Pages → Create → Pages → *Upload assets*, then drop in `navjot-site.zip`.
-`index.html`, `_worker.js` and `_routes.json` sit at the root of the zip.
+`index.html`, `_worker.js` and `_routes.json` sit at the root of the zip. Then follow the setup checklist below.
 
 **From Git:** connect the repo. Framework preset: *None*. Build command: *(empty)*. Output directory: `public`.
 
 To rebuild the zip after edits, run `npm run zip`.
 
-## The Studio (`/admin`): edit everything visually
+## Setup checklist (once, about 5 minutes)
 
-Open `https://your-site/admin/` and sign in. The website appears in the Studio exactly as visitors see it:
+1. **Upload** `navjot-site.zip` to the Pages project (Workers & Pages → the project → *Create deployment*).
+2. **Variables:** Workers & Pages → the project → **Settings → Variables and Secrets** → *Production*. Add:
 
-- **Texts:** click any text in the preview and type. Use the toolbar for bold, gold italic and line breaks.
-- **Photos:** click any photo to replace it. You can upload, pick from your Cloudinary library or paste a Cloudinary link, then add a description and set the focus point.
-- **Lists:** the **Photos** panel reorders, adds or removes photos in every gallery, slideshow and magazine wall.
-- **Podcasts:** paste YouTube links.
-- **Contact & links:** WhatsApp, email, phone, Instagram, LinkedIn and book links update everywhere at once.
-- **Sections:** show or hide whole sections.
-- **Google & sharing:** page title and description, with a live Google preview.
+   | Variable | Required | What it is |
+   |---|---|---|
+   | `ADMIN_USER` | yes | Studio login ID you give the client |
+   | `ADMIN_PASSWORD` | yes | Studio password (type **Secret**) |
+   | `CLOUDINARY_API_KEY` | yes | **Your** Cloudinary → Settings → API Keys |
+   | `CLOUDINARY_API_SECRET` | yes | Same page (type **Secret**) |
+   | `CLOUDINARY_CLOUD_NAME` | no | Defaults to `dhn6pvsr1` |
+   | `SITE_URL` | recommended | The real address, e.g. `https://www.drnavjotkaur.com`. It sets the canonical link, social URLs, sitemap and robots.txt. Without it, the custom domain in use is detected automatically. |
+   | `SUPPORT_NAME` | no | Your studio name shown in the Studio (default `Infinity`) |
+   | `SUPPORT_WHATSAPP` | recommended | Your WhatsApp (digits with country code). Help and DNS requests from the Studio come here. |
+   | `SUPPORT_EMAIL` | optional | Used if no WhatsApp is set |
+
+3. **Redeploy:** variables apply to new deployments, so upload the same ZIP once more.
+4. **Check:** open `https://<domain>/admin/`, sign in, change a word, press **Publish**, then open the site.
+
+The Cloudinary keys are used **only** to store the published content (one small JSON file, plus its history). The client never sees them. They don't need your Cloudflare or Cloudinary login.
+
+## The Studio (`/admin`): what the client gets
+
+- **Home:**
+  - a personal greeting and live counts of everything they control
+  - site health score
+  - their domain shown as connected
+  - quick actions and a "Need anything?" link to you
+- **Domain & DNS:**
+  - their domain, with HTTPS and response time
+  - live DNS records, read-only, looked up through public DNS-over-HTTPS
+  - a friendly **Request a change** form (presets for business email, Google verification and subdomains) that sends the request to your WhatsApp or email
+  - no Cloudflare access needed or shared
+- **Text:** click any text in the live preview and type (bold, gold italic, line breaks). All 322 texts are editable.
+- **Photos & videos:**
+  - click any photo, or use the Photos panel to replace, reorder, add or remove, with a description and focus point
+  - new photos come from **the client's own Cloudinary**: the Studio walks them through uploading there, copying the link (*Copy URL*) and pasting it
+  - any `https://res.cloudinary.com/...` link from any account works
+  - the existing photos (in your Cloudinary) keep working
+- **Podcasts:** paste YouTube links; titles optional.
+- **Contact & links:** WhatsApp, email, phone, Instagram, LinkedIn and book links, updated everywhere at once.
+- **Sections:** show or hide whole sections; edit the menu, footer and phone tab bar.
+- **Google & sharing:** title and description, with a live Google preview.
 - **Safety net:**
   - undo and redo
   - drafts saved automatically in the browser
-  - a version history that can reopen any published version, or the original site
-  - nothing goes live until **Publish**
+  - nothing goes live until **Publish** (with a summary of changes)
+  - **Version history** can reopen any published version, or the original site
+- **Shortcuts:** Ctrl/⌘ + K searches everything; Ctrl/⌘ + Z undoes; Ctrl/⌘ + S publishes.
 
-**Setup (once).** In Cloudflare go to Workers & Pages → this project → Settings → Variables and Secrets, add these for Production, then redeploy (upload the ZIP again).
-
-| Variable | What it is |
-|---|---|
-| `ADMIN_USER` | Studio login ID |
-| `ADMIN_PASSWORD` | Studio password (choose type *Secret*) |
-| `CLOUDINARY_API_KEY` | Cloudinary → Settings → API Keys |
-| `CLOUDINARY_API_SECRET` | Same page (type *Secret*) |
-| `CLOUDINARY_CLOUD_NAME` | Optional, defaults to `dhn6pvsr1` |
-
-**How it works.** The site runs on Cloudflare Pages alone, with no KV, R2, D1 or other Cloudflare services.
-
-- `public/_worker.js` serves the page, the Studio API and the login. The login is an HttpOnly cookie signed with the password, and expires after 12 hours.
-- Published content is one JSON file (`navjot-site/content.json`) in the site's own Cloudinary account, next to the photos. Every publish also keeps a copy in `navjot-site/history/`.
-- Uploaded photos go to the `navjot-site/media` folder.
-- Visitors get the published texts and links applied on the server, so Google sees them too. Changes appear within about a minute.
+**How publishing works.**
+- The worker saves `navjot-site/content.json` (plus a copy in `navjot-site/history/`) to the Cloudinary account in the variables.
+- Visitors get the published texts and links applied on the server, so Google sees them too, within about a minute.
 - Every photo must be a Cloudinary link; the server refuses anything else.
+- Login is an HttpOnly, signed cookie that expires after 12 hours. Changing `ADMIN_PASSWORD` signs everyone out. Repeated wrong passwords are slowed down.
+
+**Troubleshooting.**
+- *"Publishing switches on after one last setup step"*: the Cloudinary variables are missing, or the ZIP wasn't redeployed after adding them.
+- *A pasted photo shows no preview*: the link is incomplete, or the file is private in Cloudinary.
+- *Changes not visible yet*: wait a minute, then hard-refresh.
 
 **For developers.**
 - Editable texts carry `data-e` keys and external links carry `data-l` keys. After adding new HTML, run `python3 scripts/tag-editables.py`: existing keys never change.
-- `npm run csp-hash` updates the boot-script hash in both `_headers` and `_worker.js`.
+- After editing the inline boot `<script>`, run `npm run csp-hash`: it updates both `_headers` and `_worker.js`.
 
 ## How ordering works (no payments on the site)
 

@@ -176,7 +176,7 @@ function showSetup() {
   s.innerHTML = `<p class="kicker">ONE-TIME SETUP</p><h1>Let’s connect your <em>studio.</em></h1>
     <p class="login-sub" style="text-align:left">In Cloudflare, open <b>Workers &amp; Pages → this project → Settings → Variables and Secrets</b>, add these for <b>Production</b>, then redeploy (upload the same ZIP again).</p>
     <ol>${row(S.status.login, '<code>ADMIN_USER</code> and <code>ADMIN_PASSWORD</code>: your studio ID and password (use the “Secret” type for the password)')}
-    ${row(S.status.cloudinary, '<code>CLOUDINARY_API_KEY</code> and <code>CLOUDINARY_API_SECRET</code>: from Cloudinary → Settings → API Keys. They let you upload photos and publish.')}</ol>
+    ${row(S.status.cloudinary, '<code>CLOUDINARY_API_KEY</code> and <code>CLOUDINARY_API_SECRET</code>: from Cloudinary → Settings → API Keys. They store the published version of the website.')}</ol>
     <p class="login-foot" style="justify-content:flex-start"><svg class="i"><use href="#i-lock"/></svg>Nothing else is needed: no databases, no extra Cloudflare services.</p>`;
 }
 
@@ -254,7 +254,7 @@ async function loadContent() {
   } catch (e) {
     S.saved = { content: null, version: null, updatedAt: null };
     S.cloudOk = false;
-    if (e.status === 503) showBanner(`${icon('alert')}<span>Cloudinary isn’t connected yet, so you can explore and edit, but not publish or upload.</span><span class="sp"></span><button class="btn sm" type="button" data-banner="setup">How to connect</button>`);
+    if (e.status === 503) showBanner(`${icon('alert')}<span>Publishing switches on after one last setup step. You can explore and edit in the meantime; your work is saved.</span><span class="sp"></span><button class="btn sm" type="button" data-banner="setup">What’s needed</button>`);
     else toast(`Could not load the published version: ${e.message}`, 'err', 5000);
   }
   S.savedN = normalize(S.saved.content);
@@ -281,8 +281,8 @@ function showBanner(html) {
   }));
 }
 function setupHelp() {
-  openLayer(`<div class="m-head"><div><p class="eyebrow">CONNECT CLOUDINARY</p><h2>Publish and upload in <em>two minutes.</em></h2></div><button class="ic-btn" data-close aria-label="Close">${icon('x')}</button></div>
-  <div class="m-body"><ol style="color:var(--m);padding-left:20px;line-height:1.8">
+  openLayer(`<div class="m-head"><div><p class="eyebrow">ONE LAST STEP</p><h2>Switch on <em>publishing.</em></h2></div><button class="ic-btn" data-close aria-label="Close">${icon('x')}</button></div>
+  <div class="m-body"><p style="color:var(--m);margin:0 0 6px">${S.me && S.me.support && (S.me.support.email || S.me.support.whatsapp) ? `Your web team at ${esc(S.me.support.name)} can do this for you in a minute. For reference:` : 'For whoever manages the hosting:'}</p><ol style="color:var(--m);padding-left:20px;line-height:1.8">
     <li>Open <b>cloudinary.com</b> → <b>Settings → API Keys</b> and copy the <b>API Key</b> and <b>API Secret</b>.</li>
     <li>In Cloudflare: <b>Workers &amp; Pages → this project → Settings → Variables and Secrets</b>.</li>
     <li>Add <code class="kbd">CLOUDINARY_API_KEY</code> and <code class="kbd">CLOUDINARY_API_SECRET</code> (Secret) for <b>Production</b>.</li>
@@ -700,98 +700,38 @@ function commitAssets(c, mutate, { reload = true } = {}) {
 const listIn = (obj, sub) => (sub ? getPath(obj, sub) : obj);
 
 /* ---------------------------------------------------------------------------
-   Media picker: upload to Cloudinary, choose from the library, or paste a link
+   Media picker: links from the owner's own Cloudinary (upload there, paste here)
    ------------------------------------------------------------------------ */
 function pickMedia({ multiple = false, video = false, title = 'Choose a photo' } = {}) {
   return new Promise(resolve => {
-    let chosen = [], tab = S.cloudOk ? 'upload' : 'link', libType = 'image', cursor = null, libItems = [];
-    const box = openLayer(`<div class="m-head"><div><p class="eyebrow">PHOTOS ${video ? '&amp; VIDEOS' : ''}</p><h2>${esc(title)}</h2></div><button class="ic-btn" data-close aria-label="Close">${icon('x')}</button></div>
-      <div class="m-body"><div class="tabs" role="tablist">
-        <button role="tab" data-tab="upload" ${S.cloudOk ? '' : 'disabled title="Connect Cloudinary to upload"'}>Upload</button>
-        <button role="tab" data-tab="library" ${S.cloudOk ? '' : 'disabled title="Connect Cloudinary to browse"'}>Your library</button>
-        <button role="tab" data-tab="link">Paste a link</button></div><div id="pkBody"></div></div>
-      <div class="m-foot"><span class="sp" id="pkNote">Photos stay in your Cloudinary account.</span><button class="btn" data-close>Cancel</button><button class="gold-btn" id="pkUse" disabled>Use ${multiple ? 'selected' : 'this'}</button></div>`, { onClose: () => resolve(null) });
-    const body = $('#pkBody', box), use = $('#pkUse', box);
-    const sync = () => { use.disabled = !chosen.length; use.innerHTML = chosen.length > 1 ? `Use ${chosen.length} items` : `Use ${multiple ? 'selected' : 'this'}`; };
-    use.addEventListener('click', () => { const r = chosen.slice(); closeLayer(true); resolve(r); });
-    const setTab = t => {
-      tab = t;
-      $$('[data-tab]', box).forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
-      chosen = []; sync();
-      if (t === 'upload') renderUpload(); else if (t === 'library') renderLib(true); else renderLink();
+    let chosen = [];
+    const box = openLayer(`<div class="m-head"><div><p class="eyebrow">YOUR PHOTOS, YOUR CLOUDINARY</p><h2>${esc(title)}</h2></div><button class="ic-btn" data-close aria-label="Close">${icon('x')}</button></div>
+      <div class="m-body">
+        <p style="color:var(--m);margin:0 0 14px">New photos${video ? ' and videos' : ''} live in <b style="color:var(--t);font-weight:400">your own Cloudinary account</b>, so they always belong to you. It takes a few seconds:</p>
+        <ol class="howto">
+          <li><span>1</span><div><b>Open your Cloudinary</b><small>Sign in at cloudinary.com and go to <em>Media Library</em>.</small></div><a class="btn sm" href="https://console.cloudinary.com/" target="_blank" rel="noopener">${icon('ext')}Open</a></li>
+          <li><span>2</span><div><b>Upload</b><small>Click <em>Upload</em> and choose the ${video ? 'photo or video' : 'photo'} from your phone or computer.</small></div></li>
+          <li><span>3</span><div><b>Copy its link</b><small>Hover over it and click the link icon (<em>Copy URL</em>). The link starts with https://res.cloudinary.com/</small></div></li>
+          <li><span>4</span><div><b>Paste it below</b><small>${multiple ? 'Several at once? Put one link on each line.' : 'The preview appears straight away.'}</small></div></li>
+        </ol>
+        <label class="f"><span>CLOUDINARY LINK${multiple ? 'S' : ''}</span>${multiple ? '<textarea id="lnk" rows="3" placeholder="https://res.cloudinary.com/…/image/upload/…"></textarea>' : '<input id="lnk" type="url" placeholder="https://res.cloudinary.com/…/image/upload/…">'}<small class="err-t" id="lerr"></small></label>
+        <div class="lprev" id="lprev"><p class="empty">Your preview appears here</p></div>
+      </div>
+      <div class="m-foot"><span class="sp">${icon('sparkles')} Sizes and formats are optimised automatically for every screen.</span><button class="btn" data-close>Cancel</button><button class="gold-btn" id="pkUse" disabled>Use ${multiple ? 'these' : 'this'}</button></div>`, { onClose: () => resolve(null) });
+    const inp = $('#lnk', box), use = $('#pkUse', box), prev = $('#lprev', box), err = $('#lerr', box);
+    const check = () => {
+      const lines = inp.value.split(/[\s,]+/).map(x => x.trim()).filter(Boolean);
+      const good = [], bad = [];
+      lines.forEach(v => { (isCdn(v) && (video || !isVideo(v)) ? good : bad).push(v); });
+      chosen = (multiple ? good : good.slice(0, 1)).map(v => ({ url: v, type: isVideo(v) ? 'video' : 'image' }));
+      err.textContent = bad.length ? (bad.some(isCdn) ? 'Videos can’t go here: please use a photo link.' : 'That isn’t a Cloudinary link yet. Copy the link from your Cloudinary Media Library (it starts with https://res.cloudinary.com/).') : '';
+      prev.innerHTML = chosen.length ? `<div class="lgrid">${chosen.map(c => `<span><img src="${esc(preview(c.url, 500))}" alt="">${c.type === 'video' ? `<i>${icon('play')}</i>` : ''}</span>`).join('')}</div>` : '<p class="empty">Your preview appears here</p>';
+      $$('img', prev).forEach(im => im.addEventListener('error', () => { err.textContent = 'This link doesn’t open. Check that the photo is uploaded and the link is copied in full.'; chosen = []; use.disabled = true; }));
+      use.disabled = !chosen.length;
+      use.textContent = chosen.length > 1 ? `Use ${chosen.length} items` : `Use ${multiple ? 'these' : 'this'}`;
     };
-    $$('[data-tab]', box).forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
-
-    function renderUpload() {
-      body.innerHTML = `<label class="drop" id="drop"><span class="big">${icon('upload')}</span><b>Drop ${multiple ? 'photos' : 'a photo'} here</b><span>or click to choose ${video ? '(photos or videos)' : ''} · up to ${video ? '100 MB for videos, ' : ''}10 MB per photo</span>
-        <input type="file" id="fileIn" accept="image/*${video ? ',video/*' : ''}" ${multiple ? 'multiple' : ''} hidden></label><div class="ups" id="ups"></div>`;
-      const drop = $('#drop', body), inp = $('#fileIn', body);
-      drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
-      drop.addEventListener('dragleave', () => drop.classList.remove('over'));
-      drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); upload([...e.dataTransfer.files]); });
-      inp.addEventListener('change', () => upload([...inp.files]));
-    }
-    async function upload(files) {
-      files = files.filter(f => /^image\//.test(f.type) || (video && /^video\//.test(f.type)));
-      if (!multiple) files = files.slice(0, 1);
-      if (!files.length) return toast(video ? 'Please choose a photo or a video' : 'Please choose a photo', 'err');
-      let sig; try { sig = await api('/sign', { method: 'POST', body: {} }); } catch (e) { return toast(e.message, 'err'); }
-      const ups = $('#ups', body);
-      await Promise.all(files.map(f => new Promise(done => {
-        const row = document.createElement('div'); row.className = 'up card';
-        const url = URL.createObjectURL(f);
-        row.innerHTML = `<img src="${/^image\//.test(f.type) ? url : ''}" alt=""><div class="bar-t"><b>${esc(f.name)}</b><div class="pb"><i></i></div></div><span class="st">0%</span>`;
-        ups.appendChild(row);
-        const fd = new FormData();
-        fd.append('file', f); fd.append('api_key', sig.api_key); fd.append('timestamp', sig.timestamp); fd.append('folder', sig.folder); fd.append('signature', sig.signature);
-        const x = new XMLHttpRequest();
-        x.open('POST', `https://api.cloudinary.com/v1_1/${sig.cloud}/auto/upload`);
-        x.upload.onprogress = e => { if (e.lengthComputable) { const p = Math.round(e.loaded / e.total * 100); $('.pb i', row).style.width = `${p}%`; $('.st', row).textContent = `${p}%`; } };
-        x.onload = () => {
-          let j = {}; try { j = JSON.parse(x.responseText); } catch (e) { /* ignore */ }
-          if (x.status >= 200 && x.status < 300 && j.secure_url) {
-            row.classList.add('done'); $('.st', row).textContent = 'Uploaded'; $('.pb i', row).style.width = '100%';
-            if (j.resource_type === 'video') $('img', row).src = thumb(j.secure_url, 120);
-            chosen.push({ url: j.secure_url, type: j.resource_type === 'video' ? 'video' : 'image' }); sync();
-          } else { row.classList.add('fail'); $('.st', row).textContent = (j.error && j.error.message) || 'Failed'; }
-          done();
-        };
-        x.onerror = () => { row.classList.add('fail'); $('.st', row).textContent = 'Network error'; done(); };
-        x.send(fd);
-      })));
-      if (chosen.length && !multiple) use.focus();
-    }
-    async function renderLib(reset) {
-      if (reset) { libItems = []; cursor = null; body.innerHTML = `${video ? `<div class="tabs" id="libT"><button data-lt="image" aria-selected="${libType === 'image'}">Photos</button><button data-lt="video" aria-selected="${libType === 'video'}">Videos</button></div>` : ''}<div class="lib" id="lib"><p class="empty">Loading your library…</p></div><div style="text-align:center;margin-top:10px"><button class="btn sm" id="libMore" hidden>Load more</button></div>`;
-        $$('[data-lt]', body).forEach(b => b.addEventListener('click', () => { libType = b.dataset.lt; chosen = []; sync(); renderLib(true); }));
-        $('#libMore', body).addEventListener('click', () => renderLib(false));
-      }
-      try {
-        const r = await api(`/media?type=${libType}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`);
-        cursor = r.next; libItems.push(...r.items);
-        const lib = $('#lib', body);
-        lib.innerHTML = libItems.length ? libItems.map((it, i) => `<button type="button" data-i="${i}" aria-pressed="false" title="${esc(it.id)}"><img src="${esc(thumb(it.url, 220))}" alt="" loading="lazy"></button>`).join('') : '<p class="empty">Nothing here yet. Upload your first one.</p>';
-        $$('button', lib).forEach(b => b.addEventListener('click', () => {
-          const it = libItems[+b.dataset.i], sel = { url: it.url, type: it.type };
-          const on = b.getAttribute('aria-pressed') === 'true';
-          if (!multiple) { $$('button', lib).forEach(x => x.setAttribute('aria-pressed', 'false')); chosen = []; }
-          b.setAttribute('aria-pressed', String(!on));
-          chosen = on ? chosen.filter(c => c.url !== it.url) : [...chosen, sel];
-          sync();
-        }));
-        $('#libMore', body).hidden = !cursor;
-      } catch (e) { $('#lib', body).innerHTML = `<p class="empty">${esc(e.message)}</p>`; }
-    }
-    function renderLink() {
-      body.innerHTML = `<label class="f"><span>CLOUDINARY LINK</span><input id="lnk" type="url" placeholder="https://res.cloudinary.com/…/image/upload/…"><small class="help">Paste the link of any photo${video ? ' or video' : ''} in your Cloudinary account.</small></label><div class="link-prev" id="lprev"><p class="empty">The preview appears here</p></div>`;
-      const inp = $('#lnk', body);
-      inp.addEventListener('input', () => {
-        const v = inp.value.trim(), ok = isCdn(v) && (video || !isVideo(v));
-        $('#lprev', body).innerHTML = ok ? `<img src="${esc(preview(v, 600))}" alt="">` : `<p class="empty">${v ? 'That is not a Cloudinary photo link (it should start with https://res.cloudinary.com/).' : 'The preview appears here'}</p>`;
-        chosen = ok ? [{ url: v, type: isVideo(v) ? 'video' : 'image' }] : []; sync();
-      });
-    }
-    setTab(tab);
+    inp.addEventListener('input', check);
+    use.addEventListener('click', () => { const r = chosen.slice(); closeLayer(true); resolve(r); });
   });
 }
 
@@ -810,7 +750,7 @@ function showPanel(name, arg = null, keep = false) {
   const p = $('#panel');
   const scroll = keep ? p.scrollTop : 0;
   p.innerHTML = '';
-  ({ overview: pOverview, sections: pSections, photos: pPhotos, podcasts: pPodcasts, links: pLinks, seo: pSeo, health: pHealth })[name](p, arg || {});
+  ({ overview: pOverview, sections: pSections, photos: pPhotos, podcasts: pPodcasts, links: pLinks, seo: pSeo, health: pHealth, domain: pDomain })[name](p, arg || {});
   if (keep) p.scrollTop = scroll;
   refreshBadges();
 }
@@ -861,6 +801,10 @@ function pOverview(p) {
       <div class="ring">${ringSvg(score)}<b>${score}</b></div>
       <div><strong>Site health ${score >= 90 ? 'is excellent' : score >= 70 ? 'is good' : 'needs a look'}</strong><p>${S.saved.updatedAt ? `Last published ${esc(rel(S.saved.updatedAt))}` : 'Showing the original website'} · see details</p></div>
     </button>
+    <button class="live-card card hov" type="button" data-go="domain" style="width:100%;text-align:left;margin-top:8px">
+      <div class="dom-dot"><i></i></div>
+      <div><strong>${esc(domainName())}</strong><p>Connected · secured with HTTPS · see your domain</p></div>
+    </button>
     <p class="group-t">QUICK ACTIONS</p>
     <div class="quick">
       ${quick('image', 'Change the hero photo', 'The first thing visitors see', 'photos:hero')}
@@ -869,6 +813,7 @@ function pOverview(p) {
       ${quick('book', 'Add a magazine page', 'Covers and features', 'photos:mags')}
       ${quick('clock', 'Version history', 'Go back to any published version', 'history')}
     </div>
+    ${supportLink() ? `<p class="group-t">YOUR WEB TEAM</p><a class="card hov help-card" href="${esc(supportLink('Hello, I need a little help with my website.'))}" target="_blank" rel="noopener"><span class="qi">${icon('sparkles')}</span><span><b>Need anything? ${esc(S.me.support.name)} is here.</b><small>Message your web team, any time.</small></span></a>` : ''}
     <p class="group-t">GOOD TO KNOW</p>
     <ul class="tips">
       <li>${icon('sparkles')}<span>Click any text in the preview to edit it. A green outline marks what you changed.</span></li>
@@ -940,7 +885,7 @@ function closeFrameMenu() { try { S.fw.NK.closeMenu(); } catch (e) { /* ignore *
 function pPhotos(p, arg) {
   if (arg.card) return pCard(p, card(arg.card), arg.focus);
   const groups = [...new Set(CARDS.map(c => c.group))];
-  p.innerHTML = `<p class="eyebrow">PHOTOS &amp; VIDEOS</p><h2>Every <em>picture,</em> in one place.</h2><p class="sub">Replace, reorder, add or remove. You can also click any photo in the preview.</p>` +
+  p.innerHTML = `<p class="eyebrow">PHOTOS &amp; VIDEOS</p><h2>Every <em>picture,</em> in one place.</h2><p class="sub">Replace, reorder, add or remove. You can also click any photo in the preview.</p><div class="note card">${icon('image')}<span>New photos go in <b>your own Cloudinary</b>: upload there, copy the link, paste it here. We’ll guide you each time.</span></div>` +
     groups.map(g => `<p class="group-t">${g.toUpperCase()}</p>` + CARDS.filter(c => c.group === g).map(c => {
       const its = S.assets ? itemsOf(c) : [];
       const changed = S.draft.assets[c.path.split('.')[0]] !== undefined;
@@ -955,7 +900,7 @@ function pCard(p, c, focus) {
   if (focus == null) focus = its.length ? its[0].key : null;
   if (c.type !== 'slot' && focus != null && !its.some(x => x.key === String(focus))) focus = its.length ? its[0].key : null;
   p.innerHTML = `<button class="back" type="button" data-back>${icon('left')}ALL PHOTOS</button><p class="eyebrow">${c.group.toUpperCase()}</p><h2>${esc(c.title)}</h2>
-    <p class="sub">${c.type === 'list' ? (c.fixed ? 'Drag to reorder. Tap one to change it.' : 'Drag to reorder · tap one to change it · add as many as you like.') : c.type === 'slots' ? 'Tap one to change it.' : 'Replace it, and choose which part stays in view.'}</p>
+    <div class="note card">${icon('image')}<span>To use a new photo, upload it to <b>your Cloudinary</b>, copy its link and paste it here. <a href="https://console.cloudinary.com/" target="_blank" rel="noopener">Open Cloudinary</a></span></div><p class="sub">${c.type === 'list' ? (c.fixed ? 'Drag to reorder. Tap one to change it.' : 'Drag to reorder · tap one to change it · add as many as you like.') : c.type === 'slots' ? 'Tap one to change it.' : 'Replace it, and choose which part stays in view.'}</p>
     <div class="row-btns" style="margin:-6px 0 12px"><button class="btn sm" type="button" data-show>${icon('eye')}Show on the page</button>${S.draft.assets[c.path.split('.')[0]] !== undefined ? `<button class="btn sm danger" type="button" data-reset>${icon('rotate')}Back to original</button>` : ''}</div>
     ${c.type === 'slot' ? '' : `<div class="thumbs" id="thumbs">${its.map((x, i) => `<div class="thumb ${c.fit ? 'fit' : ''} ${String(x.key) === String(focus) ? 'is-sel' : ''}" draggable="${c.type === 'list'}" data-k="${x.key}" title="${esc(x.label || x.item.alt || '')}">
         <img src="${esc(thumb(x.item.src, 260, c.fit))}" alt="" loading="lazy">${c.type === 'list' ? `<span class="tn">${i + 1}</span>` : ''}${isVideo(x.item.src) ? `<span class="tv">${icon('play')}</span>` : ''}</div>`).join('')}
@@ -1207,6 +1152,69 @@ function pSeo(p) {
   [$('#seoT', p), $('#seoD', p)].forEach(el => el.addEventListener('change', () => { pushUndo(before); before = null; toast('Saved to your draft'); }));
 }
 
+/* Domain & DNS: read-only live view; changes go to the web team as a request */
+const domainName = () => (S.me && S.me.site ? S.me.site.replace(/^https:\/\//, '') : location.hostname);
+const apex = h => h.replace(/^www\./, '');
+function supportLink(text = '') {
+  const s = S.me && S.me.support; if (!s) return '';
+  if (s.whatsapp) return `https://wa.me/${s.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+  if (s.email) return `mailto:${s.email}?subject=${encodeURIComponent(`Website: ${domainName()}`)}${text ? `&body=${encodeURIComponent(text)}` : ''}`;
+  return '';
+}
+const RTYPE = { 1: 'A', 2: 'NS', 5: 'CNAME', 15: 'MX', 16: 'TXT', 28: 'AAAA' };
+async function doh(name, type) {
+  const r = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`, { headers: { accept: 'application/dns-json' } });
+  const j = await r.json();
+  return (j.Answer || []).map(a => ({ name: a.name.replace(/\.$/, ''), type: RTYPE[a.type] || String(a.type), value: String(a.data).replace(/^"|"$/g, '').replace(/\.$/, '') }));
+}
+function pDomain(p) {
+  const host = domainName();
+  const custom = !host.endsWith('.pages.dev') && !/^(localhost|[\d.]+)(:\d+)?$/.test(host);
+  const sup = (S.me && S.me.support) || { name: 'your web team' };
+  p.innerHTML = `<p class="eyebrow">DOMAIN &amp; DNS</p><h2>Your <em>address</em> on the web.</h2>
+    <div class="dom-hero card"><div class="dom-dot big"><i></i></div><div><small>YOUR DOMAIN</small><b>${esc(host)}</b><span>Connected and live</span></div><a class="ic-btn" href="${esc(location.protocol)}//${esc(host)}" target="_blank" rel="noopener" title="Open">${icon('ext')}</a></div>
+    <div class="dom-stats">
+      <div class="card"><span class="ok-i">${icon('lock')}</span><b>HTTPS</b><small>${location.protocol === 'https:' ? 'Secured' : 'Local preview'}</small></div>
+      <div class="card"><span class="ok-i">${icon('globe')}</span><b>Global</b><small>Cloudflare network</small></div>
+      <div class="card"><span class="ok-i">${icon('heart')}</span><b id="ping">…</b><small>Response time</small></div>
+    </div>
+    <p class="group-t">DNS RECORDS ${custom ? '<em class="live-tag">LIVE</em>' : ''}</p>
+    <div id="dns" class="dns">${custom ? '<p class="empty">Reading your DNS records…</p>' : '<p class="empty">Your DNS records appear here when the Studio is opened on your own domain (for example <b>yourdomain.com/admin</b>).</p>'}</div>
+    <p class="group-t">NEED A CHANGE?</p>
+    <div class="card dns-req">
+      <p>${esc(sup.name)} looks after the technical side of your domain, so it always stays fast and secure. Tell us what you need and it’s done for you.</p>
+      <div class="chips">${[['Business email', 'MX', '@', 'Connect a business email (e.g. Google Workspace or Zoho) to the domain.'], ['Google verification', 'TXT', '@', 'Verify the domain for Google. The TXT value is: '], ['New subdomain', 'CNAME', 'shop', 'Create a subdomain pointing to: '], ['Something else', 'Other', '', '']].map(([t, ty, n, d]) => `<button class="btn sm" type="button" data-ty="${ty}" data-n="${esc(n)}" data-d="${esc(d)}">${t}</button>`).join('')}</div>
+      <div class="row2"><label class="f"><span>TYPE</span><select id="rqT">${['A', 'AAAA', 'CNAME', 'MX', 'TXT', 'Other'].map(x => `<option>${x}</option>`).join('')}</select></label><label class="f"><span>NAME</span><input id="rqN" placeholder="@, www or shop"></label></div>
+      <label class="f"><span>VALUE OR DETAILS</span><textarea id="rqV" rows="3" placeholder="What should it point to, or what do you need?"></textarea></label>
+      ${supportLink() ? `<button class="gold-btn" type="button" id="rqSend" style="width:100%">${icon('send')}Send request</button>` : '<p class="help" style="color:var(--m2);font-size:.85rem;margin:4px 0 0">Send these details to your web team and they’ll take care of it.</p>'}
+    </div>`;
+  const t0 = performance.now();
+  fetch(`/robots.txt?ping=${Date.now()}`, { cache: 'no-store' })
+    .then(() => { const el = $('#ping', p); if (el) el.textContent = `${Math.max(1, Math.round(performance.now() - t0))} ms`; })
+    .catch(() => { const el = $('#ping', p); if (el) el.textContent = '—'; });
+  $$('[data-ty]', p).forEach(b => b.addEventListener('click', () => { $('#rqT', p).value = b.dataset.ty; $('#rqN', p).value = b.dataset.n; $('#rqV', p).value = b.dataset.d; $('#rqV', p).focus(); }));
+  const send = $('#rqSend', p);
+  if (send) send.addEventListener('click', () => {
+    const v = $('#rqV', p).value.trim();
+    if (!v) { toast('Please add a few details first', 'err'); return; }
+    const msg = `Hello ${sup.name}, a DNS request for ${host}:\n\nType: ${$('#rqT', p).value}\nName: ${$('#rqN', p).value.trim() || '@'}\nDetails: ${v}\n\nThank you!`;
+    window.open(supportLink(msg), '_blank', 'noopener');
+    toast('Your request is ready to send. Thank you!');
+  });
+  if (!custom) return;
+  const root = apex(host.replace(/:\d+$/, '')), www = `www.${root}`;
+  Promise.all([['A', root], ['AAAA', root], ['CNAME', www], ['A', www], ['MX', root], ['TXT', root], ['NS', root]].map(([ty, n]) => doh(n, ty).catch(() => [])))
+    .then(all => {
+      const seen = new Set();
+      const rows = all.flat().filter(r => { const k = `${r.name}|${r.type}|${r.value}`; if (seen.has(k)) return false; seen.add(k); return true; });
+      const el = $('#dns', p); if (!el) return;
+      const nm = n => (n === root ? '@' : n.endsWith(`.${root}`) ? n.slice(0, -root.length - 1) : n);
+      el.innerHTML = rows.length
+        ? `<table><thead><tr><th>Type</th><th>Name</th><th>Points to</th></tr></thead><tbody>${rows.map(r => `<tr><td><span class="rt">${esc(r.type)}</span></td><td>${esc(nm(r.name))}</td><td title="${esc(r.value)}">${esc(r.value)}</td></tr>`).join('')}</tbody></table><p class="help" style="font-size:.78rem;color:var(--m2);margin:8px 0 0">Read live from the internet’s DNS just now.</p>`
+        : '<p class="empty">No public records found yet.</p>';
+    });
+}
+
 /* Health */
 function health() {
   const out = [];
@@ -1350,7 +1358,7 @@ function openPalette() {
     ...[['send', 'Publish changes', 'Make your edits live', openPublish], ['undo', 'Undo', 'Ctrl+Z', undo], ['redo', 'Redo', 'Ctrl+Shift+Z', redo], ['clock', 'Version history', 'Open any past version', openHistory],
       ['monitor', 'Preview on desktop', '', () => setDevice('desktop')], ['tablet', 'Preview on tablet', '', () => setDevice('tablet')], ['phone', 'Preview on phone', '', () => setDevice('phone')],
       ['ext', 'Open the live website', '', () => window.open('/', '_blank', 'noopener')], ['menu', 'Edit the menu', 'Opens it in the preview', openFrameMenu]].map(([ic, t, s, fn]) => ({ g: 'Actions', ic, t, s, fn })),
-    ...[['overview', 'Home', 'home'], ['sections', 'Sections', 'layers'], ['photos', 'Photos & videos', 'image'], ['podcasts', 'Podcasts', 'mic'], ['links', 'Contact & links', 'link'], ['seo', 'Google & sharing', 'globe'], ['health', 'Site health', 'heart']].map(([id, t, ic]) => ({ g: 'Panels', ic, t, s: '', fn: () => showPanel(id) })),
+    ...[['overview', 'Home', 'home'], ['domain', 'Domain & DNS', 'shield'], ['sections', 'Sections', 'layers'], ['photos', 'Photos & videos', 'image'], ['podcasts', 'Podcasts', 'mic'], ['links', 'Contact & links', 'link'], ['seo', 'Google & sharing', 'globe'], ['health', 'Site health', 'heart']].map(([id, t, ic]) => ({ g: 'Panels', ic, t, s: '', fn: () => showPanel(id) })),
     ...SECTIONS.map(([id, t, s]) => ({ g: 'Go to section', ic: 'layers', t, s, fn: () => scrollToSection(id) })),
     ...CARDS.map(c => ({ g: 'Photos', ic: 'image', t: c.title, s: c.group, fn: () => showPanel('photos', { card: c.id }) })),
     ...(S.fd ? $$('[data-e]', S.fd).map(el => ({ g: 'Texts', ic: 'sparkles', t: el.textContent.replace(/\s+/g, ' ').trim().slice(0, 90), s: labelFor(el), fn: () => scrollToEl(el, () => startEdit(el)) })).filter(x => x.t.length > 1) : [])
